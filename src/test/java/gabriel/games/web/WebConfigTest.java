@@ -1,7 +1,6 @@
 package gabriel.games.web;
 
 
-import gabriel.games.Configuration;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +15,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = Configuration.class)
+@SpringBootTest()
 @AutoConfigureMockMvc
 public class WebConfigTest {
 
