@@ -1,8 +1,8 @@
 DELETE FROM users;
 
-INSERT INTO users (username, password) VALUES ('user1', 'password1');
-INSERT INTO users (username, password) VALUES ('user2', 'password2');
-INSERT INTO users (username, password) VALUES ('admin', 'password3');
+INSERT INTO users (username, password) VALUES ('user1', '$2a$10$zfHUDQhX73PYdbjZefPx/OiJEn/xWciiSHAZiwLH2Rn7DtonnNrSW');
+INSERT INTO users (username, password) VALUES ('user2', '$2a$10$vcHcQBKE4e8ZMcLewCOxROJ1mjSZsl/h6jliNcoBNm/1ksvzf/Fk2');
+INSERT INTO users (username, password) VALUES ('admin', '$2a$10$7abF1B3Inxl3aidh4s74vOYLtFCfkE9LVFwqzh0Yd2HcrPxpo26YS');
 
 DELETE FROM authority_types;
 

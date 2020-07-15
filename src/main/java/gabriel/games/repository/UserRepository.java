@@ -1,5 +1,9 @@
 package gabriel.games.repository;
 
-public interface UserRepository {
+import gabriel.games.model.User;
 
+import java.util.Optional;
+
+public interface UserRepository {
+    Optional<User> findByUsername(String username);
 }
