@@ -41,9 +41,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         configureH2Console(httpSecurity);
     }
 
-    private void configureAccess(HttpSecurity httpSecurity) throws Exception{
-        httpSecurity.authorizeRequests()
-                .antMatchers("/", "/**").permitAll();
+    private void configureAccess(HttpSecurity httpSecurity) throws Exception {
+        httpSecurity
+            .authorizeRequests()
+                .antMatchers("/", "/**").permitAll()
+            .and()
+                .formLogin()
+                    .loginPage("/login");
+
     }
 
     private void configureH2Console(HttpSecurity httpSecurity) throws Exception {

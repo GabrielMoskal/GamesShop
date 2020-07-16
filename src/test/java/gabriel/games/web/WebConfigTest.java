@@ -30,4 +30,11 @@ public class WebConfigTest {
                 .andExpect(view().name("home"));
     }
 
+    @Test
+    @WithMockUser
+    public void testLoginPage() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/login"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("login"));
+    }
 }
