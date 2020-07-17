@@ -14,5 +14,6 @@ DELETE FROM authorities;
 INSERT INTO authorities (username, authority) VALUES ('user1', 'ROLE_USER');
 INSERT INTO authorities (username, authority) VALUES ('user2', 'ROLE_USER');
 INSERT INTO authorities (username, authority) VALUES ('admin', 'ROLE_ADMIN');
+INSERT INTO authorities (username, authority) VALUES ('admin', 'ROLE_USER');
 
 -- TODO add values for groups, group_authorities and group_members

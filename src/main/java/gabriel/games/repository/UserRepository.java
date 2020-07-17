@@ -1,9 +1,9 @@
 package gabriel.games.repository;
 
-import gabriel.games.model.User;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Optional;
 
 public interface UserRepository {
-    Optional<User> findByUsername(String username);
+    Optional<UserDetails> findByUsername(String username);
 }
