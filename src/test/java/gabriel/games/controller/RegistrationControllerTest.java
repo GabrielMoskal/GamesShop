@@ -1,6 +1,6 @@
 package gabriel.games.controller;
 
-import gabriel.games.model.RegistrationForm;
+import gabriel.games.dto.UserDto;
 import gabriel.games.model.User;
 import gabriel.games.repository.UserRepository;
 import org.junit.Test;
@@ -43,29 +43,29 @@ public class RegistrationControllerTest {
 
     @Test
     public void processRegistration_RegistrationFormGiven_ShouldSaveUserAndRedirectToLoginPage() throws Exception {
-        RegistrationForm registrationForm = new RegistrationForm("name", "pass");
-        verifyMockMvc(registrationForm);
-        verifyMethodCalls(registrationForm);
+        UserDto userDto = new UserDto("name", "pass");
+        verifyMockMvc(userDto);
+        verifyMethodCalls(userDto);
     }
 
-    private void verifyMockMvc(RegistrationForm registrationForm) throws Exception {
+    private void verifyMockMvc(UserDto userDto) throws Exception {
         mockMvc.perform(
                 post("/register")
                         .with(csrf())
-                        .param("username", registrationForm.getUsername())
-                        .param("password", registrationForm.getPassword())
+                        .param("username", userDto.getUsername())
+                        .param("password", userDto.getPassword())
         )
                 .andExpect(status().is3xxRedirection())
                 .andExpect(view().name("redirect:/login"));
     }
 
-    private void verifyMethodCalls(RegistrationForm registrationForm) {
+    private void verifyMethodCalls(UserDto userDto) {
         ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
 
         verify(userRepository, times(1)).save(userCaptor.capture());
         verifyNoMoreInteractions(userRepository);
 
-        assertThat(userCaptor.getValue().getUsername()).isEqualTo(registrationForm.getUsername());
-        assertThat(userCaptor.getValue().getPassword()).isEqualTo(registrationForm.getPassword());
+        assertThat(userCaptor.getValue().getUsername()).isEqualTo(userDto.getUsername());
+        assertThat(userCaptor.getValue().getPassword()).isEqualTo(userDto.getPassword());
     }
 }

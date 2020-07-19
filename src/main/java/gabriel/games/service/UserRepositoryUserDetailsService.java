@@ -1,5 +1,6 @@
 package gabriel.games.service;
 
+import gabriel.games.model.User;
 import gabriel.games.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -21,7 +22,7 @@ public class UserRepositoryUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Optional<UserDetails> optionalUserDetails = userRepository.findByUsername(username);
+        Optional<User> optionalUserDetails = userRepository.findByUsername(username);
 
         return optionalUserDetails.orElseThrow(
                 () -> new UsernameNotFoundException("UserDetails not found in userRepository::findByUsername")

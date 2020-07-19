@@ -6,7 +6,6 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Repository;
 
 import java.sql.ResultSet;
@@ -25,14 +24,14 @@ public class JdbcUserRepository implements UserRepository {
     }
 
     @Override
-    public Optional<UserDetails> findByUsername(String username) {
+    public Optional<User> findByUsername(String username) {
         String sql = "SELECT username, password FROM users WHERE username=?";
 
         return queryForUser(sql, username.toLowerCase());
     }
 
-    private Optional<UserDetails> queryForUser(String sql, String username) {
-        Optional<UserDetails> result;
+    private Optional<User> queryForUser(String sql, String username) {
+        Optional<User> result;
         try {
             User user = jdbcTemplate.queryForObject(sql, this::mapRowToUser, username);
             result = Optional.ofNullable(user);
@@ -59,12 +58,36 @@ public class JdbcUserRepository implements UserRepository {
         List<String> authorities = jdbcTemplate.queryForList(sql, String.class, username);
 
         return authorities.stream()
-                .map(SimpleGrantedAuthority::new)
+                .map((SimpleGrantedAuthority::new))
                 .collect(Collectors.toList());
     }
 
     @Override
     public void save(User user) {
+        String username = user.getUsername().toLowerCase();
 
+        saveToUsers(username, user.getPassword());
+        saveToAuthorities(username, user.getAuthorities());
+    }
+
+    private void saveToUsers(String username, String password) {
+        String sqlUsers = "INSERT INTO users(username, password) VALUES(?, ?)";
+        jdbcTemplate.update(
+                sqlUsers,
+                username,
+                password
+        );
+    }
+
+    private void saveToAuthorities(String username, Collection<? extends GrantedAuthority> authorities) {
+        String sqlAuthorities = "INSERT INTO authorities(username, authority) VALUES(?, ?)";
+
+        for (GrantedAuthority authority : authorities) {
+            jdbcTemplate.update(
+                    sqlAuthorities,
+                    username,
+                    authority.getAuthority()
+            );
+        }
     }
 }

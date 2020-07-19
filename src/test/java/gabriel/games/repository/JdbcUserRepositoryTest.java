@@ -2,10 +2,12 @@ package gabriel.games.repository;
 
 import gabriel.games.model.User;
 import gabriel.games.utilities.UserUtil;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -26,6 +28,13 @@ public class JdbcUserRepositoryTest {
 
     @Autowired
     private PasswordEncoder encoder;
+
+    private User defaultUser;
+
+    @Before
+    public void setUp() {
+        this.defaultUser = UserUtil.makeUser("defaultUsername", "defaultPassword");
+    }
 
     @Test
     public void findByUsername_ExistingUsernameGiven_ShouldReturnExistingUser() {
@@ -55,7 +64,7 @@ public class JdbcUserRepositoryTest {
     @Test
     public void findByUsername_NonExistingUsernameGiven_ShouldReturnOptionalEmpty() {
         User user = UserUtil.makeUser("doesntExist", "password");
-        Optional<UserDetails> result = userRepository.findByUsername(user.getUsername());
+        Optional<User> result = userRepository.findByUsername(user.getUsername());
         assertFalse("Optional<UserDetails> should be empty", result.isPresent());
     }
 
@@ -67,7 +76,7 @@ public class JdbcUserRepositoryTest {
 
     @Test
     public void findByUsername_ExistingUsernameGiven_ShouldContainCorrectAuthorities() {
-        User result = (User)userRepository.findByUsername("user1").get();
+        User result = userRepository.findByUsername("user1").orElse(defaultUser);
         Collection<? extends GrantedAuthority> authorities = result.getAuthorities();
 
         assertAuthoritiesContains(authorities, "ROLE_USER");
@@ -80,11 +89,44 @@ public class JdbcUserRepositoryTest {
 
     @Test
     public void findByUsername_ExistingOtherUsernameGiven_ShouldContainCorrectAuthorities() {
-        User result = (User)userRepository.findByUsername("admin").get();
+        User result = userRepository.findByUsername("admin").orElse(defaultUser);
         Collection<? extends GrantedAuthority> authorities = result.getAuthorities();
 
         assertAuthoritiesContains(authorities, "ROLE_ADMIN");
         assertAuthoritiesContains(authorities, "ROLE_USER");
         assertEquals(authorities.size(), 2);
+    }
+
+    @Test
+    public void save_NotExistingUserGiven_ShouldExistInDatabase() {
+        User expected = UserUtil.makeUser("qwerty1", "newPassword");
+
+        assertSavesUsersCorrectly(expected);
+    }
+
+    private void assertSavesUsersCorrectly(User expected) {
+        userRepository.save(expected);
+        User result = userRepository.findByUsername(expected.getUsername().toLowerCase()).orElse(defaultUser);
+
+        assertEquals(expected, result);
+    }
+
+    @Test
+    public void save_NotExistingOtherUserGiven_ShouldExistInDatabase() {
+        User expected = new User(
+                "qwerty_different",
+                "newPassword",
+                Arrays.asList(
+                        new SimpleGrantedAuthority("ROLE_USER"),
+                        new SimpleGrantedAuthority("ROLE_ADMIN")
+                )
+        );
+        assertSavesUsersCorrectly(expected);
+    }
+
+    @Test(expected = DuplicateKeyException.class)
+    public void save_ExistingUserGiven_ShouldThrowException() {
+        User user = UserUtil.makeUser("user1", "password1");
+        userRepository.save(user);
     }
 }
