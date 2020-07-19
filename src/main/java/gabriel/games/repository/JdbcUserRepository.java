@@ -63,4 +63,8 @@ public class JdbcUserRepository implements UserRepository {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public void save(User user) {
+
+    }
 }
