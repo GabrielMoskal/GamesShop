@@ -24,7 +24,7 @@ public class WebConfigTest {
 
     @Test
     @WithMockUser
-    public void testHomePage() throws Exception {
+    public void homePageGetRequest_ShouldReturnHomePage() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("home"));
@@ -32,7 +32,7 @@ public class WebConfigTest {
 
     @Test
     @WithMockUser
-    public void testLoginPage() throws Exception {
+    public void loginPageGetRequest_ShouldReturnLoginPage() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/login"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("login"));

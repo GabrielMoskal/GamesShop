@@ -21,22 +21,22 @@ public class UserTest {
     }
 
     @Test
-    public void accountsAreNeverExpired() {
+    public void isAccountNonExpired_ShouldReturnTrue() {
         assertTrue(user.isAccountNonExpired());
     }
 
     @Test
-    public void accountsAreNeverLocked() {
+    public void isAccountNonLocked_ShouldReturnTrue() {
         assertTrue(user.isAccountNonLocked());
     }
 
     @Test
-    public void credentialsAreNeverExpired() {
+    public void isCredentialsNonExpired_ShouldReturnTrue() {
         assertTrue(user.isCredentialsNonExpired());
     }
 
     @Test
-    public void usersAreAlwaysEnabled() {
+    public void isEnabled_ShouldReturnTrue() {
         assertTrue(user.isEnabled());
     }
 }

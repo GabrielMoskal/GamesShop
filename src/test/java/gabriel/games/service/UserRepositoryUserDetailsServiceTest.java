@@ -19,7 +19,7 @@ public class UserRepositoryUserDetailsServiceTest {
     private UserRepositoryUserDetailsService service;
 
     @Test
-    public void loadUserByUsernameReturnsExistingUser() {
+    public void loadUserByUsername_ExistingUsernameGiven_ShouldReturnExistingUser() {
         UserDetails expected = UserUtil.makeUser("user1", "password1");
         assertServiceLoadsTheSameUser(expected);
     }
@@ -30,13 +30,13 @@ public class UserRepositoryUserDetailsServiceTest {
     }
 
     @Test
-    public void loadUserByUsernameReturnsDifferentExistingUser() {
+    public void loadUserByUsername_ExistingDifferentUsernameGiven_ShouldReturnExistingUser() {
         UserDetails expected = UserUtil.makeUser("user2", "password2");
         assertServiceLoadsTheSameUser(expected);
     }
 
     @Test(expected = UsernameNotFoundException.class)
-    public void usernameNotFoundThrowsException() {
+    public void loadUserByUsername_NonExistentUsernameGiven_ShouldThrowException() {
         service.loadUserByUsername("nonExistent");
     }
 }

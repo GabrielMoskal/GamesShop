@@ -28,7 +28,7 @@ public class JdbcUserRepositoryTest {
     private PasswordEncoder encoder;
 
     @Test
-    public void findsExistingUserByUsername() {
+    public void findByUsername_ExistingUsernameGiven_ShouldReturnExistingUser() {
         User expected = UserUtil.makeUser("user1", "password1");
         assertUsersAreTheSame(expected);
     }
@@ -47,26 +47,26 @@ public class JdbcUserRepositoryTest {
     }
 
     @Test
-    public void findsDifferentExistingUserByUsername() {
+    public void findByUsername_ExistingDifferentUsernameGiven_ShouldReturnExistingUser() {
         User expected = UserUtil.makeUser("user2", "password2");
         assertUsersAreTheSame(expected);
     }
 
     @Test
-    public void returnsOptionalEmptyIfNotFound() {
+    public void findByUsername_NonExistingUsernameGiven_ShouldReturnOptionalEmpty() {
         User user = UserUtil.makeUser("doesntExist", "password");
         Optional<UserDetails> result = userRepository.findByUsername(user.getUsername());
         assertFalse("Optional<UserDetails> should be empty", result.isPresent());
     }
 
     @Test
-    public void returnsExistingUserCaseInsensitive() {
+    public void findByUsername_ExistingUsernameDifferentCaseGiven_ShouldReturnExistingUser() {
         User expected = UserUtil.makeUser("USER1", "password1");
         assertUsersAreTheSame(expected);
     }
 
     @Test
-    public void existingUserHasCorrectAuthorities() {
+    public void findByUsername_ExistingUsernameGiven_ShouldContainCorrectAuthorities() {
         User result = (User)userRepository.findByUsername("user1").get();
         Collection<? extends GrantedAuthority> authorities = result.getAuthorities();
 
@@ -79,7 +79,7 @@ public class JdbcUserRepositoryTest {
     }
 
     @Test
-    public void existingOtherUserHasCorrectAuthorities() {
+    public void findByUsername_ExistingOtherUsernameGiven_ShouldContainCorrectAuthorities() {
         User result = (User)userRepository.findByUsername("admin").get();
         Collection<? extends GrantedAuthority> authorities = result.getAuthorities();
 

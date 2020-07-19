@@ -35,14 +35,14 @@ public class RegistrationControllerTest {
     }
 
     @Test
-    public void registerGetReturnRegisterPage() throws Exception {
+    public void registerForm_ShouldReturnRegistrationPage() throws Exception {
         mockMvc.perform(get("/register"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("registration"));
     }
 
     @Test
-    public void registerPostRedirectsToLoginPage() throws Exception {
+    public void processRegistration_RegistrationFormGiven_ShouldSaveUserAndRedirectToLoginPage() throws Exception {
         RegistrationForm registrationForm = new RegistrationForm("name", "pass");
         verifyMockMvc(registrationForm);
         verifyMethodCalls(registrationForm);
