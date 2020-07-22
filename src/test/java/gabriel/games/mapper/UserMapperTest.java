@@ -2,19 +2,32 @@ package gabriel.games.mapper;
 
 import gabriel.games.dto.UserDto;
 import gabriel.games.model.User;
-import gabriel.games.utilities.UserUtil;
-import org.junit.Before;
+import gabriel.games.util.UserUtil;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
+@RunWith(SpringRunner.class)
+@SpringBootTest
 public class UserMapperTest {
 
     private UserMapper userMapper;
+    private PasswordEncoder passwordEncoder;
 
-    @Before
-    public void setUp() {
-        userMapper = new UserMapper();
+    @Autowired
+    public void setUserMapper(UserMapper userMapper) {
+        this.userMapper = userMapper;
+    }
+
+    @Autowired
+    public void setPasswordEncoder(PasswordEncoder passwordEncoder) {
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Test
@@ -23,16 +36,17 @@ public class UserMapperTest {
     }
 
     private void assertConversionCorrect(String username, String password) {
+        UserDto userDto = new UserDto(username, password, password);
+
         User expected = UserUtil.makeUser(username, password);
-        UserDto userDto = new UserDto(expected.getUsername(), expected.getPassword());
-        User result = userMapper.toUserModel(userDto);
+        User result = userMapper.toUser(userDto);
 
         assertAllFieldsAreTheSame(expected, result);
     }
 
     private void assertAllFieldsAreTheSame(User expected, User result) {
         assertEquals(expected, result);
-        assertEquals(expected.getPassword(), result.getPassword());
+        assertTrue(passwordEncoder.matches(expected.getPassword(), result.getPassword()));
     }
 
     @Test

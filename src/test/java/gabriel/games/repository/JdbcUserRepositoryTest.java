@@ -1,7 +1,7 @@
 package gabriel.games.repository;
 
 import gabriel.games.model.User;
-import gabriel.games.utilities.UserUtil;
+import gabriel.games.util.UserUtil;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

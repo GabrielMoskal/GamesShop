@@ -2,16 +2,27 @@ package gabriel.games.mapper;
 
 import gabriel.games.dto.UserDto;
 import gabriel.games.model.User;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Component;
 
 import java.util.Collections;
 
+@Component
 public class UserMapper {
 
-    public User toUserModel(UserDto userDto) {
+    private final PasswordEncoder passwordEncoder;
+
+    @Autowired
+    public UserMapper(PasswordEncoder passwordEncoder) {
+        this.passwordEncoder = passwordEncoder;
+    }
+
+    public User toUser(UserDto userDto) {
         return new User(
                 userDto.getUsername(),
-                userDto.getPassword(),
+                passwordEncoder.encode(userDto.getPassword()),
                 Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER")));
     }
 }

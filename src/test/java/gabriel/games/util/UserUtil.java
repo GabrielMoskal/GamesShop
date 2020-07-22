@@ -1,4 +1,4 @@
-package gabriel.games.utilities;
+package gabriel.games.util;
 
 import gabriel.games.model.User;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
