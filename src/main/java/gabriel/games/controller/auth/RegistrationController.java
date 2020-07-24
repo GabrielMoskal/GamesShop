@@ -1,4 +1,4 @@
-package gabriel.games.controller;
+package gabriel.games.controller.auth;
 
 import gabriel.games.dto.UserDto;
 import gabriel.games.exception.UserAlreadyExistsException;

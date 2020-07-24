@@ -14,8 +14,8 @@ import static org.mockito.Mockito.when;
 
 public class FieldMatchValidatorTest {
 
-    FieldMatch fieldMatch;
-    FieldMatchValidator fieldMatchValidator;
+    private FieldMatch fieldMatch;
+    private FieldMatchValidator fieldMatchValidator;
 
     @Before
     public void setUp() {

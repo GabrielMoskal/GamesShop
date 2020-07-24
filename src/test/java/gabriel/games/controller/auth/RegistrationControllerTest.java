@@ -1,4 +1,4 @@
-package gabriel.games.controller;
+package gabriel.games.controller.auth;
 
 import gabriel.games.dto.UserDto;
 import gabriel.games.exception.UserAlreadyExistsException;
@@ -56,7 +56,7 @@ public class RegistrationControllerTest {
         UserDto userDto = new UserDto("valid_name", "valid_pass", "valid_pass");
         performMockMvc(userDto)
                 .andExpect(status().is3xxRedirection())
-                .andExpect(view().name("redirect:/login"));;
+                .andExpect(view().name("redirect:/login"));
         verifyMethodCalls(userDto);
     }
 
