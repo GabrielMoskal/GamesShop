@@ -6,10 +6,36 @@
     <meta charset="UTF-8">
     <title>Home Page</title>
     <link rel="stylesheet" th:href="@{/css/styles.css}" />
+    <link rel="stylesheet" th:href="@{/css/nav.css}" />
 </head>
 <body>
 
-<h1>Welcome</h1>
+<header>
+    <nav>
+        <ul class="top-nav">
+            <li class="left"><a href="/"><h1>Games Shop</h1></a></li>
+            <li class="right dropdown">
+                <div class="dropdown-button">
+                    My shop
+                </div>
+                <div class="dropdown-content">
+                    <form method="post" th:action="@{/login}">
+                        <label class="form-label" for="username">Username:</label><br/>
+                        <input type="text" id="username" name="username"><br/>
+
+                        <label class="form-label" for="password">Password:</label><br/>
+                        <input type="password" id="password" name="password"><br/>
+
+                        <input class="button" type="submit" value="Log In" />
+                    </form>
+
+                    <a class="link-button" href="#">Forgot account?</a>
+                    <a class="link-button" href="/register">Create New Account</a>
+                </div>
+            </li>
+        </ul>
+    </nav>
+</header>
 
 </body>
 </html>
