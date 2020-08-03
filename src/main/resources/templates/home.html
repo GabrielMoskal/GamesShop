@@ -30,9 +30,16 @@
                     </form>
 
                     <a class="link-button" href="#">Forgot account?</a>
-                    <a class="link-button" href="/register">Create New Account</a>
+                    <a class="link-button" th:href="@{/register}">Create New Account</a>
                 </div>
             </li>
+
+            <li>
+                <form method="post" th:action="@{/logout}">
+                    <input type="submit" value="Logout"/>
+                </form>
+            </li>
+
         </ul>
     </nav>
 </header>
