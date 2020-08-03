@@ -7,16 +7,24 @@
     <title>Title</title>
 </head>
 <body>
-<form method="POST" th:action="@{/register}" id="userDto">
+<form method="POST" th:action="@{/register}" id="userDto" th:object="${user}">
 
     <label for="username">Username: </label>
-    <input type="text" name="username" id="username" /><br/>
+    <input type="text" name="username" id="username" th:field="*{username}"/><br/>
+    <div class="validationError" th:if="${#fields.hasErrors('username')}" th:errors="*{username}">Username error
+    </div>
 
     <label for="password">Password: </label>
-    <input type="password" name="password" id="password" /><br/>
+    <input type="password" name="password" id="password"/><br/>
+    <div class="validationError" th:if="${#fields.hasErrors('password')}" th:errors="*{password}">
+        Username error
+    </div>
 
     <label for="confirm">Confirm password: </label>
-    <input type="password" name="confirmedPassword" id="confirm" /><br/>
+    <input type="password" name="confirmedPassword" id="confirm"/><br/>
+    <div class="validationError" th:if="${#fields.hasErrors('${user}')}" th:errors="${user}">
+        User error
+    </div>
 
     <input type="submit" value="Register">
 

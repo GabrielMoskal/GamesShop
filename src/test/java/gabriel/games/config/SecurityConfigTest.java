@@ -1,18 +1,16 @@
-package gabriel.games.security;
+package gabriel.games.config;
 
-import gabriel.games.model.User;
-import gabriel.games.util.UserUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -42,18 +40,13 @@ public class SecurityConfigTest {
     }
 
     @Test
+    @WithMockUser
     public void logoutPostRequestGiven_ShouldSucceedWith3xx() throws Exception {
-        authenticateFakeUser();
+        assertNotNull(SecurityContextHolder.getContext().getAuthentication());
 
         performLogout();
 
-        assertUserIsLoggedOut();
-    }
-
-    private void authenticateFakeUser() {
-        User user = UserUtil.makeUser("username", "password");
-        Authentication authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+        assertNull(SecurityContextHolder.getContext().getAuthentication());
     }
 
     private void performLogout() throws Exception {
@@ -62,9 +55,5 @@ public class SecurityConfigTest {
                         .with(csrf())
         )
                 .andExpect(status().is3xxRedirection());
-    }
-
-    private void assertUserIsLoggedOut() {
-        assertNull(SecurityContextHolder.getContext().getAuthentication());
     }
 }

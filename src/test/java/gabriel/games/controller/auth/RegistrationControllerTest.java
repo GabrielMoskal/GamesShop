@@ -14,8 +14,12 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.web.servlet.ModelAndView;
+
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -46,9 +50,39 @@ public class RegistrationControllerTest {
 
     @Test
     public void registerForm_ShouldReturnRegistrationPage() throws Exception {
-        mockMvc.perform(get("/register"))
+        performGetRegister()
                 .andExpect(status().isOk())
                 .andExpect(view().name("registration"));
+    }
+
+    private ResultActions performGetRegister() throws Exception {
+        return mockMvc.perform(get("/register"));
+    }
+
+    @Test
+    public void registerForm_ShouldAddEmptyUserDtoToModel() throws Exception {
+        UserDto userDto = retrieveUserDto();
+
+        assertNotNull(userDto);
+        assertUserDtoIsEmpty(userDto);
+    }
+
+    private UserDto retrieveUserDto() throws Exception {
+        ModelAndView modelAndView = performGetRegister()
+                .andReturn()
+                .getModelAndView();
+
+        assertNotNull(modelAndView);
+
+        Map<String, Object> model = modelAndView.getModel();
+
+        return (UserDto)model.get("user");
+    }
+
+    private void assertUserDtoIsEmpty(UserDto userDto) {
+        assertTrue(userDto.getUsername().isEmpty());
+        assertTrue(userDto.getPassword().isEmpty());
+        assertTrue(userDto.getConfirmedPassword().isEmpty());
     }
 
     @Test

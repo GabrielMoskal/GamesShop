@@ -2,9 +2,11 @@ package gabriel.games.controller.auth;
 
 import gabriel.games.dto.UserDto;
 import gabriel.games.exception.UserAlreadyExistsException;
+import gabriel.games.model.User;
 import gabriel.games.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,12 +24,14 @@ public class RegistrationController {
     }
 
     @GetMapping
-    public String registerForm() {
+    public String registerForm(Model model) {
+        model.addAttribute("user", new UserDto("", "", ""));
+
         return "registration";
     }
 
     @PostMapping
-    public String processRegistration(@ModelAttribute @Valid UserDto userDto, Errors errors) {
+    public String processRegistration(@ModelAttribute("user") @Valid UserDto userDto, Errors errors) {
         if (errors.hasErrors()) {
             // todo change response error code to 4xx, later when i add better return entities than Strings
             return "registration";

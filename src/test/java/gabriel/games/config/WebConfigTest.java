@@ -1,4 +1,4 @@
-package gabriel.games.web;
+package gabriel.games.config;
 
 
 import org.junit.Test;
@@ -31,7 +31,6 @@ public class WebConfigTest {
     }
 
     @Test
-    @WithMockUser
     public void loginPageGetRequest_ShouldReturnLoginPage() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/login"))
                 .andExpect(status().isOk())
