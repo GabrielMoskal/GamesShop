@@ -14,34 +14,52 @@
 <header>
     <nav>
         <ul class="top-nav">
-            <li class="left"><a href="/"><h1>Games Shop</h1></a></li>
+            <li class="left">
+                <a href="/">
+                    <h1 th:text="#{home.welcome}">Welcome</h1>
+                </a>
+            </li>
             <li class="right dropdown" sec:authorize="isAnonymous()">
                 <div class="dropdown-button">
-                    My shop
+                    <span th:text="#{nav.account}">
+                        Account
+                    </span>
                 </div>
                 <div class="dropdown-content">
                     <form method="post" th:action="@{/login}">
-                        <label class="form-label" for="username">Username:</label><br/>
+                        <label class="form-label" for="username" th:text="#{login.username}">
+                            Username:
+                        </label>
+                        <br/>
                         <input type="text" id="username" name="username"><br/>
 
-                        <label class="form-label" for="password">Password:</label><br/>
+                        <label class="form-label" for="password" th:text="#{login.password}">
+                            Password:
+                        </label>
+                        <br/>
                         <input type="password" id="password" name="password"><br/>
 
-                        <input class="button" type="submit" value="Log In"/>
+                        <input class="button" type="submit" value="Login" th:value="#{login.login}"/>
                     </form>
 
-                    <a class="link-button" href="#">Forgot account?</a>
-                    <a class="link-button" th:href="@{/register}">Create New Account</a>
+                    <a class="link-button" href="#">
+                        <span th:text="#{login.forgotAccount}">Forgot account?</span>
+                    </a>
+                    <a class="link-button" th:href="@{/register}">
+                        <span th:text="#{register.register}">Create New Account</span>
+                    </a>
                 </div>
             </li>
 
             <li class="right dropdown" sec:authorize="isAuthenticated()">
                 <div class="dropdown-button">
-                    Account
+                    <span th:text="#{nav.account}">
+                        Account
+                    </span>
                 </div>
                 <div class="dropdown-content">
                     <form method="post" th:action="@{/logout}">
-                        <input class="button" type="submit" value="Log Out"/>
+                        <input class="button" type="submit" value="Logout" th:value="#{login.logout}"/>
                     </form>
                 </div>
             </li>
