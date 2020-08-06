@@ -45,6 +45,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private void configureAccess(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
             .authorizeRequests()
+                .antMatchers("/cms/**")
+                    .hasRole("ADMIN")
                 .antMatchers("/", "/**").permitAll()
             .and()
                 .formLogin()

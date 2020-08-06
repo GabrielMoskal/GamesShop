@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
+import java.util.Arrays;
 import java.util.Collections;
 
 @Configuration
@@ -19,8 +20,20 @@ public class UserUtil {
         );
     }
 
-    @Bean
+    @Bean(name = "user")
     public User user() {
         return makeUser("username", "password");
+    }
+
+    @Bean(name = "admin")
+    public User admin() {
+        return new User(
+                "adminName",
+                "password",
+                Arrays.asList(
+                        new SimpleGrantedAuthority("ROLE_USER"),
+                        new SimpleGrantedAuthority("ROLE_ADMIN")
+                )
+        );
     }
 }
