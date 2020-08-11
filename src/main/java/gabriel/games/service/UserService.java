@@ -38,11 +38,18 @@ public class UserService implements UserDetailsService {
         );
     }
 
-    public void register(UserDto userDto) {
+    public UserDto register(UserDto userDto) {
+        User user = toValidUser(userDto);
+        User saved = save(user);
+
+        return userMapper.toUserDto(saved);
+    }
+
+    private User toValidUser(UserDto userDto) {
         @Valid User user = userMapper.toUser(userDto);
 
         validate(user);
-        save(user);
+        return user;
     }
 
     private void validate(User user) {
@@ -59,9 +66,9 @@ public class UserService implements UserDetailsService {
         return violations.isEmpty();
     }
 
-    private void save(User user) {
+    private User save(User user) {
         try {
-            userRepository.save(user);
+            return userRepository.save(user);
         } catch (DuplicateKeyException e) {
             throw new UserAlreadyExistsException("User already exists.");
         }

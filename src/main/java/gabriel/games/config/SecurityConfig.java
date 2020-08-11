@@ -55,13 +55,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .logout()
                     .logoutSuccessUrl("/");
 
+
     }
 
     private void configureH2Console(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
             .csrf()
-                .ignoringAntMatchers("/console/**")
-            .and()
+                .disable()
             .headers()
                 .frameOptions()
                     .sameOrigin();

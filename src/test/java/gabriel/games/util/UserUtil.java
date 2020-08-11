@@ -1,5 +1,6 @@
 package gabriel.games.util;
 
+import gabriel.games.dto.UserDto;
 import gabriel.games.model.User;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,6 +13,10 @@ import java.util.Collections;
 @Configuration
 @Profile({"test", "default"})
 public class UserUtil {
+
+    private final String username = "username";
+    private final String password = "password";
+
     public static User makeUser(String username, String password) {
         return new User(
                 username,
@@ -22,18 +27,27 @@ public class UserUtil {
 
     @Bean(name = "user")
     public User user() {
-        return makeUser("username", "password");
+        return makeUser(username, password);
     }
 
     @Bean(name = "admin")
     public User admin() {
         return new User(
                 "adminName",
-                "password",
+                password,
                 Arrays.asList(
                         new SimpleGrantedAuthority("ROLE_USER"),
                         new SimpleGrantedAuthority("ROLE_ADMIN")
                 )
         );
+    }
+
+    public static UserDto makeUserDto(String username, String password) {
+        return new UserDto(username, password, password);
+    }
+
+    @Bean
+    public UserDto userDto() {
+        return makeUserDto(username, password);
     }
 }

@@ -5,6 +5,7 @@ import gabriel.games.exception.InvalidObjectValuesException;
 import gabriel.games.exception.UserAlreadyExistsException;
 import gabriel.games.model.User;
 import gabriel.games.repository.UserRepository;
+import gabriel.games.util.UserUtil;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,7 +25,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Optional;
 
-import static gabriel.games.util.UserUtil.makeUser;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.*;
@@ -42,16 +42,19 @@ public class UserServiceTest {
     @MockBean
     private UserRepository userRepository;
 
+    @Autowired
+    private UserDto userDto;
+
     private User user;
 
     @Before
     public void setUp() {
-        user = makeUser("validUsername", "validPassword");
+        this.user = UserUtil.makeUser(userDto.getUsername(), userDto.getPassword());
     }
 
     @Test
     public void loadUserByUsername_ExistingUsernameGiven_ShouldReturnExistingUser() {
-        mockRepository(Optional.of(user));
+        mockFindByUsername(Optional.of(user));
 
         UserDetails result = userService.loadUserByUsername(user.getUsername());
 
@@ -61,7 +64,7 @@ public class UserServiceTest {
         assertEquals(user, result);
     }
 
-    private void mockRepository(Optional<User> optionalUser) {
+    private void mockFindByUsername(Optional<User> optionalUser) {
         when(userRepository.findByUsername(anyString())).thenReturn(optionalUser);
     }
 
@@ -76,7 +79,7 @@ public class UserServiceTest {
 
     @Test(expected = UsernameNotFoundException.class)
     public void loadUserByUsername_NonExistentUsernameGiven_ShouldThrowException() {
-        mockRepository(Optional.empty());
+        mockFindByUsername(Optional.empty());
 
         userService.loadUserByUsername(user.getUsername());
 
@@ -86,12 +89,16 @@ public class UserServiceTest {
 
     @Test
     public void register_ValidUserDtoGiven_ShouldSaveValidUserToDatabase() throws UserAlreadyExistsException {
-        UserDto expected = new UserDto("validUsername1", "valid_pass", "valid_pass");
+        mockSave();
 
-        userService.register(expected);
+        userService.register(userDto);
 
         User result = verifySaveInteractions();
-        assertUserIsValid(expected, result);
+        assertUserIsValid(userDto, result);
+    }
+
+    private void mockSave() {
+        when(userRepository.save(any())).thenReturn(user);
     }
 
     private User verifySaveInteractions() {
@@ -101,6 +108,15 @@ public class UserServiceTest {
         verifyNoMoreInteractions(userRepository);
 
         return userCaptor.getValue();
+    }
+
+    @Test
+    public void register_ValidUserDtoGiven_ShouldReturnEqualUserDto() {
+        mockSave();
+
+        UserDto result = userService.register(userDto);
+
+        assertEquals(userDto, result);
     }
 
     private void assertUserIsValid(UserDto expected, User result) {
@@ -115,7 +131,7 @@ public class UserServiceTest {
     public void register_ExistentUsernameGiven_ShouldThrowException() {
         doThrow(new DuplicateKeyException("msg")).when(userRepository).save(any());
 
-        userService.register(new UserDto("existentUsername", "valid_pass", "valid_pass"));
+        userService.register(userDto);
 
         verifySaveInteractions();
     }

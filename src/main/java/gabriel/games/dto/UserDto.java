@@ -1,5 +1,8 @@
 package gabriel.games.dto;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import gabriel.games.util.validator.FieldMatch;
 import gabriel.games.util.validator.Word;
 import lombok.Data;
@@ -25,4 +28,15 @@ public class UserDto {
     @Word
     @Size(min = 7, max = 20, message = "{confirmedPassword.size}")
     private final String confirmedPassword;
+
+    @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
+    public UserDto(
+            @JsonProperty("username") String username,
+            @JsonProperty("password") String password,
+            @JsonProperty("confirmedPassword") String confirmedPassword
+    ) {
+        this.username = username;
+        this.password = password;
+        this.confirmedPassword = confirmedPassword;
+    }
 }

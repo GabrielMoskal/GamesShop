@@ -19,6 +19,7 @@ public class UserMapperTest {
 
     private UserMapper userMapper;
     private PasswordEncoder passwordEncoder;
+    private UserDto userDto;
 
     @Autowired
     public void setUserMapper(UserMapper userMapper) {
@@ -30,15 +31,18 @@ public class UserMapperTest {
         this.passwordEncoder = passwordEncoder;
     }
 
-    @Test
-    public void toUserModel_UserDtoGiven_ReturnsCorrectUser() {
-        assertConversionCorrect("username", "password");
+    @Autowired
+    public void setUserDto(UserDto userDto) {
+        this.userDto = userDto;
     }
 
-    private void assertConversionCorrect(String username, String password) {
-        UserDto userDto = new UserDto(username, password, password);
+    @Test
+    public void toUser_UserDtoGiven_ReturnsCorrectUser() {
+        assertConversionCorrect(userDto);
+    }
 
-        User expected = UserUtil.makeUser(username, password);
+    private void assertConversionCorrect(UserDto userDto) {
+        User expected = UserUtil.makeUser(userDto.getUsername(), userDto.getPassword());
         User result = userMapper.toUser(userDto);
 
         assertAllFieldsAreTheSame(expected, result);
@@ -50,7 +54,27 @@ public class UserMapperTest {
     }
 
     @Test
-    public void toUserModel_DifferentUserDtoGiven_ReturnsCorrectUser() {
-        assertConversionCorrect("differentUsername", "differentUsername");
+    public void toUser_DifferentUserDtoGiven_ReturnsCorrectUser() {
+        UserDto userDto = new UserDto("differentUsername", "diffPass", "diffPass");
+        assertConversionCorrect(userDto);
+    }
+
+    @Test
+    public void toUserDto_UserGiven_ReturnsCorrectUserDto() {
+        User user = UserUtil.makeUser(userDto.getUsername(), userDto.getPassword());
+
+        UserDto result = userMapper.toUserDto(user);
+
+        assertEquals(userDto, result);
+    }
+
+    @Test
+    public void toUserDto_DifferentUserGiven_ReturnsCorrectUserDto() {
+        User user = UserUtil.makeUser("diffUsername", "diffPassword");
+
+        UserDto expected = UserUtil.makeUserDto(user.getUsername(), user.getPassword());
+        UserDto result = userMapper.toUserDto(user);
+
+        assertEquals(expected, result);
     }
 }

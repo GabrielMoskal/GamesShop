@@ -129,4 +129,10 @@ public class JdbcUserRepositoryTest {
         User user = UserUtil.makeUser("user1", "password1");
         userRepository.save(user);
     }
+
+    @Test
+    public void save_NotExistingUserGiven_ShouldReturnSavedUser() {
+        User result = userRepository.save(defaultUser);
+        assertEquals(defaultUser, result);
+    }
 }

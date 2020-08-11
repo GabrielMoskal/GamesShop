@@ -2,18 +2,19 @@ package gabriel.games.controller.auth;
 
 import gabriel.games.dto.UserDto;
 import gabriel.games.exception.UserAlreadyExistsException;
-import gabriel.games.model.User;
 import gabriel.games.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.*;
 
-@Controller
-@RequestMapping("/register")
+@RestController
+@RequestMapping(path = "/register", produces = "application/json")
+@CrossOrigin(origins = "*")
 public class RegistrationController {
 
     private final UserService userService;
@@ -24,38 +25,85 @@ public class RegistrationController {
     }
 
     @GetMapping
-    public String registerForm(Model model) {
-        model.addAttribute("user", new UserDto("", "", ""));
+    public ResponseEntity<Object> register() {
+        Map<String, Object> body = new HashMap<>();
+        UserDto userDto = new UserDto("", "", "");
 
-        return "registration";
+        body.put("user", userDto);
+
+        return new ResponseEntity<>(body, HttpStatus.OK);
     }
 
-    @PostMapping
-    public String processRegistration(@ModelAttribute("user") @Valid UserDto userDto, Errors errors) {
+    @PostMapping(consumes = "application/json")
+    public ResponseEntity<Object> processRegistration(@RequestBody @Valid UserDto userDto, Errors errors) {
         if (errors.hasErrors()) {
-            // todo change response error code to 4xx, later when i add better return entities than Strings
-            return "registration";
+            return handleErrors(userDto, errors);
         }
         return register(userDto, errors);
     }
 
-    private String register(UserDto userDto, Errors errors) {
+    private ResponseEntity<Object> handleErrors(UserDto userDto, Errors errors) {
+        Map<String, Object> body = new HashMap<>();
+
+        addErrors(body, errors);
+        addUser(body, userDto);
+
+        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+    }
+
+    private void addErrors(Map<String, Object> body, Errors errors) {
+        Map<String, Object> stringMapErrors = new HashMap<>();
+
+        addFieldErrors(stringMapErrors, errors);
+        addObjectErrors(stringMapErrors, errors);
+
+        body.put("errors", stringMapErrors);
+    }
+
+    private void addFieldErrors(Map<String, Object> stringMapErrors, Errors errors) {
+        Map<String, String> fieldErrors = new HashMap<>();
+
+        errors.getFieldErrors().forEach(
+                fieldError -> fieldErrors.put(fieldError.getField(), fieldError.getDefaultMessage())
+        );
+
+        stringMapErrors.put("fieldErrors", fieldErrors);
+    }
+
+    private void addObjectErrors(Map<String, Object> stringMapErrors, Errors errors) {
+        Map<String, String> objectErrors = new HashMap<>();
+
+        errors.getGlobalErrors().forEach(
+                objectError -> objectErrors.put("user", objectError.getDefaultMessage())
+        );
+
+        stringMapErrors.put("objectErrors", objectErrors);
+    }
+
+    private void addUser(Map<String, Object> body, UserDto userDto) {
+        body.put("user", userDto);
+    }
+
+    private ResponseEntity<Object> register(UserDto userDto, Errors errors) {
         try {
             return register(userDto);
         } catch (UserAlreadyExistsException e) {
-            return addErrorAndReturnToRegistration(errors);
+            return addError(userDto, errors);
         }
     }
 
-    private String register(UserDto userDto) {
+    private ResponseEntity<Object> register(UserDto userDto) {
         userService.register(userDto);
 
-        return "redirect:/login";
+        Map<String, Object> body = new HashMap<>();
+        addUser(body, new UserDto(userDto.getUsername(), "", ""));
+
+        return new ResponseEntity<>(body, HttpStatus.CREATED);
     }
 
-    private String addErrorAndReturnToRegistration(Errors errors) {
+    private ResponseEntity<Object> addError(UserDto userDto, Errors errors) {
         errors.rejectValue("username", "", "User with given username already exists.");
 
-        return "registration";
+        return handleErrors(userDto, errors);
     }
 }

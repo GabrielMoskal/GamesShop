@@ -25,4 +25,12 @@ public class UserMapper {
                 passwordEncoder.encode(userDto.getPassword()),
                 Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER")));
     }
+
+    public UserDto toUserDto(User user) {
+        return new UserDto(
+                user.getUsername(),
+                user.getPassword(),
+                user.getPassword()
+        );
+    }
 }

@@ -1,9 +1,12 @@
 package gabriel.games.controller.auth;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import gabriel.games.dto.UserDto;
 import gabriel.games.exception.UserAlreadyExistsException;
 import gabriel.games.repository.UserRepository;
 import gabriel.games.service.UserService;
+import gabriel.games.util.UserUtil;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -11,19 +14,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.web.servlet.ModelAndView;
 
-import java.util.Map;
-
+import static gabriel.games.util.ResponseBodyMatchers.responseBody;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -32,11 +32,18 @@ public class RegistrationControllerTest {
 
     private MockMvc mockMvc;
 
+    private ObjectMapper objectMapper;
+
     @MockBean
     private UserRepository userRepository;
 
     @MockBean
     private UserService userService;
+
+    @Before
+    public void setUp() {
+        this.objectMapper = new ObjectMapper();
+    }
 
     @Autowired
     public void setMockMvc(MockMvc mockMvc) {
@@ -49,58 +56,35 @@ public class RegistrationControllerTest {
     }
 
     @Test
-    public void registerForm_ShouldReturnRegistrationPage() throws Exception {
-        performGetRegister()
+    public void register_ShouldReturnEmptyUserDtoJson() throws Exception {
+        UserDto userDto = UserUtil.makeUserDto("", "");
+        mockMvc.perform(
+                get("/register")
+                    .contentType(MediaType.APPLICATION_JSON_VALUE)
+        )
                 .andExpect(status().isOk())
-                .andExpect(view().name("registration"));
-    }
-
-    private ResultActions performGetRegister() throws Exception {
-        return mockMvc.perform(get("/register"));
+                .andExpect(responseBody().containsObjectAsJson("user", userDto, UserDto.class));
     }
 
     @Test
-    public void registerForm_ShouldAddEmptyUserDtoToModel() throws Exception {
-        UserDto userDto = retrieveUserDto();
+    public void processRegistration_ValidUserDtoGiven_ShouldSaveUserAndReturnUserDtoAsJson() throws Exception {
+        UserDto userDto = UserUtil.makeUserDto("valid_name", "valid_pass");
+        UserDto expected = UserUtil.makeUserDto(userDto.getUsername(), "");
 
-        assertNotNull(userDto);
-        assertUserDtoIsEmpty(userDto);
-    }
+        performPostRegister(userDto)
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(responseBody().containsObjectAsJson("user", expected, UserDto.class));
 
-    private UserDto retrieveUserDto() throws Exception {
-        ModelAndView modelAndView = performGetRegister()
-                .andReturn()
-                .getModelAndView();
-
-        assertNotNull(modelAndView);
-
-        Map<String, Object> model = modelAndView.getModel();
-
-        return (UserDto)model.get("user");
-    }
-
-    private void assertUserDtoIsEmpty(UserDto userDto) {
-        assertTrue(userDto.getUsername().isEmpty());
-        assertTrue(userDto.getPassword().isEmpty());
-        assertTrue(userDto.getConfirmedPassword().isEmpty());
-    }
-
-    @Test
-    public void processRegistration_ValidUserDtoGiven_ShouldSaveUserAndRedirectToLoginPage() throws Exception {
-        UserDto userDto = new UserDto("valid_name", "valid_pass", "valid_pass");
-        performMockMvc(userDto)
-                .andExpect(status().is3xxRedirection())
-                .andExpect(view().name("redirect:/login"));
         verifyMethodCalls(userDto);
     }
 
-    private ResultActions performMockMvc(UserDto userDto) throws Exception {
+    private ResultActions performPostRegister(UserDto userDto) throws Exception {
+        String inputJson = objectMapper.writeValueAsString(userDto);
+
         return mockMvc.perform(
                 post("/register")
-                        .with(csrf())
-                        .param("username", userDto.getUsername())
-                        .param("password", userDto.getPassword())
-                        .param("confirmedPassword", userDto.getConfirmedPassword())
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(inputJson)
         );
     }
 
@@ -115,24 +99,24 @@ public class RegistrationControllerTest {
     }
 
     @Test
-    public void processRegistration_InvalidUserDtoGiven_ShouldReturnToRegistrationPageWithErrors() throws Exception {
-        UserDto userDto = new UserDto("a", "valid_pass", "valid_pass");
+    public void processRegistration_InvalidUserDtoGiven_ShouldReturnTheSameUserDtoAsJsonWithErrors() throws Exception {
+        UserDto userDto = UserUtil.makeUserDto("a", "valid_pass");
 
         performMockMvcExpectErrors(userDto);
     }
 
     private void performMockMvcExpectErrors(UserDto userDto) throws Exception {
-        performMockMvc(userDto)
-                .andExpect(model().hasErrors())
-                .andExpect(status().isOk())
-                .andExpect(view().name("registration"));
+        performPostRegister(userDto)
+                .andExpect(status().is4xxClientError())
+                .andExpect(responseBody().containsErrorsAsJson())
+                .andExpect(responseBody().containsObjectAsJson("user", userDto, UserDto.class));
     }
 
     @Test
-    public void processRegistration_ExistingUserDtoGiven_ShouldReturnToRegistrationPageWithErrors() throws Exception {
+    public void processRegistration_ExistingUserDtoGiven_ShouldReturnTheSameUserDtoAsJsonWithErrors() throws Exception {
         doThrow(new UserAlreadyExistsException("msg")).when(userService).register(any());
 
-        UserDto userDto = new UserDto("valid_username", "valid_pass", "valid_pass");
+        UserDto userDto = UserUtil.makeUserDto("valid_name", "valid_pass");
 
         performMockMvcExpectErrors(userDto);
 
