@@ -110,7 +110,6 @@ public class RegistrationController {
         String message = messageSource.getMessage(
                 "username.exists",
                 null,
-                "User with given username already exists.",
                 LocaleContextHolder.getLocale()
         );
 
