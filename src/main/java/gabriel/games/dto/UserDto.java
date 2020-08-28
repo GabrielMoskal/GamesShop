@@ -2,7 +2,6 @@ package gabriel.games.dto;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import gabriel.games.util.validator.FieldMatch;
 import gabriel.games.util.validator.Word;
 import lombok.Data;

@@ -19,6 +19,9 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
+import java.util.Arrays;
+import java.util.List;
+
 import static gabriel.games.util.ResponseBodyMatchers.responseBody;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
@@ -105,22 +108,31 @@ public class RegistrationControllerTest {
         performMockMvcExpectErrors(userDto);
     }
 
-    private void performMockMvcExpectErrors(UserDto userDto) throws Exception {
-        performPostRegister(userDto)
+    private ResultActions performMockMvcExpectErrors(UserDto userDto) throws Exception {
+        return performPostRegister(userDto)
                 .andExpect(status().is4xxClientError())
                 .andExpect(responseBody().containsErrorsAsJson())
                 .andExpect(responseBody().containsObjectAsJson("user", userDto, UserDto.class));
     }
 
     @Test
-    public void processRegistration_ExistingUserDtoGiven_ShouldReturnTheSameUserDtoAsJsonWithErrors() throws Exception {
+    public void processRegistration_ExistingUserDtoGiven_ShouldReturnTheSameUserDtoAsJsonWithLocalizedErrors() throws Exception {
         doThrow(new UserAlreadyExistsException("msg")).when(userService).register(any());
 
         UserDto userDto = UserUtil.makeUserDto("valid_name", "valid_pass");
 
-        performMockMvcExpectErrors(userDto);
+        performMockMvcExpectLocalizedError(userDto);
 
         verify(userService, times(1)).register(userDto);
         verifyNoMoreInteractions(userRepository);
+    }
+
+    private void performMockMvcExpectLocalizedError(UserDto userDto) throws Exception {
+        List<String> path = Arrays.asList("errors", "fieldErrors", "username");
+
+        String message = "Użytkownik o podanej nazwie istnieje.";
+
+        performMockMvcExpectErrors(userDto)
+                .andExpect(responseBody().containErrorAsJson(message, path));
     }
 }

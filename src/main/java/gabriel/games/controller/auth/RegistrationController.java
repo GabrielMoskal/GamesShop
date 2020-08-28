@@ -4,6 +4,8 @@ import gabriel.games.dto.UserDto;
 import gabriel.games.exception.UserAlreadyExistsException;
 import gabriel.games.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
@@ -18,10 +20,12 @@ import java.util.*;
 public class RegistrationController {
 
     private final UserService userService;
+    private final MessageSource messageSource;
 
     @Autowired
-    public RegistrationController(UserService userService) {
+    public RegistrationController(UserService userService, MessageSource messageSource) {
         this.userService = userService;
+        this.messageSource = messageSource;
     }
 
     @GetMapping
@@ -102,7 +106,15 @@ public class RegistrationController {
     }
 
     private ResponseEntity<Object> addError(UserDto userDto, Errors errors) {
-        errors.rejectValue("username", "", "User with given username already exists.");
+
+        String message = messageSource.getMessage(
+                "username.exists",
+                null,
+                "User with given username already exists.",
+                LocaleContextHolder.getLocale()
+        );
+
+        errors.rejectValue("username", "", Objects.requireNonNull(message));
 
         return handleErrors(userDto, errors);
     }

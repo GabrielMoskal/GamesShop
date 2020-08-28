@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultMatcher;
 
+import java.util.List;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -36,6 +38,24 @@ public class ResponseBodyMatchers {
 
             assertTrue(jsonNode.has("errors"));
         };
+    }
+
+    public ResultMatcher containErrorAsJson(String message, List<String> path) {
+        return mvcResult -> {
+            String errorMessage = searchForError(mvcResult, path);
+
+            assertEquals(errorMessage, message);
+        };
+    }
+
+    private String searchForError(MvcResult resultMatcher, List<String> path) throws Exception {
+        JsonNode jsonNode = makeJsonNode(resultMatcher);
+
+        for (String node : path) {
+            jsonNode = jsonNode.get(node);
+        }
+
+        return jsonNode.asText();
     }
 
     public static ResponseBodyMatchers responseBody() {
