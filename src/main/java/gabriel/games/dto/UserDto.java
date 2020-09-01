@@ -8,6 +8,8 @@ import lombok.Data;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.HashMap;
+import java.util.Map;
 
 @Data
 @FieldMatch(first = "password", second = "confirmedPassword", message = "{password.match}")
@@ -28,14 +30,17 @@ public class UserDto {
     @Size(min = 7, max = 20, message = "{confirmedPassword.size}")
     private final String confirmedPassword;
 
+    private Map<String, Map<String, String>> errors;
+
     @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
     public UserDto(
-            @JsonProperty("username") String username,
-            @JsonProperty("password") String password,
-            @JsonProperty("confirmedPassword") String confirmedPassword
+            @JsonProperty("username") final String username,
+            @JsonProperty("password") final String password,
+            @JsonProperty("confirmedPassword") final String confirmedPassword
     ) {
         this.username = username;
         this.password = password;
         this.confirmedPassword = confirmedPassword;
+        this.errors = new HashMap<>();
     }
 }

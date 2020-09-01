@@ -1,5 +1,6 @@
 package gabriel.games.dto;
 
+import gabriel.games.util.UserUtil;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -145,5 +146,12 @@ public class UserDtoTest {
         UserDto userDto = new UserDto(correctUsername, "password", "different");
 
         assertValidationErrors(userDto, 1);
+    }
+
+    @Test
+    public void errorsShouldNotBeNull() {
+        UserDto userDto = UserUtil.makeUserDto(correctUsername, correctPassword);
+
+        assertNotNull(userDto.getErrors());
     }
 }
