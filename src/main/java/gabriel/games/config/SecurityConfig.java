@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -38,32 +39,24 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
-        configureAccess(httpSecurity);
-        configureH2Console(httpSecurity);
-    }
-
-    private void configureAccess(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
-            .authorizeRequests()
+                .authorizeRequests()
                 .antMatchers("/cms/**")
-                    .hasRole("ADMIN")
+                .hasRole("ADMIN")
                 .antMatchers("/", "/**").permitAll()
-            .and()
+                .and()
                 .formLogin()
-                    .loginPage("/login")
-            .and()
+                .loginPage("/login")
+                .and()
                 .logout()
-                    .logoutSuccessUrl("/");
-
-
+                .logoutSuccessUrl("/");
     }
 
-    private void configureH2Console(HttpSecurity httpSecurity) throws Exception {
-        httpSecurity
-            .csrf()
-                .disable()
-            .headers()
-                .frameOptions()
-                    .sameOrigin();
+    // ignore spring security for H2 console
+    @Override
+    public void configure(WebSecurity webSecurity) {
+        webSecurity
+                .ignoring()
+                .antMatchers("/console/**");
     }
 }
