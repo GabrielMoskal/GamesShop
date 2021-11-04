@@ -1,4 +1,4 @@
-package gabriel.games.util.validator;
+package gabriel.games.dto.validator;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
@@ -6,23 +6,18 @@ import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
-import static java.lang.annotation.ElementType.ANNOTATION_TYPE;
-import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.ElementType.*;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-@Target({TYPE, ANNOTATION_TYPE})
+@Target({FIELD, METHOD, PARAMETER, ANNOTATION_TYPE, TYPE_USE})
 @Retention(RUNTIME)
-@Constraint(validatedBy = FieldMatchValidator.class)
+@Constraint(validatedBy = WordValidator.class)
 @Documented
-public @interface FieldMatch {
-    String message() default "Fields don't match.";
+public @interface Word {
+
+    String message() default "Should be word ([a-zA-Z_0-9]*)";
 
     Class<?>[] groups() default {};
 
     Class<? extends Payload>[] payload() default {};
-
-    String first();
-
-    String second();
-
 }

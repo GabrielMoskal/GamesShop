@@ -1,10 +1,10 @@
 package gabriel.games.service;
 
 import gabriel.games.dto.UserDto;
-import gabriel.games.exception.InvalidObjectValuesException;
-import gabriel.games.exception.UserAlreadyExistsException;
+import gabriel.games.controller.auth.exception.UserAlreadyExistsException;
 import gabriel.games.model.User;
 import gabriel.games.repository.UserRepository;
+import gabriel.games.service.exception.InvalidObjectValuesException;
 import gabriel.games.util.UserUtil;
 import org.junit.Before;
 import org.junit.Test;

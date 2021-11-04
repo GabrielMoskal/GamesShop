@@ -1,4 +1,4 @@
-package gabriel.games.mapper;
+package gabriel.games.dto.mapper;
 
 import gabriel.games.dto.UserDto;
 import gabriel.games.model.User;
@@ -10,12 +10,12 @@ import org.springframework.stereotype.Component;
 import java.util.Collections;
 
 @Component
-public class UserMapper {
+public class UserDtoMapper {
 
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserMapper(PasswordEncoder passwordEncoder) {
+    public UserDtoMapper(PasswordEncoder passwordEncoder) {
         this.passwordEncoder = passwordEncoder;
     }
 

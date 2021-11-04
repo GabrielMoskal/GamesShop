@@ -1,4 +1,4 @@
-package gabriel.games.exception;
+package gabriel.games.service.exception;
 
 public class InvalidObjectValuesException extends RuntimeException {
     public InvalidObjectValuesException(String msg) {

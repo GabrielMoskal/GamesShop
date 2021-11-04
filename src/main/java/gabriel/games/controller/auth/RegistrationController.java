@@ -1,7 +1,7 @@
 package gabriel.games.controller.auth;
 
 import gabriel.games.dto.UserDto;
-import gabriel.games.exception.UserAlreadyExistsException;
+import gabriel.games.controller.auth.exception.UserAlreadyExistsException;
 import gabriel.games.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;

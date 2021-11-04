@@ -1,4 +1,4 @@
-package gabriel.games.mapper;
+package gabriel.games.dto.mapper;
 
 import gabriel.games.dto.UserDto;
 import gabriel.games.model.User;
@@ -17,12 +17,12 @@ import static org.junit.Assert.assertTrue;
 @SpringBootTest
 public class UserMapperTest {
 
-    private UserMapper userMapper;
+    private UserDtoMapper userMapper;
     private PasswordEncoder passwordEncoder;
     private UserDto userDto;
 
     @Autowired
-    public void setUserMapper(UserMapper userMapper) {
+    public void setUserMapper(UserDtoMapper userMapper) {
         this.userMapper = userMapper;
     }
 

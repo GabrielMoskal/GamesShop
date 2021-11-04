@@ -1,4 +1,4 @@
-package gabriel.games.util.validator;
+package gabriel.games.dto.validator;
 
 import org.junit.Before;
 import org.junit.Test;

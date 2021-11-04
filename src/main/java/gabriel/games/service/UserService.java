@@ -1,11 +1,11 @@
 package gabriel.games.service;
 
 import gabriel.games.dto.UserDto;
-import gabriel.games.exception.InvalidObjectValuesException;
-import gabriel.games.exception.UserAlreadyExistsException;
-import gabriel.games.mapper.UserMapper;
+import gabriel.games.controller.auth.exception.UserAlreadyExistsException;
+import gabriel.games.dto.mapper.UserDtoMapper;
 import gabriel.games.model.User;
 import gabriel.games.repository.UserRepository;
+import gabriel.games.service.exception.InvalidObjectValuesException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -21,10 +21,10 @@ import java.util.Set;
 public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
-    private final UserMapper userMapper;
+    private final UserDtoMapper userMapper;
 
     @Autowired
-    public UserService(UserRepository userRepository, UserMapper userMapper) {
+    public UserService(UserRepository userRepository, UserDtoMapper userMapper) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
     }

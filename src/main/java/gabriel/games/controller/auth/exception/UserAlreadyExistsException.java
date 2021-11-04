@@ -1,4 +1,4 @@
-package gabriel.games.exception;
+package gabriel.games.controller.auth.exception;
 
 public class UserAlreadyExistsException extends RuntimeException {
     public UserAlreadyExistsException(String msg) {
