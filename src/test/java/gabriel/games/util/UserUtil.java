@@ -1,6 +1,6 @@
 package gabriel.games.util;
 
-import gabriel.games.dto.UserDto;
+import gabriel.games.model.dto.UserDto;
 import gabriel.games.model.User;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

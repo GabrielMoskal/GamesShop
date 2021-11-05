@@ -1,6 +1,6 @@
-package gabriel.games.dto.mapper;
+package gabriel.games.model.dto.mapper;
 
-import gabriel.games.dto.UserDto;
+import gabriel.games.model.dto.UserDto;
 import gabriel.games.model.User;
 import gabriel.games.util.UserUtil;
 import org.junit.Test;

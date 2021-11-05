@@ -1,9 +1,9 @@
-package gabriel.games.dto;
+package gabriel.games.model.dto;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import gabriel.games.dto.validator.FieldMatch;
-import gabriel.games.dto.validator.Word;
+import gabriel.games.model.dto.validator.FieldMatch;
+import gabriel.games.model.dto.validator.Word;
 import lombok.Data;
 
 import javax.validation.constraints.NotNull;

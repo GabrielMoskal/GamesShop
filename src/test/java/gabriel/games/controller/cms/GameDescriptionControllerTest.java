@@ -14,7 +14,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -38,12 +37,18 @@ public class GameDescriptionControllerTest {
     }
 
     @Test
-    public void descriptionPage_UserRoleAdminGiven_ShouldReturnGameDescriptionPage() throws Exception {
+    @WithMockUser
+    public void description_UserRoleUserGiven_ShouldReturn4xxStatus() throws Exception {
+        mockMvc.perform(get(uri))
+                .andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    public void description_UserRoleAdminGiven_ShouldReturn200Status() throws Exception {
         authenticateAdmin();
 
         mockMvc.perform(get(uri))
-                .andExpect(status().isOk())
-                .andExpect(view().name("cms/game_description"));
+                .andExpect(status().isOk());
     }
 
     private void authenticateAdmin() {
@@ -52,10 +57,8 @@ public class GameDescriptionControllerTest {
     }
 
     @Test
-    @WithMockUser
-    public void descriptionPage_UserRoleUserGiven_ShouldReturn4xx() throws Exception {
-        mockMvc.perform(get(uri))
-                .andExpect(status().is4xxClientError());
+    public void description_ExistingResourcePathGiven_ShouldReturnValidGameDescriptionDtoJson() throws Exception {
+
     }
 
 }

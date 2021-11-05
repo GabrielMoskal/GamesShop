@@ -1,4 +1,4 @@
-package gabriel.games.dto.validator;
+package gabriel.games.model.dto.validator;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;

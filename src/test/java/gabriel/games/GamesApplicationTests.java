@@ -1,13 +1,26 @@
 package gabriel.games;
 
+import gabriel.games.controller.auth.RegistrationController;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
+@RunWith(SpringRunner.class)
 @SpringBootTest
-class GamesApplicationTests {
+@AutoConfigureMockMvc
+public class GamesApplicationTests {
+
+    @Autowired
+    private RegistrationController registrationController;
 
     @Test
     public void contextLoads() {
+        assertThat(registrationController).isNotNull();
     }
 
 }

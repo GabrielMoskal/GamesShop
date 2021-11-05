@@ -1,6 +1,6 @@
 package gabriel.games.model;
 
-import gabriel.games.dto.validator.Word;
+import gabriel.games.model.dto.validator.Word;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.springframework.security.core.GrantedAuthority;

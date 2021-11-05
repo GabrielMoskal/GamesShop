@@ -1,4 +1,4 @@
-package gabriel.games.dto;
+package gabriel.games.model.dto;
 
 import gabriel.games.util.UserUtil;
 import org.junit.Before;
