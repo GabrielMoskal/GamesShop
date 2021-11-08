@@ -1,19 +1,17 @@
 package gabriel.games.controller.cms;
 
-import gabriel.games.model.User;
+import gabriel.games.controller.JsonValidator;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
+
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -24,41 +22,33 @@ public class GameDescriptionControllerTest {
 
     private MockMvc mockMvc;
 
-    private User admin;
-
     @Autowired
     public void setMockMvc(MockMvc mockMvc) {
         this.mockMvc = mockMvc;
     }
 
-    @Autowired
-    public void setAdmin(User admin) {
-        this.admin = admin;
-    }
-
     @Test
-    @WithMockUser
-    public void description_UserRoleUserGiven_ShouldReturn4xxStatus() throws Exception {
-        mockMvc.perform(get(uri))
-                .andExpect(status().is4xxClientError());
+    public void description_ExistingResourcePathGiven_ShouldReturnValidJson() throws Exception {
+        String shortDescription = "Test short description";
+        String webpage = "https://test-link.com";
+        String ratingPlayers = "7.0";
+        String ratingReviewer = "6.5";
+        String[] platforms = {"PC", "XBOX 360"};
+        String releaseDate = "2000-01-01";
+        String producer = "Test Producer";
+        String publisher = "Test Publisher";
+
+        ResultActions resultActions = mockMvc.perform(get(uri).contentType(MediaType.APPLICATION_JSON_VALUE));
+
+        JsonValidator jsonValidator = new JsonValidator(resultActions);
+        jsonValidator.expect("description", shortDescription);
+        jsonValidator.expect("webpage", webpage);
+        jsonValidator.expect("playerRating", ratingPlayers);
+        jsonValidator.expect("reviewerRating", ratingReviewer);
+        jsonValidator.expect("platforms[0]", platforms[0]);
+        jsonValidator.expect("platforms[1]", platforms[1]);
+        jsonValidator.expect("releaseDate", releaseDate);
+        jsonValidator.expect("producer", producer);
+        jsonValidator.expect("publisher", publisher);
     }
-
-    @Test
-    public void description_UserRoleAdminGiven_ShouldReturn200Status() throws Exception {
-        authenticateAdmin();
-
-        mockMvc.perform(get(uri))
-                .andExpect(status().isOk());
-    }
-
-    private void authenticateAdmin() {
-        Authentication auth = new UsernamePasswordAuthenticationToken(admin, null, admin.getAuthorities());
-        SecurityContextHolder.getContext().setAuthentication(auth);
-    }
-
-    @Test
-    public void description_ExistingResourcePathGiven_ShouldReturnValidGameDescriptionDtoJson() throws Exception {
-
-    }
-
 }

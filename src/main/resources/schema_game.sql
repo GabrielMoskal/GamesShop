@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS game (
 
 CREATE TABLE IF NOT EXISTS game_description (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    description_short TEXT,
+    description TEXT,
     webpage VARCHAR(256),
     rating_players DECIMAL(4, 2),
     rating_reviewer DECIMAL(4, 2)

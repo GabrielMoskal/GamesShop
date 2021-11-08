@@ -1,6 +1,7 @@
 package gabriel.games.controller.auth;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import gabriel.games.controller.JsonValidator;
 import gabriel.games.model.dto.UserDto;
 import gabriel.games.controller.auth.exception.UserAlreadyExistsException;
 import gabriel.games.repository.UserRepository;
@@ -83,11 +84,11 @@ public class RegistrationControllerTest {
     }
 
     private void verifyJsonContent(ResultActions resultActions, UserDto expected) throws Exception {
-        resultActions
-                .andExpect(jsonPath("username", is(expected.getUsername())))
-                .andExpect(jsonPath("password", is(expected.getPassword())))
-                .andExpect(jsonPath("confirmedPassword", is(expected.getConfirmedPassword())))
-                .andExpect(jsonPath("errors", is(expected.getErrors())));
+        JsonValidator jsonValidator = new JsonValidator(resultActions);
+        jsonValidator.expect("username", expected.getUsername());
+        jsonValidator.expect("password", expected.getPassword());
+        jsonValidator.expect("confirmedPassword", expected.getConfirmedPassword());
+        jsonValidator.expect("errors", expected.getErrors());
     }
 
     private void verifyJsonLinks(ResultActions resultActions) throws Exception {
@@ -143,15 +144,23 @@ public class RegistrationControllerTest {
     }
 
     private void addExpectedErrors(UserDto userDto, final String errorMessage) {
-        Map<String, String> objectErrors = new HashMap<>();
-        Map<String, String> fieldErrors = new HashMap<>();
-        fieldErrors.put("username", errorMessage);
-
-        Map<String, Map<String, String>> errors = new HashMap<>();
-        errors.put("objectErrors", objectErrors);
-        errors.put("fieldErrors", fieldErrors);
+        Map<String, String> fieldErrors = addExpectedFieldErrors(errorMessage);
+        Map<String, Map<String, String>> errors = addErrors(fieldErrors);
 
         userDto.setErrors(errors);
+    }
+
+    private Map<String, String> addExpectedFieldErrors(String errorMessage) {
+        Map<String, String> fieldErrors = new HashMap<>();
+        fieldErrors.put("username", errorMessage);
+        return fieldErrors;
+    }
+
+    private Map<String, Map<String, String>> addErrors(Map<String, String> fieldErrors) {
+        Map<String, Map<String, String>> errors = new HashMap<>();
+        errors.put("objectErrors", new HashMap<>());
+        errors.put("fieldErrors", fieldErrors);
+        return errors;
     }
 
     @Test
