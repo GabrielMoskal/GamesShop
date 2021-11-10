@@ -1,6 +1,5 @@
 package gabriel.games.model.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -10,8 +9,9 @@ import java.util.List;
 @Builder
 @Getter
 @EqualsAndHashCode
-public class GameDescriptionDto {
+public class GameDto {
 
+    private final String name;
     private final String description;
     private final String webpage;
     private final String playerRating;

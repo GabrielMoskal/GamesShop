@@ -36,9 +36,10 @@ import static org.hamcrest.core.Is.is;
 @AutoConfigureMockMvc
 public class RegistrationControllerTest {
 
+    @Autowired
     private MockMvc mockMvc;
 
-    private ObjectMapper objectMapper;
+    private UserDto userDto;
 
     @MockBean
     private UserRepository userRepository;
@@ -48,27 +49,16 @@ public class RegistrationControllerTest {
 
     @Before
     public void setUp() {
-        this.objectMapper = new ObjectMapper();
-    }
-
-    @Autowired
-    public void setMockMvc(MockMvc mockMvc) {
-        this.mockMvc = mockMvc;
-    }
-
-    @Autowired
-    public void setUserService(UserService userService) {
-        this.userService = userService;
+        userDto = UserUtil.makeUserDto("valid_name", "valid_pass");
     }
 
     @Test
     public void register_ShouldReturnEmptyUserJsonWithLink() throws Exception {
-        UserDto expected = UserUtil.makeUserDto("", "");
+        userDto = UserUtil.makeUserDto("", "");
 
-        ResultActions resultActions = performGet()
-                .andExpect(status().isOk());
+        ResultActions resultActions = performGet().andExpect(status().isOk());
 
-        verifyJson(resultActions, expected);
+        verifyJson(resultActions);
     }
 
     private ResultActions performGet() throws Exception {
@@ -78,40 +68,38 @@ public class RegistrationControllerTest {
         );
     }
 
-    private void verifyJson(ResultActions resultActions, UserDto expected) throws Exception {
-        verifyJsonContent(resultActions, expected);
+    private void verifyJson(ResultActions resultActions) throws Exception {
+        verifyJsonContent(resultActions);
         verifyJsonLinks(resultActions);
     }
 
-    private void verifyJsonContent(ResultActions resultActions, UserDto expected) throws Exception {
+    private void verifyJsonContent(ResultActions resultActions) throws Exception {
         JsonValidator jsonValidator = new JsonValidator(resultActions);
-        jsonValidator.expect("username", expected.getUsername());
-        jsonValidator.expect("password", expected.getPassword());
-        jsonValidator.expect("confirmedPassword", expected.getConfirmedPassword());
-        jsonValidator.expect("errors", expected.getErrors());
+        jsonValidator.expect("username", userDto.getUsername());
+        jsonValidator.expect("password", userDto.getPassword());
+        jsonValidator.expect("confirmedPassword", userDto.getConfirmedPassword());
+        jsonValidator.expect("errors", userDto.getErrors());
     }
 
     private void verifyJsonLinks(ResultActions resultActions) throws Exception {
         final String path = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString() + "/register";
 
-        resultActions
-                .andExpect(jsonPath("_links.self.href", is(path)));
+        resultActions.andExpect(jsonPath("_links.self.href", is(path)));
     }
 
     @Test
     public void processRegistration_ValidUserDtoGiven_ShouldSaveUserAndReturnUserDtoAsJson() throws Exception {
-        UserDto userDto = UserUtil.makeUserDto("valid_name", "valid_pass");
-        UserDto expected = UserUtil.makeUserDto(userDto.getUsername(), "");
-
-        ResultActions resultActions = performPostRegister(userDto)
+        ResultActions resultActions = performPostRegister()
                 .andExpect(status().is2xxSuccessful());
 
-        verifyJson(resultActions, expected);
-        verifyMethodCalls(userDto);
+        verifyMethodCalls();
+
+        userDto = UserUtil.makeUserDto(userDto.getUsername(), "");
+        verifyJson(resultActions);
     }
 
-    private ResultActions performPostRegister(UserDto userDto) throws Exception {
-        String inputJson = objectMapper.writeValueAsString(userDto);
+    private ResultActions performPostRegister() throws Exception {
+        String inputJson = transformUserDtoToJson();
 
         return mockMvc.perform(
                 post("/register")
@@ -121,29 +109,47 @@ public class RegistrationControllerTest {
         );
     }
 
-    private void verifyMethodCalls(UserDto userDto) {
+    private String transformUserDtoToJson() throws Exception {
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        return objectMapper.writeValueAsString(userDto);
+    }
+
+    private void verifyMethodCalls() {
+        ArgumentCaptor<UserDto> userDtoCaptor = verifyInteractions();
+
+        assertCapturedValuesEqualsUserDto(userDtoCaptor.getValue());
+    }
+
+    private ArgumentCaptor<UserDto> verifyInteractions() {
         ArgumentCaptor<UserDto> userDtoCaptor = ArgumentCaptor.forClass(UserDto.class);
 
         verify(userService, times(1)).register(userDtoCaptor.capture());
         verifyNoMoreInteractions(userRepository);
 
-        assertThat(userDtoCaptor.getValue().getUsername()).isEqualTo(userDto.getUsername());
-        assertThat(userDtoCaptor.getValue().getPassword()).isEqualTo(userDto.getPassword());
+        return userDtoCaptor;
+    }
+
+    private void assertCapturedValuesEqualsUserDto(UserDto captured) {
+        assertThat(captured.getUsername()).isEqualTo(userDto.getUsername());
+        assertThat(captured.getPassword()).isEqualTo(userDto.getPassword());
     }
 
     @Test
     public void processRegistration_InvalidUserDtoGiven_ShouldReturnTheSameUserDtoAsJsonWithErrors() throws Exception {
-        UserDto userDto = UserUtil.makeUserDto("a", "valid_pass");
+        userDto = UserUtil.makeUserDto("a", userDto.getPassword());
+        addExpectedErrorsToUserDto("Nazwa użytkownika musi zawierać między 5 a 20 znaków.");
 
-        ResultActions resultActions = performPostRegister(userDto)
-                .andExpect(status().is4xxClientError());
+        ResultActions resultActions = performPostRegister().andExpect(status().is4xxClientError());
 
-        addExpectedErrors(userDto, "Nazwa użytkownika musi zawierać między 5 a 20 znaków.");
-
-        verifyJson(resultActions, userDto);
+        verifyJson(resultActions);
     }
 
-    private void addExpectedErrors(UserDto userDto, final String errorMessage) {
+    private void addExpectedErrorsToUserDto(String expectedErrorMessage) {
+        addExpectedErrors(expectedErrorMessage);
+    }
+
+    private void addExpectedErrors(final String errorMessage) {
         Map<String, String> fieldErrors = addExpectedFieldErrors(errorMessage);
         Map<String, Map<String, String>> errors = addErrors(fieldErrors);
 
@@ -167,23 +173,15 @@ public class RegistrationControllerTest {
     public void processRegistration_ExistingUserDtoGiven_ShouldReturnTheSameUserDtoAsJsonWithLocalizedErrors() throws Exception {
         mockUserService();
 
-        UserDto userDto = UserUtil.makeUserDto("valid_name", "valid_pass");
+        addExpectedErrorsToUserDto("Użytkownik o podanej nazwie istnieje.");
 
-        ResultActions resultActions = performPostRegister(userDto)
-                .andExpect(status().is4xxClientError());
+        ResultActions resultActions = performPostRegister().andExpect(status().is4xxClientError());
 
-        addExpectedErrors(userDto, "Użytkownik o podanej nazwie istnieje.");
-
-        verifyInteractions(userDto);
-        verifyJson(resultActions, userDto);
+        verifyInteractions();
+        verifyJson(resultActions);
     }
 
     private void mockUserService() {
         doThrow(new UserAlreadyExistsException("msg")).when(userService).register(any());
-    }
-
-    private void verifyInteractions(UserDto userDto) {
-        verify(userService, times(1)).register(userDto);
-        verifyNoMoreInteractions(userRepository);
     }
 }
