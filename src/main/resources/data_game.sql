@@ -87,3 +87,8 @@ INSERT INTO game_publisher(game_id, publisher_id) VALUES (1, 1);
 INSERT INTO game_publisher(game_id, publisher_id) VALUES (2, 2);
 INSERT INTO game_publisher(game_id, publisher_id) VALUES (3, 3);
 INSERT INTO game_publisher(game_id, publisher_id) VALUES (4, 4);
+
+INSERT INTO game_uri(game_id, uri) VALUES (1, 'age-of-empires-iv');
+INSERT INTO game_uri(game_id, uri) VALUES (2, 'europa-universalis-iv');
+INSERT INTO game_uri(game_id, uri) VALUES (3, 'world-of-warcraft');
+INSERT INTO game_uri(game_id, uri) VALUES (4, 'test-name');

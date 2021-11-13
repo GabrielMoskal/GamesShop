@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class GameService {
     //TODO
-    public GameDto findByName(String name) {
+    public GameDto findByUri(String uri) {
         return null;
     }
 }

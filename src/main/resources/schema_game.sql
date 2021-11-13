@@ -58,3 +58,10 @@ CREATE TABLE IF NOT EXISTS game_publisher (
 
 ALTER TABLE game_publisher ADD FOREIGN KEY (game_id) REFERENCES game(id);
 ALTER TABLE game_publisher ADD FOREIGN KEY (publisher_id) REFERENCES publisher(id);
+
+CREATE TABLE IF NOT EXISTS game_uri (
+    game_id INT NOT NULL,
+    uri VARCHAR(128)
+);
+
+ALTER TABLE game_uri ADD FOREIGN KEY (game_id) REFERENCES game(id);

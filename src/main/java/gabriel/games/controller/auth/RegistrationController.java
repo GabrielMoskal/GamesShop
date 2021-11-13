@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
@@ -34,18 +35,16 @@ public class RegistrationController {
 
     @GetMapping
     public ResponseEntity<EntityModel<UserDto>> register() {
-        EntityModel<UserDto> responseBody = addLinks(
+        EntityModel<UserDto> responseBody = EntityModel.of(
                 new UserDto("", "", "")
         );
+        responseBody.add(makeLink());
 
         return new ResponseEntity<>(responseBody, HttpStatus.OK);
     }
 
-    private EntityModel<UserDto> addLinks(UserDto userDto) {
-        EntityModel<UserDto> entityModel = EntityModel.of(userDto);
-        entityModel.add(linkTo(methodOn(RegistrationController.class).register()).withSelfRel());
-
-        return entityModel;
+    private Link makeLink() {
+        return linkTo(methodOn(RegistrationController.class).register()).withSelfRel();
     }
 
     @PostMapping(consumes = "application/json")
@@ -58,8 +57,8 @@ public class RegistrationController {
 
     private ResponseEntity<EntityModel<UserDto>> handleErrors(UserDto userDto, Errors errors) {
         addErrors(userDto, errors);
-
-        EntityModel<UserDto> responseBody = addLinks(userDto);
+        EntityModel<UserDto> responseBody = EntityModel.of(userDto);
+        responseBody.add(makeLink());
 
         return new ResponseEntity<>(responseBody, HttpStatus.BAD_REQUEST);
     }
@@ -105,9 +104,10 @@ public class RegistrationController {
     private ResponseEntity<EntityModel<UserDto>> register(UserDto userDto) {
         userService.register(userDto);
 
-        EntityModel<UserDto> responseBody = addLinks(
+        EntityModel<UserDto> responseBody = EntityModel.of(
                 new UserDto(userDto.getUsername(), "", "")
         );
+        responseBody.add(makeLink());
 
         return new ResponseEntity<>(responseBody, HttpStatus.CREATED);
     }

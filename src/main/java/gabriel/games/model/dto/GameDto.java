@@ -11,6 +11,7 @@ import java.util.List;
 @EqualsAndHashCode
 public class GameDto {
 
+    private final String uri;
     private final String name;
     private final String description;
     private final String webpage;

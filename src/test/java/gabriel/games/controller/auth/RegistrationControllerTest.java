@@ -19,7 +19,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -29,17 +28,17 @@ import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.hamcrest.core.Is.is;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @AutoConfigureMockMvc
 public class RegistrationControllerTest {
 
+    private UserDto userDto;
+    private JsonValidator jsonValidator;
+
     @Autowired
     private MockMvc mockMvc;
-
-    private UserDto userDto;
 
     @MockBean
     private UserRepository userRepository;
@@ -55,9 +54,7 @@ public class RegistrationControllerTest {
     @Test
     public void register_ShouldReturnEmptyUserJsonWithLink() throws Exception {
         userDto = UserUtil.makeUserDto("", "");
-
         ResultActions resultActions = performGet().andExpect(status().isOk());
-
         verifyJson(resultActions);
     }
 
@@ -69,22 +66,16 @@ public class RegistrationControllerTest {
     }
 
     private void verifyJson(ResultActions resultActions) throws Exception {
-        verifyJsonContent(resultActions);
-        verifyJsonLinks(resultActions);
+        jsonValidator = new JsonValidator(resultActions);
+        verifyJsonContent();
+        jsonValidator.verifyJsonLinks("/register");
     }
 
-    private void verifyJsonContent(ResultActions resultActions) throws Exception {
-        JsonValidator jsonValidator = new JsonValidator(resultActions);
+    private void verifyJsonContent() throws Exception {
         jsonValidator.expect("username", userDto.getUsername());
         jsonValidator.expect("password", userDto.getPassword());
         jsonValidator.expect("confirmedPassword", userDto.getConfirmedPassword());
         jsonValidator.expect("errors", userDto.getErrors());
-    }
-
-    private void verifyJsonLinks(ResultActions resultActions) throws Exception {
-        final String path = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString() + "/register";
-
-        resultActions.andExpect(jsonPath("_links.self.href", is(path)));
     }
 
     @Test
@@ -93,7 +84,6 @@ public class RegistrationControllerTest {
                 .andExpect(status().is2xxSuccessful());
 
         verifyMethodCalls();
-
         userDto = UserUtil.makeUserDto(userDto.getUsername(), "");
         verifyJson(resultActions);
     }
@@ -111,13 +101,11 @@ public class RegistrationControllerTest {
 
     private String transformUserDtoToJson() throws Exception {
         ObjectMapper objectMapper = new ObjectMapper();
-
         return objectMapper.writeValueAsString(userDto);
     }
 
     private void verifyMethodCalls() {
         ArgumentCaptor<UserDto> userDtoCaptor = verifyInteractions();
-
         assertCapturedValuesEqualsUserDto(userDtoCaptor.getValue());
     }
 
@@ -152,7 +140,6 @@ public class RegistrationControllerTest {
     private void addExpectedErrors(final String errorMessage) {
         Map<String, String> fieldErrors = addExpectedFieldErrors(errorMessage);
         Map<String, Map<String, String>> errors = addErrors(fieldErrors);
-
         userDto.setErrors(errors);
     }
 
@@ -172,7 +159,6 @@ public class RegistrationControllerTest {
     @Test
     public void processRegistration_ExistingUserDtoGiven_ShouldReturnTheSameUserDtoAsJsonWithLocalizedErrors() throws Exception {
         mockUserService();
-
         addExpectedErrorsToUserDto("Użytkownik o podanej nazwie istnieje.");
 
         ResultActions resultActions = performPostRegister().andExpect(status().is4xxClientError());
