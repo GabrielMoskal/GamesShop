@@ -2,6 +2,7 @@ package gabriel.games.controller.api;
 
 import gabriel.games.model.dto.GameDto;
 import gabriel.games.service.GameService;
+import gabriel.games.service.exception.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;
@@ -25,15 +26,26 @@ public class GameController {
     }
 
     @GetMapping(path = "/{uri}")
-    public ResponseEntity<EntityModel<GameDto>> description(@PathVariable String uri) throws Exception {
+    public ResponseEntity<EntityModel<GameDto>> description(@PathVariable String uri) {
+        try {
+            return findGame(uri);
+        } catch (ObjectNotFoundException e) {
+            return notFound();
+        }
+    }
+
+    private ResponseEntity<EntityModel<GameDto>> findGame(String uri) {
         GameDto gameDto = gameService.findByUri(uri);
         EntityModel<GameDto> entityModel = EntityModel.of(gameDto);
         entityModel.add(makeLink(gameDto));
-
         return new ResponseEntity<>(entityModel, HttpStatus.OK);
     }
 
-    private Link makeLink(GameDto gameDto) throws Exception {
+    private Link makeLink(GameDto gameDto) {
         return linkTo(methodOn(GameController.class).description(gameDto.getUri())).withSelfRel();
+    }
+
+    private ResponseEntity<EntityModel<GameDto>> notFound() {
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 }

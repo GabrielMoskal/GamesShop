@@ -3,6 +3,7 @@ package gabriel.games.controller.api;
 import gabriel.games.controller.JsonValidator;
 import gabriel.games.model.dto.GameDto;
 import gabriel.games.service.GameService;
+import gabriel.games.service.exception.ObjectNotFoundException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,14 +14,13 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import org.springframework.web.util.UriComponents;
 
 import java.util.Arrays;
 import java.util.Collections;
 
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -40,14 +40,13 @@ public class GameControllerTest {
     @Test
     public void description_ExistingResourcePathGiven_ShouldReturnValidJson() throws Exception {
         gameDto = buildValidGameDto();
-        ResultActions resultActions = performGetRequest();
-        verifyJson(resultActions);
+        shouldReturnValidJson();
     }
 
     private GameDto buildValidGameDto() {
         return GameDto.builder()
-                .uri("test")
-                .name("test")
+                .uri("multiple-words-name")
+                .name("Multiple Words Name")
                 .description("Test short description")
                 .webpage("https://test-link.com")
                 .playerRating("7.0")
@@ -59,18 +58,23 @@ public class GameControllerTest {
                 .build();
     }
 
+    private void shouldReturnValidJson() throws Exception {
+        mockFindByName();
+        ResultActions resultActions = performGetRequest();
+        verifyJson(resultActions);
+    }
+
+    private void mockFindByName() {
+        when(gameService.findByUri(gameDto.getUri())).thenReturn(gameDto);
+    }
+
     private ResultActions performGetRequest() throws Exception {
         updateUri();
-        mockFindByName();
         return mockMvc.perform(get(uri).contentType(MediaType.APPLICATION_JSON_VALUE));
     }
 
     private void updateUri() {
         uri += gameDto.getUri();
-    }
-
-    private void mockFindByName() {
-        when(gameService.findByUri(gameDto.getUri())).thenReturn(gameDto);
     }
 
     private void verifyJson(ResultActions resultActions) throws Exception {
@@ -91,8 +95,7 @@ public class GameControllerTest {
     @Test
     public void description_ExistingDifferentResourcePathGiven_ShouldReturnValidJson() throws Exception {
         gameDto = buildDifferentValidGameDto();
-        ResultActions resultActions = performGetRequest();
-        verifyJson(resultActions);
+        shouldReturnValidJson();
     }
 
     private GameDto buildDifferentValidGameDto() {
@@ -113,6 +116,11 @@ public class GameControllerTest {
     @Test
     public void description_ExistingResourcePathGiven_ShouldReturnValidLink() throws Exception {
         gameDto = buildValidGameDto();
+        shouldReturnValidLink();
+    }
+
+    private void shouldReturnValidLink() throws Exception {
+        mockFindByName();
         ResultActions resultActions = performGetRequest();
         jsonValidator = new JsonValidator(resultActions);
         jsonValidator.verifyJsonLinks(uri);
@@ -121,28 +129,20 @@ public class GameControllerTest {
     @Test
     public void description_ExistingDifferentResourcePathGiven_ShouldReturnValidLink() throws Exception {
         gameDto = buildDifferentValidGameDto();
-        ResultActions resultActions = performGetRequest();
-        jsonValidator = new JsonValidator(resultActions);
-        jsonValidator.verifyJsonLinks(uri);
+        shouldReturnValidLink();
     }
 
     @Test
-    public void description_MultipleWordsResourcePathGiven_ShouldReturnLinkWithValidFormat() throws Exception {
-        gameDto = buildDifferentValidGameDto();
-        ResultActions resultActions = performGetRequest();
-        jsonValidator = new JsonValidator(resultActions);
-        verifyJsonLinks();
+    public void description_NonExistingResourcePathGiven_ShouldReturn404() throws Exception {
+        gameDto = buildValidGameDto();
+        when(gameService.findByUri(gameDto.getUri())).thenThrow(new ObjectNotFoundException("msg"));
+        performGetRequest().andExpect(status().isNotFound());
     }
 
-    public void verifyJsonLinks() throws Exception {
-        final String expectedLink = makeExpectedLink();
-        jsonValidator.expect("_links.self.href", expectedLink);
-    }
-
-    private String makeExpectedLink() {
-        UriComponents uriComponents = ServletUriComponentsBuilder
-                .fromCurrentContextPath()
-                .build();
-        return uriComponents.toUriString() + uri;
+    @Test
+    public void description_ExistingResourcePathGiven_ShouldReturn200() throws Exception {
+        gameDto = buildValidGameDto();
+        mockFindByName();
+        performGetRequest().andExpect(status().isOk());
     }
 }
