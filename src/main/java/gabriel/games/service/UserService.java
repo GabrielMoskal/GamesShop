@@ -5,7 +5,6 @@ import gabriel.games.controller.auth.exception.UserAlreadyExistsException;
 import gabriel.games.model.dto.mapper.UserDtoMapper;
 import gabriel.games.model.User;
 import gabriel.games.repository.UserRepository;
-import gabriel.games.service.exception.InvalidObjectValuesException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -13,9 +12,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import javax.validation.*;
 import java.util.Optional;
-import java.util.Set;
 
 @Service
 public class UserService implements UserDetailsService {
@@ -46,24 +43,10 @@ public class UserService implements UserDetailsService {
     }
 
     private User toValidUser(UserDto userDto) {
-        @Valid User user = userMapper.toUser(userDto);
+        User user = userMapper.toUser(userDto);
 
-        validate(user);
+        user.validate();
         return user;
-    }
-
-    private void validate(User user) {
-        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
-        Validator validator = factory.getValidator();
-        Set<ConstraintViolation<User>> violations = validator.validate(user);
-
-        if (!isValid(violations)) {
-            throw new InvalidObjectValuesException("User contains invalid values.");
-        }
-    }
-
-    private boolean isValid(Set<ConstraintViolation<User>> violations) {
-        return violations.isEmpty();
     }
 
     private User save(User user) {

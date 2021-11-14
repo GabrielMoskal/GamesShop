@@ -92,7 +92,6 @@ public class RegistrationController {
         stringMapErrors.put("objectErrors", objectErrors);
     }
 
-
     private ResponseEntity<EntityModel<UserDto>> register(UserDto userDto, Errors errors) {
         try {
             return register(userDto);

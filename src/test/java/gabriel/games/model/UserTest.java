@@ -1,5 +1,6 @@
 package gabriel.games.model;
 
+import gabriel.games.service.exception.InvalidObjectValuesException;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.security.core.GrantedAuthority;
@@ -11,8 +12,7 @@ import javax.validation.Validator;
 import java.util.*;
 
 import static gabriel.games.util.UserUtil.makeUser;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class UserTest {
 
@@ -32,29 +32,29 @@ public class UserTest {
 
     @Test
     public void validUserHasNoErrors() {
-        User user = makeUser(correctUsername, correctPassword);
+        user = makeUser(correctUsername, correctPassword);
 
-        assertValidationErrors(user, 0);
+        assertValidationErrors(0);
     }
 
-    private void assertValidationErrors(User user, int numOfErrors) {
+    private void assertValidationErrors(int numOfErrors) {
         Set<ConstraintViolation<User>> violations = validator.validate(user);
         assertEquals(numOfErrors, violations.size());
     }
 
     @Test
     public void usernameShouldBeAtLeast5CharLong() {
-        User user = makeUser("four", correctPassword);
+        user = makeUser("four", correctPassword);
 
-        assertValidationErrors(user, 1);
+        assertValidationErrors(1);
     }
 
     @Test
     public void usernameShouldBeMax20CharsLong() {
         String username = makeGenericWord(21);
-        User user = makeUser(username, correctPassword);
+        user = makeUser(username, correctPassword);
 
-        assertValidationErrors(user, 1);
+        assertValidationErrors(1);
     }
 
     private String makeGenericWord(int length) {
@@ -63,37 +63,37 @@ public class UserTest {
 
     @Test
     public void usernameShouldHaveNoWhitespaces() {
-        User user = makeUser("white spaces", correctPassword);
+        user = makeUser("white spaces", correctPassword);
 
-        assertValidationErrors(user, 1);
+        assertValidationErrors(1);
     }
 
     @Test
     public void usernameShouldNotBeNull() {
-        User user = makeUser(null, correctPassword);
+        user = makeUser(null, correctPassword);
 
-        assertValidationErrors(user, 1);
+        assertValidationErrors(1);
     }
 
     @Test
     public void passwordShouldNotBeNull() {
-        User user = makeUser(correctUsername, null);
+        user = makeUser(correctUsername, null);
 
-        assertValidationErrors(user, 1);
+        assertValidationErrors(1);
     }
 
     @Test
     public void authoritiesMustNotBeNull() {
-        User user = new User(correctUsername, correctPassword, null);
+        user = new User(correctUsername, correctPassword, null);
 
-        assertValidationErrors(user, 1);
+        assertValidationErrors(1);
     }
 
     @Test
     public void authoritiesMustContainAtLeast1Element() {
-        User user = new User(correctUsername, correctPassword, new ArrayList<>());
+        user = new User(correctUsername, correctPassword, new ArrayList<>());
 
-        assertValidationErrors(user, 1);
+        assertValidationErrors(1);
     }
 
     @Test
@@ -101,9 +101,9 @@ public class UserTest {
         List<GrantedAuthority> authorities = new ArrayList<>();
         authorities.add(null);
 
-        User user = new User(correctUsername, correctPassword, authorities);
+        user = new User(correctUsername, correctPassword, authorities);
 
-        assertValidationErrors(user, 1);
+        assertValidationErrors(1);
     }
 
     @Test
@@ -124,5 +124,16 @@ public class UserTest {
     @Test
     public void isEnabled_ShouldReturnTrue() {
         assertTrue(user.isEnabled());
+    }
+
+    @Test
+    public void validate_ValidUserGiven_ShouldNotThrowException() {
+        assertDoesNotThrow(() -> user.validate());
+    }
+
+    @Test(expected = InvalidObjectValuesException.class)
+    public void validate_InvalidUserGiven_ShouldThrowInvalidObjectValuesException() {
+        user = makeUser("a", "password");
+        user.validate();
     }
 }
