@@ -1,6 +1,7 @@
 CREATE TABLE IF NOT EXISTS game (
     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    game_name VARCHAR(128) NOT NULL
+    game_name VARCHAR(128) NOT NULL,
+    uri VARCHAR(128)
 );
 
 CREATE TABLE IF NOT EXISTS game_description (
@@ -35,7 +36,7 @@ ALTER TABLE game_release_date ADD FOREIGN KEY (game_platform_id) REFERENCES plat
 
 CREATE TABLE IF NOT EXISTS producer (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    producer_name VARCHAR(256)
+    producer_name VARCHAR(128)
 );
 
 CREATE TABLE IF NOT EXISTS game_producer (
@@ -48,7 +49,7 @@ ALTER TABLE game_producer ADD FOREIGN KEY (producer_id) REFERENCES producer(id);
 
 CREATE TABLE IF NOT EXISTS publisher (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    publisher_name VARCHAR(256)
+    publisher_name VARCHAR(128)
 );
 
 CREATE TABLE IF NOT EXISTS game_publisher (
@@ -58,10 +59,3 @@ CREATE TABLE IF NOT EXISTS game_publisher (
 
 ALTER TABLE game_publisher ADD FOREIGN KEY (game_id) REFERENCES game(id);
 ALTER TABLE game_publisher ADD FOREIGN KEY (publisher_id) REFERENCES publisher(id);
-
-CREATE TABLE IF NOT EXISTS game_uri (
-    game_id INT NOT NULL,
-    uri VARCHAR(128)
-);
-
-ALTER TABLE game_uri ADD FOREIGN KEY (game_id) REFERENCES game(id);

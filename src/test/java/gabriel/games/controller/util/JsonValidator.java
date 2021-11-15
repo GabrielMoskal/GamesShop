@@ -1,4 +1,4 @@
-package gabriel.games.controller;
+package gabriel.games.controller.util;
 
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.ResultMatcher;
