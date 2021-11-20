@@ -11,7 +11,7 @@ import java.util.Arrays;
 import java.util.Collections;
 
 @Configuration
-@Profile({"test", "default"})
+@Profile({"test"})
 public class UserUtil {
 
     private final String username = "username";
