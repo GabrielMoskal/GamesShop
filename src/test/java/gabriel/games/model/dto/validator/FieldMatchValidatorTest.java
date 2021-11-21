@@ -1,14 +1,14 @@
 package gabriel.games.model.dto.validator;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import javax.validation.ConstraintValidatorContext;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -17,7 +17,7 @@ public class FieldMatchValidatorTest {
     private FieldMatch fieldMatch;
     private FieldMatchValidator fieldMatchValidator;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         mockFieldMatch();
         makeFieldMatchValidator();
@@ -38,22 +38,18 @@ public class FieldMatchValidatorTest {
     public void isValid_EqualStringsGiven_ReturnsTrue() {
         String toCompare = "theSameString";
         Map<String, String> stringMap = makeStringMap(toCompare, toCompare);
-
         assertTrue(isValid(stringMap));
     }
 
     private Map<String, String> makeStringMap(String first, String second) {
         Map<String, String> stringMap = new HashMap<String, String>() {};
-
         stringMap.put(fieldMatch.first(), first);
         stringMap.put(fieldMatch.second(), second);
-
         return stringMap;
     }
 
     private boolean isValid(Map<String, String> stringMap) {
         ConstraintValidatorContext context = mock(ConstraintValidatorContext.class);
-
         return fieldMatchValidator.isValid(stringMap, context);
     }
 
@@ -62,14 +58,12 @@ public class FieldMatchValidatorTest {
         String string1 = "stringOne";
         String string2 = "stringTwo";
         Map<String, String> stringMap = makeStringMap(string1, string2);
-
         assertFalse(isValid(stringMap));
     }
 
     @Test
     public void isValid_NullsGiven_ShouldReturnTrue() {
         Map<String, String> stringMap = makeStringMap(null, null);
-
         assertTrue(isValid(stringMap));
     }
 
@@ -77,7 +71,6 @@ public class FieldMatchValidatorTest {
     public void isValid_FirstNullGiven_ShouldReturnFalse() {
         String toCompare = "string";
         Map<String, String> stringMap = makeStringMap(null, toCompare);
-
         assertFalse(isValid(stringMap));
     }
 
@@ -85,7 +78,6 @@ public class FieldMatchValidatorTest {
     public void isValid_SecondNullGiven_ShouldReturnFalse() {
         String toCompare = "string";
         Map<String, String> stringMap = makeStringMap(toCompare, null);
-
         assertFalse(isValid(stringMap));
     }
 }

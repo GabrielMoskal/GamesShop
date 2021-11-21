@@ -1,8 +1,8 @@
 package gabriel.games.model;
 
 import gabriel.games.service.exception.InvalidObjectValuesException;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.security.core.GrantedAuthority;
 
 import javax.validation.ConstraintViolation;
@@ -22,7 +22,7 @@ public class UserTest {
     private String correctUsername;
     private String correctPassword;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         validator = Validation.buildDefaultValidatorFactory().getValidator();
         correctUsername = "correctUsername";
@@ -33,7 +33,6 @@ public class UserTest {
     @Test
     public void validUserHasNoErrors() {
         user = makeUser(correctUsername, correctPassword);
-
         assertValidationErrors(0);
     }
 
@@ -45,7 +44,6 @@ public class UserTest {
     @Test
     public void usernameShouldBeAtLeast5CharLong() {
         user = makeUser("four", correctPassword);
-
         assertValidationErrors(1);
     }
 
@@ -53,7 +51,6 @@ public class UserTest {
     public void usernameShouldBeMax20CharsLong() {
         String username = makeGenericWord(21);
         user = makeUser(username, correctPassword);
-
         assertValidationErrors(1);
     }
 
@@ -64,35 +61,30 @@ public class UserTest {
     @Test
     public void usernameShouldHaveNoWhitespaces() {
         user = makeUser("white spaces", correctPassword);
-
         assertValidationErrors(1);
     }
 
     @Test
     public void usernameShouldNotBeNull() {
         user = makeUser(null, correctPassword);
-
         assertValidationErrors(1);
     }
 
     @Test
     public void passwordShouldNotBeNull() {
         user = makeUser(correctUsername, null);
-
         assertValidationErrors(1);
     }
 
     @Test
     public void authoritiesMustNotBeNull() {
         user = new User(correctUsername, correctPassword, null);
-
         assertValidationErrors(1);
     }
 
     @Test
     public void authoritiesMustContainAtLeast1Element() {
         user = new User(correctUsername, correctPassword, new ArrayList<>());
-
         assertValidationErrors(1);
     }
 
@@ -100,9 +92,7 @@ public class UserTest {
     public void authoritiesValuesMustNotBeNull() {
         List<GrantedAuthority> authorities = new ArrayList<>();
         authorities.add(null);
-
         user = new User(correctUsername, correctPassword, authorities);
-
         assertValidationErrors(1);
     }
 
@@ -131,9 +121,9 @@ public class UserTest {
         assertDoesNotThrow(() -> user.validate());
     }
 
-    @Test(expected = InvalidObjectValuesException.class)
+    @Test
     public void validate_InvalidUserGiven_ShouldThrowInvalidObjectValuesException() {
         user = makeUser("a", "password");
-        user.validate();
+        assertThrows(InvalidObjectValuesException.class, () -> user.validate());
     }
 }

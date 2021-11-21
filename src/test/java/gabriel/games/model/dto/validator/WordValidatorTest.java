@@ -1,20 +1,20 @@
 package gabriel.games.model.dto.validator;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import javax.validation.ConstraintValidatorContext;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class WordValidatorTest {
 
     private WordValidator wordValidator;
     private ConstraintValidatorContext context;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         wordValidator = new WordValidator();
         context = Mockito.mock(ConstraintValidatorContext.class);

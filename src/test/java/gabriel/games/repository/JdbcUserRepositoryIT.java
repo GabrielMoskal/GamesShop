@@ -2,9 +2,9 @@ package gabriel.games.repository;
 
 import gabriel.games.model.User;
 import gabriel.games.util.UserUtil;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DuplicateKeyException;
@@ -12,16 +12,16 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.*;
 
-import static org.junit.Assert.*;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.test.util.AssertionErrors.assertFalse;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest
-public class JdbcUserRepositoryTest {
+public class JdbcUserRepositoryIT {
 
     @Autowired
     private UserRepository userRepository;
@@ -31,7 +31,7 @@ public class JdbcUserRepositoryTest {
 
     private User defaultUser;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         this.defaultUser = UserUtil.makeUser("defaultUsername", "defaultPassword");
     }
@@ -124,10 +124,10 @@ public class JdbcUserRepositoryTest {
         assertSavesUsersCorrectly(expected);
     }
 
-    @Test(expected = DuplicateKeyException.class)
+    @Test
     public void save_ExistingUserGiven_ShouldThrowException() {
         User user = UserUtil.makeUser("user1", "password1");
-        userRepository.save(user);
+        assertThrows(DuplicateKeyException.class, () -> userRepository.save(user));
     }
 
     @Test

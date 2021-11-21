@@ -3,37 +3,25 @@ package gabriel.games.model.dto.mapper;
 import gabriel.games.model.dto.UserDto;
 import gabriel.games.model.User;
 import gabriel.games.util.UserUtil;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.test.context.junit4.SpringRunner;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest
 public class UserMapperTest {
 
     private UserDtoMapper userMapper;
     private PasswordEncoder passwordEncoder;
     private UserDto userDto;
 
-    @Autowired
-    public void setUserMapper(UserDtoMapper userMapper) {
-        this.userMapper = userMapper;
-    }
-
-    @Autowired
-    public void setPasswordEncoder(PasswordEncoder passwordEncoder) {
-        this.passwordEncoder = passwordEncoder;
-    }
-
-    @Autowired
-    public void setUserDto(UserDto userDto) {
-        this.userDto = userDto;
+    @BeforeEach
+    public void setUp() {
+        this.passwordEncoder = new BCryptPasswordEncoder();
+        this.userMapper = new UserDtoMapper(this.passwordEncoder);
+        this.userDto = new UserUtil().userDto();
     }
 
     @Test
@@ -44,7 +32,6 @@ public class UserMapperTest {
     private void assertConversionCorrect(UserDto userDto) {
         User expected = UserUtil.makeUser(userDto.getUsername(), userDto.getPassword());
         User result = userMapper.toUser(userDto);
-
         assertAllFieldsAreTheSame(expected, result);
     }
 
@@ -62,19 +49,15 @@ public class UserMapperTest {
     @Test
     public void toUserDto_UserGiven_ReturnsCorrectUserDto() {
         User user = UserUtil.makeUser(userDto.getUsername(), userDto.getPassword());
-
         UserDto result = userMapper.toUserDto(user);
-
         assertEquals(userDto, result);
     }
 
     @Test
     public void toUserDto_DifferentUserGiven_ReturnsCorrectUserDto() {
         User user = UserUtil.makeUser("diffUsername", "diffPassword");
-
         UserDto expected = UserUtil.makeUserDto(user.getUsername(), user.getPassword());
         UserDto result = userMapper.toUserDto(user);
-
         assertEquals(expected, result);
     }
 }

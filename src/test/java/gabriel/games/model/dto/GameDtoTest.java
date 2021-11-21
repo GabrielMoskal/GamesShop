@@ -4,8 +4,8 @@ import gabriel.games.model.dto.util.DtoValidator;
 import gabriel.games.model.dto.util.GenericWord;
 import gabriel.games.model.dto.util.ReflectionSetter;
 import gabriel.games.util.GameUtil;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.*;
 
@@ -15,7 +15,7 @@ public class GameDtoTest {
     private DtoValidator<GameDto> validator;
     private GenericWord genericWord;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         GameDto gameDto = GameUtil.makeValidGameDto();
         this.setter = new ReflectionSetter<>(gameDto);

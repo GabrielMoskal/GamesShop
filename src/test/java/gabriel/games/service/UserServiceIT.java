@@ -6,14 +6,13 @@ import gabriel.games.model.User;
 import gabriel.games.repository.UserRepository;
 import gabriel.games.service.exception.InvalidObjectValuesException;
 import gabriel.games.util.UserUtil;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Profile;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -21,20 +20,19 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Optional;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ActiveProfiles("test")
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest
-public class UserServiceTest {
+public class UserServiceIT {
 
     @Autowired
     private UserService userService;
@@ -50,7 +48,7 @@ public class UserServiceTest {
 
     private User user;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         this.user = UserUtil.makeUser(userDto.getUsername(), userDto.getPassword());
     }
@@ -80,11 +78,10 @@ public class UserServiceTest {
         return captor.getValue();
     }
 
-    @Test(expected = UsernameNotFoundException.class)
+    @Test
     public void loadUserByUsername_NonExistentUsernameGiven_ShouldThrowException() {
         mockFindByUsername(Optional.empty());
-
-        userService.loadUserByUsername(user.getUsername());
+        assertThrows(UsernameNotFoundException.class, () -> userService.loadUserByUsername(user.getUsername()));
 
         String capturedUsername = verifyFindByUsernameInteractions();
         assertEquals(user.getUsername(), capturedUsername);
@@ -130,19 +127,18 @@ public class UserServiceTest {
         assertEquals(expectedAuthorities, result.getAuthorities());
     }
 
-    @Test(expected = UserAlreadyExistsException.class)
+    @Test
     public void register_ExistentUsernameGiven_ShouldThrowException() {
         doThrow(new DuplicateKeyException("msg")).when(userRepository).save(any());
 
-        userService.register(userDto);
-
+        assertThrows(UserAlreadyExistsException.class, () -> userService.register(userDto));
         verifySaveInteractions();
     }
 
-    @Test(expected = InvalidObjectValuesException.class)
+    @Test
     public void register_InvalidUserGiven_ShouldThrowException() {
         UserDto invalidUserDto = new UserDto("a a", "p", "p");
 
-        userService.register(invalidUserDto);
+        assertThrows(InvalidObjectValuesException.class, () -> userService.register(invalidUserDto));
     }
 }
