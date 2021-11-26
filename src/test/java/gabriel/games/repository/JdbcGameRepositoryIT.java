@@ -9,7 +9,7 @@ public class JdbcGameRepositoryIT {
 
     @Test
     public void findByUri_ExistingGameUriGiven_ShouldReturnExistingGame() {
-        Game expected = new Game(1L);
+        Game expected = new Game(1L, "name", "uri");
         GameRepository gameRepository = new JdbcGameRepository();
         Game actual = gameRepository.findByUri("existing").orElse(null);
         assertEquals(expected, actual);

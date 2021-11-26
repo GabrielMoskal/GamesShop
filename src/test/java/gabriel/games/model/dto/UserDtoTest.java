@@ -1,6 +1,6 @@
 package gabriel.games.model.dto;
 
-import gabriel.games.model.dto.util.DtoValidator;
+import gabriel.games.model.dto.util.EntityValidator;
 import gabriel.games.model.dto.util.GenericWord;
 import gabriel.games.model.dto.util.ReflectionSetter;
 import gabriel.games.util.UserUtil;
@@ -10,14 +10,14 @@ import org.junit.jupiter.api.Test;
 public class UserDtoTest {
 
     private ReflectionSetter<UserDto> setter;
-    private DtoValidator<UserDto> validator;
+    private EntityValidator<UserDto> validator;
     private GenericWord genericWord;
 
     @BeforeEach
     public void setUp() {
         UserDto userDto = UserUtil.makeUserDto("correctUsername", "correctPassword");
         this.setter = new ReflectionSetter<>(userDto);
-        this.validator = new DtoValidator<>(userDto);
+        this.validator = new EntityValidator<>(userDto);
         this.genericWord = new GenericWord();
     }
 

@@ -7,12 +7,12 @@ import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class DtoValidator<T> {
+public class EntityValidator<T> {
 
     private final T validated;
     private final Validator validator;
 
-    public DtoValidator(final T validated) {
+    public EntityValidator(final T validated) {
         this.validated = validated;
         this.validator = Validation.buildDefaultValidatorFactory().getValidator();
     }

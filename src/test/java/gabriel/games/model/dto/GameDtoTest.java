@@ -1,6 +1,6 @@
 package gabriel.games.model.dto;
 
-import gabriel.games.model.dto.util.DtoValidator;
+import gabriel.games.model.dto.util.EntityValidator;
 import gabriel.games.model.dto.util.GenericWord;
 import gabriel.games.model.dto.util.ReflectionSetter;
 import gabriel.games.util.GameUtil;
@@ -12,14 +12,14 @@ import java.util.*;
 public class GameDtoTest {
 
     private ReflectionSetter<GameDto> setter;
-    private DtoValidator<GameDto> validator;
+    private EntityValidator<GameDto> validator;
     private GenericWord genericWord;
 
     @BeforeEach
     public void setUp() {
         GameDto gameDto = GameUtil.makeValidGameDto();
         this.setter = new ReflectionSetter<>(gameDto);
-        this.validator = new DtoValidator<>(gameDto);
+        this.validator = new EntityValidator<>(gameDto);
         this.genericWord = new GenericWord();
     }
 

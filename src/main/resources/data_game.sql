@@ -1,9 +1,9 @@
 DELETE FROM game;
 
-INSERT INTO game(game_name, uri) VALUES ('Age of Empires IV', 'age-of-empires-iv');
-INSERT INTO game(game_name, uri) VALUES ('Europa Universalis IV', 'europa-universalis-iv');
-INSERT INTO game(game_name, uri) VALUES ('World of Warcraft', 'world-of-warcraft');
-INSERT INTO game(game_name, uri) VALUES ('Test Name', 'test-name');
+INSERT INTO game(name, uri) VALUES ('Age of Empires IV', 'age-of-empires-iv');
+INSERT INTO game(name, uri) VALUES ('Europa Universalis IV', 'europa-universalis-iv');
+INSERT INTO game(name, uri) VALUES ('World of Warcraft', 'world-of-warcraft');
+INSERT INTO game(name, uri) VALUES ('Test Name', 'test-name');
 
 DELETE FROM game_description;
 
