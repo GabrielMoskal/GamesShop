@@ -3,6 +3,8 @@ package gabriel.games.model;
 import gabriel.games.model.dto.util.EntityValidator;
 import gabriel.games.model.dto.util.GenericWord;
 import gabriel.games.model.dto.util.ReflectionSetter;
+import nl.jqno.equalsverifier.EqualsVerifier;
+import nl.jqno.equalsverifier.Warning;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -81,6 +83,13 @@ public class GameTest {
     public void uriShouldBeLowercase() {
         setter.setValue("uri", "Uppercase");
         validator.assertErrors(1);
+    }
+
+    @Test
+    public void equalsContract() {
+        EqualsVerifier.forClass(Game.class)
+                .suppress(Warning.ALL_FIELDS_SHOULD_BE_USED)
+                .verify();
     }
 
 }

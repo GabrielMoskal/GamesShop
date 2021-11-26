@@ -4,7 +4,6 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import org.hibernate.Hibernate;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -42,14 +41,18 @@ public class Game {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Game)) {
+            return false;
+        }
         Game game = (Game) o;
-        return id != null && Objects.equals(id, game.id);
+        return uri != null && Objects.equals(uri, game.uri);
     }
 
     @Override
     public int hashCode() {
-        return getClass().hashCode();
+        return java.util.Objects.hashCode(uri);
     }
 }
