@@ -3,9 +3,9 @@ package gabriel.games.controller.util;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.StringEndsWith.endsWith;
 
 public class JsonValidator {
 
@@ -23,13 +23,7 @@ public class JsonValidator {
         resultActions.andExpect(jsonPath(expression, matcher));
     }
 
-    public void verifyJsonLinks(String path) throws Exception {
-        final String expectedLink = makeExpectedLink(path);
-
-        expect("_links.self.href", expectedLink);
-    }
-
-    private String makeExpectedLink(String path) {
-        return ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString() + path;
+    public void verifyJsonLinks(String path) {
+        MockMvcResultMatchers.jsonPath("_links.self.href", endsWith(path));
     }
 }
