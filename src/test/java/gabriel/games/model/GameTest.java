@@ -2,7 +2,6 @@ package gabriel.games.model;
 
 import gabriel.games.model.dto.util.EntityValidator;
 import gabriel.games.model.dto.util.GenericWord;
-import gabriel.games.model.dto.util.ReflectionSetter;
 import gabriel.games.model.embedded.Rating;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
@@ -14,14 +13,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class GameTest {
 
     private Game game;
-    private ReflectionSetter<Game> setter;
     private EntityValidator<Game> validator;
     private GenericWord genericWord;
 
     @BeforeEach
     public void setUp() {
         this.game = new Game(1L, "valid_name", "valid_uri");
-        this.setter = new ReflectionSetter<>(this.game);
         this.validator = new EntityValidator<>(this.game);
         this.genericWord = new GenericWord();
     }
@@ -40,49 +37,49 @@ public class GameTest {
 
     @Test
     public void nameShouldNotBeNull() {
-        setter.setValue("name", null);
+        game.setName(null);
         validator.assertErrors(1);
     }
 
     @Test
     public void nameShouldBeAtLeast1CharacterLong() {
-        setter.setValue("name", "");
+        game.setName("");
         validator.assertErrors(1);
     }
 
     @Test
     public void nameShouldBeMax128CharacterLong() {
-        setter.setValue("name", genericWord.make(129));
+        game.setName(genericWord.make(129));
         validator.assertErrors(1);
     }
 
     @Test
     public void uriShouldNotBeNull() {
-        setter.setValue("uri", null);
+        game.setUri(null);
         validator.assertErrors(1);
     }
 
     @Test
     public void uriShouldBeAtLeast1CharacterLong() {
-        setter.setValue("uri", genericWord.make(0));
+        game.setUri(genericWord.make(0));
         validator.assertErrors(1);
     }
 
     @Test
     public void uriShouldBeMax128CharacterLong() {
-        setter.setValue("uri", genericWord.make(129));
+        game.setUri(genericWord.make(129));
         validator.assertErrors(1);
     }
 
     @Test
     public void uriShouldHaveNoWhiteSpaces() {
-        setter.setValue("uri", "some white spaces");
+        game.setUri("some white spaces");
         validator.assertErrors(1);
     }
 
     @Test
     public void uriShouldBeLowercase() {
-        setter.setValue("uri", "Uppercase");
+        game.setUri("Uppercase");
         validator.assertErrors(1);
     }
 
