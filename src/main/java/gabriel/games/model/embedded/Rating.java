@@ -10,6 +10,8 @@ import java.math.BigDecimal;
 
 @Getter
 @Setter
+@ToString
+@EqualsAndHashCode
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Embeddable
 public class Rating {

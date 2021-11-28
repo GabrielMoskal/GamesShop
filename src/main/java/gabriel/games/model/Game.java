@@ -44,18 +44,19 @@ public class Game {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof Game)) {
-            return false;
-        }
+        if (this == o) return true;
+        if (!(o instanceof Game)) return false;
+
         Game game = (Game) o;
-        return uri != null && Objects.equals(uri, game.uri);
+
+        if (!Objects.equals(name, game.name)) return false;
+        return Objects.equals(uri, game.uri);
     }
 
     @Override
     public int hashCode() {
-        return java.util.Objects.hashCode(uri);
+        int result = name != null ? name.hashCode() : 0;
+        result = 31 * result + (uri != null ? uri.hashCode() : 0);
+        return result;
     }
 }

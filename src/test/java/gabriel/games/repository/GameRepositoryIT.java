@@ -49,7 +49,8 @@ public class GameRepositoryIT {
                 .gameId(4L)
                 .description("Test description")
                 .webpage("https://test-link.com")
-                .ratingPlayers(new Rating("8.0"))
+                .ratingPlayers(new Rating("7.00"))
+                .ratingReviewer(new Rating("6.50"))
                 .build();
     }
 

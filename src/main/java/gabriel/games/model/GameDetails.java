@@ -34,10 +34,14 @@ public class GameDetails {
     @Embedded
     @Valid
     @AttributeOverride(name = "rating", column = @Column(name = "rating_players"))
+    @ToString.Include
     private Rating ratingPlayers;
 
-    //TODO
-    // rating reviewer
+    @Embedded
+    @Valid
+    @AttributeOverride(name = "rating", column = @Column(name = "rating_reviewer"))
+    @ToString.Include
+    private Rating ratingReviewer;
 
     @OneToOne
     @MapsId
@@ -46,18 +50,24 @@ public class GameDetails {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof GameDetails)) {
-            return false;
-        }
+        if (this == o) return true;
+        if (!(o instanceof GameDetails)) return false;
+
         GameDetails that = (GameDetails) o;
-        return description != null && Objects.equals(description, that.description);
+
+        if (!Objects.equals(description, that.description)) return false;
+        if (!Objects.equals(webpage, that.webpage)) return false;
+        if (!Objects.equals(ratingPlayers, that.ratingPlayers))
+            return false;
+        return Objects.equals(ratingReviewer, that.ratingReviewer);
     }
 
     @Override
     public int hashCode() {
-        return java.util.Objects.hashCode(description);
+        int result = description != null ? description.hashCode() : 0;
+        result = 31 * result + (webpage != null ? webpage.hashCode() : 0);
+        result = 31 * result + (ratingPlayers != null ? ratingPlayers.hashCode() : 0);
+        result = 31 * result + (ratingReviewer != null ? ratingReviewer.hashCode() : 0);
+        return result;
     }
 }
