@@ -3,6 +3,7 @@ package gabriel.games.model;
 import gabriel.games.model.dto.util.EntityValidator;
 import gabriel.games.model.dto.util.GenericWord;
 import gabriel.games.model.dto.util.ReflectionSetter;
+import gabriel.games.model.embedded.Rating;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
 import org.junit.jupiter.api.BeforeEach;
@@ -87,8 +88,8 @@ public class GameTest {
 
     @Test
     public void equalsContract() {
-        GameDetails prefab1 = new GameDetails(1L, "webpage1", "description1");
-        GameDetails prefab2 = new GameDetails(2L, "webpage2", "description2");
+        GameDetails prefab1 = buildGameDetails("1");
+        GameDetails prefab2 = buildGameDetails("2");
 
         EqualsVerifier.forClass(Game.class)
                 .suppress(Warning.ALL_FIELDS_SHOULD_BE_USED)
@@ -96,4 +97,12 @@ public class GameTest {
                 .verify();
     }
 
+    private GameDetails buildGameDetails(String value) {
+        return GameDetails.builder()
+                .gameId(Long.parseLong(value))
+                .webpage(value)
+                .description(value)
+                .ratingPlayers(new Rating(value))
+                .build();
+    }
 }

@@ -2,12 +2,11 @@ package gabriel.games.model;
 
 import gabriel.games.model.dto.util.EntityValidator;
 import gabriel.games.model.dto.util.GenericWord;
+import gabriel.games.model.embedded.Rating;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class GameDetailsTest {
 
@@ -17,20 +16,18 @@ public class GameDetailsTest {
 
     @BeforeEach
     public void setUp() {
-        this.gameDetails = new GameDetails(1L, "test description", "www.test-webpage.com");
+        this.gameDetails = GameDetails.builder()
+                .gameId(1L)
+                .description("test description")
+                .webpage("www.test-webpage.com")
+                .ratingPlayers(new Rating("4.5"))
+                .build();
         this.validator = new EntityValidator<>(this.gameDetails);
         this.genericWord = new GenericWord();
     }
 
     @Test
-    public void constructorTest() {
-        assertEquals(1L, this.gameDetails.getGameId());
-        assertEquals("test description", this.gameDetails.getDescription());
-        assertEquals("www.test-webpage.com", this.gameDetails.getWebpage());
-    }
-
-    @Test
-    public void validGameDescriptionGiven_HasNoErrors() {
+    public void validGameDetailsGiven_HasNoErrors() {
         validator.assertErrors(0);
     }
 

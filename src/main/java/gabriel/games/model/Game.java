@@ -34,7 +34,7 @@ public class Game {
 
     @OneToOne(mappedBy = "game", cascade = CascadeType.ALL)
     @PrimaryKeyJoinColumn
-    private GameDetails description;
+    private GameDetails details;
 
     public Game(final Long id, final String name, final String uri) {
         this.id = id;

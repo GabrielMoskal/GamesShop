@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS game (
 
 CREATE TABLE IF NOT EXISTS game_details (
     game_id INT NOT NULL,
-    description TEXT,
+    description TEXT NOT NULL,
     webpage VARCHAR(256),
     rating_players DECIMAL(4, 2),
     rating_reviewer DECIMAL(4, 2)

@@ -1,16 +1,19 @@
 package gabriel.games.model;
 
+import gabriel.games.model.embedded.Rating;
 import lombok.*;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+import javax.validation.Valid;
+import javax.validation.constraints.*;
 import java.util.Objects;
 
 @Getter
 @Setter
+@Builder
 @ToString(onlyExplicitlyIncluded = true)
-@NoArgsConstructor(access = AccessLevel.PUBLIC)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Entity
 public class GameDetails {
 
@@ -28,20 +31,18 @@ public class GameDetails {
     @ToString.Include
     private String webpage;
 
+    @Embedded
+    @Valid
+    @AttributeOverride(name = "rating", column = @Column(name = "rating_players"))
+    private Rating ratingPlayers;
+
+    //TODO
+    // rating reviewer
+
     @OneToOne
     @MapsId
     @JoinColumn(name = "game_id")
     private Game game;
-
-    //TODO
-    // rating player
-    // rating reviewer
-
-    public GameDetails(long gameId, final String description, final String webpage) {
-        this.gameId = gameId;
-        this.description = description;
-        this.webpage = webpage;
-    }
 
     @Override
     public boolean equals(Object o) {

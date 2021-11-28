@@ -32,7 +32,7 @@ INSERT INTO game_details(game_id, description, webpage, rating_players, rating_r
 
 INSERT INTO game_details(game_id, description, webpage, rating_players, rating_reviewer)
     VALUES (4,
-        'Test short description',
+        'Test description',
         'https://test-link.com', 7.0, 6.5);
 
 DELETE FROM platform;
