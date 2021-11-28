@@ -5,9 +5,9 @@ INSERT INTO game(id, name, uri) VALUES (2, 'Europa Universalis IV', 'europa-univ
 INSERT INTO game(id, name, uri) VALUES (3, 'World of Warcraft', 'world-of-warcraft');
 INSERT INTO game(id, name, uri) VALUES (4, 'Test Name', 'test-name');
 
-DELETE FROM game_description;
+DELETE FROM game_details;
 
-INSERT INTO game_description(id, description, webpage, rating_players, rating_reviewer)
+INSERT INTO game_details(game_id, description, webpage, rating_players, rating_reviewer)
     VALUES (1,
         'Age of Empires IV jest czwartą odsłoną bestsellerowego cyklu RTS-ów, ' ||
         'nad którym pieczę wydawniczą sprawuje firma Microsoft. W przeciwieństwie do ' ||
@@ -17,20 +17,20 @@ INSERT INTO game_description(id, description, webpage, rating_players, rating_re
         ' oraz cyklu Company of Heroes.',
         'https://www.ageofempires.com/games/age-of-empires-iv/', 10.0, 9.5);
 
-INSERT INTO game_description(id, description, webpage, rating_players, rating_reviewer)
+INSERT INTO game_details(game_id, description, webpage, rating_players, rating_reviewer)
     VALUES (2,
         'Czwarta odsłona cieszącego się dużą popularnością cyklu gier strategicznych ' ||
         'Europa Universalis. Tytuł wyprodukowany został przez' ||
         ' ekipę deweloperską Paradox Development Studio.',
         'https://www.paradoxplaza.com/europa-universalis-all/', 9.0, 8.5);
 
-INSERT INTO game_description(id, description, webpage, rating_players, rating_reviewer)
+INSERT INTO game_details(game_id, description, webpage, rating_players, rating_reviewer)
     VALUES (3,
         'Epicka gra z gatunku MMORPG, której akcję osadzono w uniwersum znanym ' ||
         'z kultowej serii RTS-ów fantasy firmy Blizzard.',
         'https://worldofwarcraft.com/en-us/', 8.0, 7.5);
 
-INSERT INTO game_description(id, description, webpage, rating_players, rating_reviewer)
+INSERT INTO game_details(game_id, description, webpage, rating_players, rating_reviewer)
     VALUES (4,
         'Test short description',
         'https://test-link.com', 7.0, 6.5);

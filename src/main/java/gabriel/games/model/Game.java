@@ -1,37 +1,40 @@
 package gabriel.games.model;
 
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.util.Objects;
 
 @Getter
-@ToString
-@NoArgsConstructor(access = AccessLevel.PROTECTED, force = true)
+@Setter
+@ToString(onlyExplicitlyIncluded = true)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
+@Table(name = "game")
 public class Game {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @ToString.Include
     private Long id;
 
     @NotNull
     @Size(min = 1, max = 128)
+    @ToString.Include
     private String name;
 
     @NotNull
     @Size(min = 1, max = 128)
     @Pattern(regexp = "([a-z_0-9]*)")
+    @ToString.Include
     private String uri;
+
+    @OneToOne(mappedBy = "game", cascade = CascadeType.ALL)
+    @PrimaryKeyJoinColumn
+    private GameDetails description;
 
     public Game(final Long id, final String name, final String uri) {
         this.id = id;

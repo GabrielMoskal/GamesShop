@@ -33,7 +33,7 @@ public class GameTest {
     }
 
     @Test
-    public void validGameHasNoErrors() {
+    public void validGameGiven_HasNoErrors() {
         validator.assertErrors(0);
     }
 
@@ -87,8 +87,12 @@ public class GameTest {
 
     @Test
     public void equalsContract() {
+        GameDetails prefab1 = new GameDetails(1L, "webpage1", "description1");
+        GameDetails prefab2 = new GameDetails(2L, "webpage2", "description2");
+
         EqualsVerifier.forClass(Game.class)
                 .suppress(Warning.ALL_FIELDS_SHOULD_BE_USED)
+                .withPrefabValues(GameDetails.class, prefab1, prefab2)
                 .verify();
     }
 

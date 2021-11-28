@@ -4,13 +4,15 @@ CREATE TABLE IF NOT EXISTS game (
     uri VARCHAR(128) UNIQUE NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS game_description (
-    id INT AUTO_INCREMENT PRIMARY KEY,
+CREATE TABLE IF NOT EXISTS game_details (
+    game_id INT NOT NULL,
     description TEXT,
     webpage VARCHAR(256),
     rating_players DECIMAL(4, 2),
     rating_reviewer DECIMAL(4, 2)
 );
+
+ALTER TABLE game_details ADD FOREIGN KEY (game_id) REFERENCES game(id);
 
 CREATE TABLE IF NOT EXISTS platform (
     id INT AUTO_INCREMENT PRIMARY KEY,
