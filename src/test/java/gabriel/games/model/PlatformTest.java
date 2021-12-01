@@ -8,8 +8,6 @@ import nl.jqno.equalsverifier.Warning;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 public class PlatformTest {
 
     private Platform platform;
@@ -19,12 +17,6 @@ public class PlatformTest {
     public void setUp() {
         this.platform = ModelUtil.makePlatform(1L);
         this.validator = new EntityValidator<>(this.platform);
-    }
-
-    @Test
-    public void defaultConstructorTest() {
-        platform = new Platform();
-        assertNotNull(platform.getGames());
     }
 
     @Test
@@ -59,12 +51,9 @@ public class PlatformTest {
 
     @Test
     public void equalsContract() {
-        Game prefab1 = ModelUtil.makeGame(1);
-        Game prefab2 = ModelUtil.makeGame(2);
-
         EqualsVerifier.forClass(Platform.class)
                 .suppress(Warning.ALL_FIELDS_SHOULD_BE_USED)
-                .withPrefabValues(Game.class, prefab1, prefab2)
+                .withPrefabValues(GamePlatform.class, ModelUtil.makeGamePlatform(1L), ModelUtil.makeGamePlatform(2L))
                 .verify();
     }
 }

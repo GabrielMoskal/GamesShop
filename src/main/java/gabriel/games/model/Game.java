@@ -40,13 +40,8 @@ public class Game {
 
     @NotNull
     @Size(min = 1)
-    @ManyToMany
-    @JoinTable(
-            name = "game_platform",
-            joinColumns = @JoinColumn(name = "game_id"),
-            inverseJoinColumns = @JoinColumn(name = "platform_id")
-    )
-    private Set<Platform> platforms;
+    @OneToMany(mappedBy = "game")
+    private Set<GamePlatform> platforms;
 
     @NotNull
     @Size(min = 1)

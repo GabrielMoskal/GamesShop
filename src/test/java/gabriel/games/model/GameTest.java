@@ -21,7 +21,7 @@ public class GameTest {
     @BeforeEach
     public void setUp() {
         this.game = new Game(1L, "valid_name", "valid_uri");
-        this.game.setPlatforms(ModelUtil.makeValidPlatforms());
+        this.game.setPlatforms(ModelUtil.makeValidGamePlatforms());
         this.game.setCompanies(ModelUtil.makeValidCompanies());
         this.validator = new EntityValidator<>(this.game);
         this.genericWord = new GenericWord();
@@ -116,6 +116,7 @@ public class GameTest {
         EqualsVerifier.forClass(Game.class)
                 .suppress(Warning.ALL_FIELDS_SHOULD_BE_USED)
                 .withPrefabValues(Game.class, ModelUtil.makeGame(1L), ModelUtil.makeGame(2L))
+                .withPrefabValues(GamePlatform.class, ModelUtil.makeGamePlatform(1L), ModelUtil.makeGamePlatform(2L))
                 .withPrefabValues(Company.class, ModelUtil.makeCompany(1L), ModelUtil.makeCompany(2L))
                 .verify();
     }

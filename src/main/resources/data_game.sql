@@ -43,20 +43,12 @@ INSERT INTO platform(id, name) VALUES (3, 'Playstation 5');
 
 DELETE FROM game_platform;
 
-INSERT INTO game_platform(game_id, platform_id) VALUES (1, 1);
-INSERT INTO game_platform(game_id, platform_id) VALUES (1, 2);
-INSERT INTO game_platform(game_id, platform_id) VALUES (2, 1);
-INSERT INTO game_platform(game_id, platform_id) VALUES (3, 3);
-INSERT INTO game_platform(game_id, platform_id) VALUES (4, 1);
-INSERT INTO game_platform(game_id, platform_id) VALUES (4, 2);
-
-DELETE FROM game_release_date;
-
-INSERT INTO game_release_date(game_id, game_platform_id, release_date) VALUES (1, 1, '2021-10-28');
-INSERT INTO game_release_date(game_id, game_platform_id, release_date) VALUES (1, 2, '2021-10-30');
-INSERT INTO game_release_date(game_id, game_platform_id, release_date) VALUES (2, 1, '2013-08-13');
-INSERT INTO game_release_date(game_id, game_platform_id, release_date) VALUES (3, 3, '2005-02-11');
-INSERT INTO game_release_date(game_id, game_platform_id, release_date) VALUES (4, 1, '2000-01-01');
+INSERT INTO game_platform(game_id, platform_id, release_date) VALUES (1, 1, '2021-10-28');
+INSERT INTO game_platform(game_id, platform_id, release_date) VALUES (1, 2, '2021-10-30');
+INSERT INTO game_platform(game_id, platform_id, release_date) VALUES (2, 1, '2013-08-13');
+INSERT INTO game_platform(game_id, platform_id, release_date) VALUES (3, 3, '2005-02-11');
+INSERT INTO game_platform(game_id, platform_id, release_date) VALUES (4, 1, '2000-01-01');
+INSERT INTO game_platform(game_id, platform_id, release_date) VALUES (4, 2, '2000-05-06');
 
 DELETE FROM company;
 
