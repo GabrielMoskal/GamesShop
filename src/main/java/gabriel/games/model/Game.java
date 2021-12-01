@@ -13,6 +13,7 @@ import java.util.Set;
 @Getter
 @Setter
 @ToString(onlyExplicitlyIncluded = true)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name = "game")
 public class Game {
@@ -47,15 +48,22 @@ public class Game {
     )
     private Set<Platform> platforms;
 
-    protected Game() {
-        this.platforms = new HashSet<>();
-    }
+    @NotNull
+    @Size(min = 1)
+    @ManyToMany
+    @JoinTable(
+            name = "game_company",
+            joinColumns = @JoinColumn(name = "game_id"),
+            inverseJoinColumns = @JoinColumn(name = "company_id")
+    )
+    private Set<Company> companies;
 
     public Game(final Long id, final String name, final String uri) {
-        this();
         this.id = id;
         this.name = name;
         this.uri = uri;
+        this.platforms = new HashSet<>();
+        this.companies = new HashSet<>();
     }
 
     @Override

@@ -4,7 +4,8 @@ import gabriel.games.controller.util.JsonValidator;
 import gabriel.games.model.dto.GameDto;
 import gabriel.games.service.GameService;
 import gabriel.games.service.exception.ObjectNotFoundException;
-import gabriel.games.util.GameUtil;
+import gabriel.games.util.ModelUtil;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,9 +36,13 @@ public class GameControllerIT {
     @MockBean
     private GameService gameService;
 
+    @BeforeEach
+    public void setUp() {
+        this.gameDto = ModelUtil.makeGameDto("Multiple words value");
+    }
+
     @Test
     public void description_ExistingResourcePathGiven_ShouldReturnValidJson() throws Exception {
-        gameDto = GameUtil.makeValidGameDto();
         shouldReturnValidJson();
     }
 
@@ -77,13 +82,12 @@ public class GameControllerIT {
 
     @Test
     public void description_ExistingDifferentResourcePathGiven_ShouldReturnValidJson() throws Exception {
-        gameDto = GameUtil.makeDifferentValidGameDto();
+        gameDto = ModelUtil.makeGameDto("different values");
         shouldReturnValidJson();
     }
 
     @Test
     public void description_ExistingResourcePathGiven_ShouldReturnValidLink() throws Exception {
-        gameDto = GameUtil.makeValidGameDto();
         shouldReturnValidLink();
     }
 
@@ -96,20 +100,18 @@ public class GameControllerIT {
 
     @Test
     public void description_ExistingDifferentResourcePathGiven_ShouldReturnValidLink() throws Exception {
-        gameDto = GameUtil.makeDifferentValidGameDto();
+        gameDto = ModelUtil.makeGameDto("different values");
         shouldReturnValidLink();
     }
 
     @Test
     public void description_NonExistingResourcePathGiven_ShouldReturn404() throws Exception {
-        gameDto = GameUtil.makeValidGameDto();
         when(gameService.findByUri(gameDto.getUri())).thenThrow(new ObjectNotFoundException("msg"));
         performGetRequest().andExpect(status().isNotFound());
     }
 
     @Test
     public void description_ExistingResourcePathGiven_ShouldReturn200() throws Exception {
-        gameDto = GameUtil.makeValidGameDto();
         mockFindByName();
         performGetRequest().andExpect(status().isOk());
     }

@@ -3,7 +3,7 @@ package gabriel.games.model.dto;
 import gabriel.games.model.dto.util.EntityValidator;
 import gabriel.games.model.dto.util.GenericWord;
 import gabriel.games.model.dto.util.ReflectionSetter;
-import gabriel.games.util.GameUtil;
+import gabriel.games.util.ModelUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -17,7 +17,7 @@ public class GameDtoTest {
 
     @BeforeEach
     public void setUp() {
-        GameDto gameDto = GameUtil.makeValidGameDto();
+        GameDto gameDto = ModelUtil.makeGameDto("Multiple words value");
         this.setter = new ReflectionSetter<>(gameDto);
         this.validator = new EntityValidator<>(gameDto);
         this.genericWord = new GenericWord();

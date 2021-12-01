@@ -50,15 +50,25 @@ CREATE TABLE IF NOT EXISTS game_producer (
 ALTER TABLE game_producer ADD FOREIGN KEY (game_id) REFERENCES game(id);
 ALTER TABLE game_producer ADD FOREIGN KEY (producer_id) REFERENCES producer(id);
 
-CREATE TABLE IF NOT EXISTS publisher (
+CREATE TABLE IF NOT EXISTS company (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    publisher_name VARCHAR(128)
+    name VARCHAR(128) UNIQUE NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS game_publisher (
+CREATE TABLE IF NOT EXISTS company_general_type (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    type VARCHAR(50) UNIQUE NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS company_type (
+    company_id INT NOT NULL,
+    type_id INT NOT NULL
+);
+
+ALTER TABLE company_type ADD FOREIGN KEY (company_id) REFERENCES company(id);
+ALTER TABLE company_type ADD FOREIGN KEY (type_id) REFERENCES company_general_type(id);
+
+CREATE TABLE IF NOT EXISTS game_company (
     game_id INT NOT NULL,
-    publisher_id INT NOT NULL
+    company_id INT NOT NULL
 );
-
-ALTER TABLE game_publisher ADD FOREIGN KEY (game_id) REFERENCES game(id);
-ALTER TABLE game_publisher ADD FOREIGN KEY (publisher_id) REFERENCES publisher(id);

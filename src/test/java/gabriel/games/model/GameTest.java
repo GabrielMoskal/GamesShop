@@ -2,7 +2,7 @@ package gabriel.games.model;
 
 import gabriel.games.model.dto.util.EntityValidator;
 import gabriel.games.model.dto.util.GenericWord;
-import gabriel.games.util.GameUtil;
+import gabriel.games.util.ModelUtil;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
 import org.junit.jupiter.api.BeforeEach;
@@ -11,7 +11,6 @@ import org.junit.jupiter.api.Test;
 import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class GameTest {
 
@@ -22,15 +21,10 @@ public class GameTest {
     @BeforeEach
     public void setUp() {
         this.game = new Game(1L, "valid_name", "valid_uri");
-        this.game.setPlatforms(GameUtil.makeValidPlatforms());
+        this.game.setPlatforms(ModelUtil.makeValidPlatforms());
+        this.game.setCompanies(ModelUtil.makeValidCompanies());
         this.validator = new EntityValidator<>(this.game);
         this.genericWord = new GenericWord();
-    }
-
-    @Test
-    public void defaultConstructorTest() {
-        this.game = new Game();
-        assertNotNull(game.getPlatforms());
     }
 
     @Test
@@ -106,13 +100,23 @@ public class GameTest {
     }
 
     @Test
-    public void equalsContract() {
-        Game prefab1 = GameUtil.makGame(1);
-        Game prefab2 = GameUtil.makGame(2);
+    public void companiesShouldNotBeNull() {
+        game.setCompanies(null);
+        validator.assertErrors(1);
+    }
 
+    @Test
+    public void companiesShouldNotBeEmpty() {
+        game.setCompanies(Collections.emptySet());
+        validator.assertErrors(1);
+    }
+
+    @Test
+    public void equalsContract() {
         EqualsVerifier.forClass(Game.class)
                 .suppress(Warning.ALL_FIELDS_SHOULD_BE_USED)
-                .withPrefabValues(Game.class, prefab1, prefab2)
+                .withPrefabValues(Game.class, ModelUtil.makeGame(1L), ModelUtil.makeGame(2L))
+                .withPrefabValues(Company.class, ModelUtil.makeCompany(1L), ModelUtil.makeCompany(2L))
                 .verify();
     }
 

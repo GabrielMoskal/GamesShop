@@ -58,32 +58,41 @@ INSERT INTO game_release_date(game_id, game_platform_id, release_date) VALUES (2
 INSERT INTO game_release_date(game_id, game_platform_id, release_date) VALUES (3, 3, '2005-02-11');
 INSERT INTO game_release_date(game_id, game_platform_id, release_date) VALUES (4, 1, '2000-01-01');
 
-DELETE FROM producer;
+DELETE FROM company;
 
-INSERT INTO producer(id, producer_name) VALUES (1, 'Relic Entertainment');
-INSERT INTO producer(id, producer_name) VALUES (2, 'World''s Edge');
-INSERT INTO producer(id, producer_name) VALUES (3, 'Paradox Development Studio');
-INSERT INTO producer(id, producer_name) VALUES (4, 'Blizzard Entertainment');
-INSERT INTO producer(id, producer_name) VALUES (5, 'Test Producer');
+INSERT INTO company(id, name) VALUES (1, 'Relic Entertainment');
+INSERT INTO company(id, name) VALUES (2, 'World''s Edge');
+INSERT INTO company(id, name) VALUES (3, 'Paradox Development Studio');
+INSERT INTO company(id, name) VALUES (4, 'Blizzard Entertainment');
+INSERT INTO company(id, name) VALUES (5, 'Test Producer');
+INSERT INTO company(id, name) VALUES (6, 'Xbox Game Studios / Microsoft Studios');
+INSERT INTO company(id, name) VALUES (7, 'Paradox Interactive');
+INSERT INTO company(id, name) VALUES (8, 'Test Publisher');
 
-DELETE FROM game_producer;
+DELETE FROM company_general_type;
 
-INSERT INTO game_producer(game_id, producer_id) VALUES (1, 1);
-INSERT INTO game_producer(game_id, producer_id) VALUES (1, 2);
-INSERT INTO game_producer(game_id, producer_id) VALUES (2, 3);
-INSERT INTO game_producer(game_id, producer_id) VALUES (3, 4);
-INSERT INTO game_producer(game_id, producer_id) VALUES (4, 5);
+INSERT INTO company_general_type(id, type) VALUES (1, 'producer');
+INSERT INTO company_general_type(id, type) VALUES (2, 'publisher');
 
-DELETE FROM publisher;
+DELETE FROM company_type;
 
-INSERT INTO publisher(id, publisher_name) VALUES (1, 'Xbox Game Studios / Microsoft Studios');
-INSERT INTO publisher(id, publisher_name) VALUES (2, 'Paradox Interactive');
-INSERT INTO publisher(id, publisher_name) VALUES (3, 'Blizzard Entertainment');
-INSERT INTO publisher(id, publisher_name) VALUES (4, 'Test Publisher');
+INSERT INTO company_type(company_id, type_id) VALUES (1, 1);
+INSERT INTO company_type(company_id, type_id) VALUES (2, 1);
+INSERT INTO company_type(company_id, type_id) VALUES (3, 1);
+INSERT INTO company_type(company_id, type_id) VALUES (4, 1);
+INSERT INTO company_type(company_id, type_id) VALUES (4, 2);
+INSERT INTO company_type(company_id, type_id) VALUES (5, 1);
+INSERT INTO company_type(company_id, type_id) VALUES (6, 2);
+INSERT INTO company_type(company_id, type_id) VALUES (7, 2);
+INSERT INTO company_type(company_id, type_id) VALUES (8, 2);
 
-DELETE FROM game_publisher;
+DELETE FROM game_company;
 
-INSERT INTO game_publisher(game_id, publisher_id) VALUES (1, 1);
-INSERT INTO game_publisher(game_id, publisher_id) VALUES (2, 2);
-INSERT INTO game_publisher(game_id, publisher_id) VALUES (3, 3);
-INSERT INTO game_publisher(game_id, publisher_id) VALUES (4, 4);
+INSERT INTO game_company(game_id, company_id) VALUES(1, 1);
+INSERT INTO game_company(game_id, company_id) VALUES(1, 2);
+INSERT INTO game_company(game_id, company_id) VALUES(2, 3);
+INSERT INTO game_company(game_id, company_id) VALUES(3, 4);
+INSERT INTO game_company(game_id, company_id) VALUES(4, 5);
+INSERT INTO game_company(game_id, company_id) VALUES(1, 6);
+INSERT INTO game_company(game_id, company_id) VALUES(2, 7);
+INSERT INTO game_company(game_id, company_id) VALUES(4, 8);
