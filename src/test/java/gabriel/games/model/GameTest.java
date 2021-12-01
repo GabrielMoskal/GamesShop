@@ -2,13 +2,16 @@ package gabriel.games.model;
 
 import gabriel.games.model.dto.util.EntityValidator;
 import gabriel.games.model.dto.util.GenericWord;
-import gabriel.games.model.embedded.Rating;
+import gabriel.games.util.GameUtil;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.Collections;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class GameTest {
 
@@ -19,8 +22,15 @@ public class GameTest {
     @BeforeEach
     public void setUp() {
         this.game = new Game(1L, "valid_name", "valid_uri");
+        this.game.setPlatforms(GameUtil.makeValidPlatforms());
         this.validator = new EntityValidator<>(this.game);
         this.genericWord = new GenericWord();
+    }
+
+    @Test
+    public void defaultConstructorTest() {
+        this.game = new Game();
+        assertNotNull(game.getPlatforms());
     }
 
     @Test
@@ -84,22 +94,26 @@ public class GameTest {
     }
 
     @Test
+    public void platformsShouldNotBeNull() {
+        game.setPlatforms(null);
+        validator.assertErrors(1);
+    }
+
+    @Test
+    public void platformsShouldNotBeEmpty() {
+        game.setPlatforms(Collections.emptySet());
+        validator.assertErrors(1);
+    }
+
+    @Test
     public void equalsContract() {
-        GameDetails prefab1 = buildGameDetails("1");
-        GameDetails prefab2 = buildGameDetails("2");
+        Game prefab1 = GameUtil.makGame(1);
+        Game prefab2 = GameUtil.makGame(2);
 
         EqualsVerifier.forClass(Game.class)
                 .suppress(Warning.ALL_FIELDS_SHOULD_BE_USED)
-                .withPrefabValues(GameDetails.class, prefab1, prefab2)
+                .withPrefabValues(Game.class, prefab1, prefab2)
                 .verify();
     }
 
-    private GameDetails buildGameDetails(String value) {
-        return GameDetails.builder()
-                .gameId(Long.parseLong(value))
-                .webpage(value)
-                .description(value)
-                .ratingPlayers(new Rating(value))
-                .build();
-    }
 }

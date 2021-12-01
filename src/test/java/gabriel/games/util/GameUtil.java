@@ -1,11 +1,10 @@
 package gabriel.games.util;
 
+import gabriel.games.model.Game;
+import gabriel.games.model.Platform;
 import gabriel.games.model.dto.GameDto;
 
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.GregorianCalendar;
+import java.util.*;
 
 public class GameUtil {
     public static GameDto makeValidGameDto() {
@@ -36,5 +35,21 @@ public class GameUtil {
                 .producer("Test different Producer")
                 .publisher("Test different Publisher")
                 .build();
+    }
+
+    public static Game makGame(long id) {
+        String value = Long.toString(id);
+        return new Game(id, value, value);
+    }
+
+    public static Platform makePlatform(long id) {
+        String value = Long.toString(id);
+        return new Platform(id, value, Collections.emptySet());
+    }
+
+    public static Set<Platform> makeValidPlatforms() {
+        Set<Platform> platforms = new HashSet<>();
+        platforms.add(makePlatform(1));
+        return platforms;
     }
 }

@@ -6,12 +6,13 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 @Getter
 @Setter
 @ToString(onlyExplicitlyIncluded = true)
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name = "game")
 public class Game {
@@ -36,7 +37,22 @@ public class Game {
     @PrimaryKeyJoinColumn
     private GameDetails details;
 
+    @NotNull
+    @Size(min = 1)
+    @ManyToMany
+    @JoinTable(
+            name = "game_platform",
+            joinColumns = @JoinColumn(name = "game_id"),
+            inverseJoinColumns = @JoinColumn(name = "platform_id")
+    )
+    private Set<Platform> platforms;
+
+    protected Game() {
+        this.platforms = new HashSet<>();
+    }
+
     public Game(final Long id, final String name, final String uri) {
+        this();
         this.id = id;
         this.name = name;
         this.uri = uri;

@@ -37,9 +37,9 @@ INSERT INTO game_details(game_id, description, webpage, rating_players, rating_r
 
 DELETE FROM platform;
 
-INSERT INTO platform(id, platform_name) VALUES (1, 'PC');
-INSERT INTO platform(id, platform_name) VALUES (2, 'XBOX 360');
-INSERT INTO platform(id, platform_name) VALUES (3, 'Playstation 5');
+INSERT INTO platform(id, name) VALUES (1, 'PC');
+INSERT INTO platform(id, name) VALUES (2, 'XBOX 360');
+INSERT INTO platform(id, name) VALUES (3, 'Playstation 5');
 
 DELETE FROM game_platform;
 

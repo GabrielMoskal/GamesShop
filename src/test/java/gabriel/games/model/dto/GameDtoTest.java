@@ -138,7 +138,7 @@ public class GameDtoTest {
     }
 
     @Test
-    public void platformsContentShouldContainAtLeast1String() {
+    public void platformsShouldNotBeEmpty() {
         setter.setValue("platforms", Collections.emptyList());
         validator.assertErrors(1);
     }

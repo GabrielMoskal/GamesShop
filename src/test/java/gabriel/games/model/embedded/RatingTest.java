@@ -1,7 +1,6 @@
-package gabriel.games.model.embeded;
+package gabriel.games.model.embedded;
 
 import gabriel.games.model.dto.util.EntityValidator;
-import gabriel.games.model.embedded.Rating;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

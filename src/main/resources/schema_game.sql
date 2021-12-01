@@ -16,12 +16,13 @@ ALTER TABLE game_details ADD FOREIGN KEY (game_id) REFERENCES game(id);
 
 CREATE TABLE IF NOT EXISTS platform (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    platform_name VARCHAR(50)
+    name VARCHAR(50) UNIQUE NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS game_platform (
-    game_id INT NOT NULL,
-    platform_id INT NOT NULL
+    game_id INT,
+    platform_id INT,
+    PRIMARY KEY(game_id, platform_id)
 );
 
 ALTER TABLE game_platform ADD FOREIGN KEY (game_id) REFERENCES game(id);
