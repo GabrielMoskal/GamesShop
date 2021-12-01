@@ -2,7 +2,7 @@ package gabriel.games.controller.auth;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gabriel.games.controller.util.JsonValidator;
-import gabriel.games.model.dto.UserDto;
+import gabriel.games.model.auth.dto.UserDto;
 import gabriel.games.controller.auth.exception.UserAlreadyExistsException;
 import gabriel.games.repository.UserRepository;
 import gabriel.games.service.UserService;

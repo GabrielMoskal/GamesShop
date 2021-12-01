@@ -1,6 +1,6 @@
 package gabriel.games.repository;
 
-import gabriel.games.model.User;
+import gabriel.games.model.auth.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;

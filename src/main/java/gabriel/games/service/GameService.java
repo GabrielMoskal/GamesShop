@@ -1,6 +1,6 @@
 package gabriel.games.service;
 
-import gabriel.games.model.dto.GameDto;
+import gabriel.games.model.api.dto.GameDto;
 import org.springframework.stereotype.Service;
 
 @Service

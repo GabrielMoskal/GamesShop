@@ -1,7 +1,7 @@
 package gabriel.games.controller.api;
 
 import gabriel.games.controller.util.JsonValidator;
-import gabriel.games.model.dto.GameDto;
+import gabriel.games.model.api.dto.GameDto;
 import gabriel.games.service.GameService;
 import gabriel.games.service.exception.ObjectNotFoundException;
 import gabriel.games.util.ModelUtil;

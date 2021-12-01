@@ -1,6 +1,6 @@
 package gabriel.games.repository;
 
-import gabriel.games.model.Game;
+import gabriel.games.model.api.Game;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.Optional;

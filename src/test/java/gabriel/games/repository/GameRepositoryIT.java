@@ -1,6 +1,6 @@
 package gabriel.games.repository;
 
-import gabriel.games.model.Game;
+import gabriel.games.model.api.Game;
 import gabriel.games.util.ModelUtil;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

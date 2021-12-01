@@ -1,11 +1,11 @@
 package gabriel.games.util;
 
-import gabriel.games.model.Company;
-import gabriel.games.model.Game;
-import gabriel.games.model.GamePlatform;
-import gabriel.games.model.Platform;
-import gabriel.games.model.dto.GameDto;
-import gabriel.games.model.embedded.GamePlatformKey;
+import gabriel.games.model.api.Company;
+import gabriel.games.model.api.Game;
+import gabriel.games.model.api.GamePlatform;
+import gabriel.games.model.api.Platform;
+import gabriel.games.model.api.dto.GameDto;
+import gabriel.games.model.api.embedded.GamePlatformKey;
 
 import java.sql.Date;
 import java.util.*;

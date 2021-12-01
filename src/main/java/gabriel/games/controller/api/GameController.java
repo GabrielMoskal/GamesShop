@@ -1,6 +1,6 @@
 package gabriel.games.controller.api;
 
-import gabriel.games.model.dto.GameDto;
+import gabriel.games.model.api.dto.GameDto;
 import gabriel.games.service.GameService;
 import gabriel.games.service.exception.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;

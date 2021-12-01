@@ -1,6 +1,6 @@
 package gabriel.games.repository;
 
-import gabriel.games.model.User;
+import gabriel.games.model.auth.User;
 
 import java.util.Optional;
 

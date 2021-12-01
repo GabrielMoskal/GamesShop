@@ -1,9 +1,9 @@
 package gabriel.games.service;
 
-import gabriel.games.model.dto.UserDto;
+import gabriel.games.model.auth.dto.UserDto;
 import gabriel.games.controller.auth.exception.UserAlreadyExistsException;
-import gabriel.games.model.dto.mapper.UserDtoMapper;
-import gabriel.games.model.User;
+import gabriel.games.model.auth.mapper.UserDtoMapper;
+import gabriel.games.model.auth.User;
 import gabriel.games.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
