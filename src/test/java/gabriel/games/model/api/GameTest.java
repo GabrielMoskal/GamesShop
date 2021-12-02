@@ -20,7 +20,7 @@ public class GameTest {
 
     @BeforeEach
     public void setUp() {
-        this.game = new Game(1L, "valid_name", "valid_uri");
+        this.game = new Game(1L, "valid name");
         this.game.setPlatforms(ModelUtil.makeValidGamePlatforms());
         this.game.setCompanies(ModelUtil.makeValidCompanies());
         this.validator = new EntityValidator<>(this.game);
@@ -30,8 +30,8 @@ public class GameTest {
     @Test
     public void constructorTest() {
         assertEquals(1L, this.game.getId());
-        assertEquals("valid_name", this.game.getName());
-        assertEquals("valid_uri", this.game.getUri());
+        assertEquals("valid name", this.game.getName());
+        assertEquals("valid-name", this.game.getUri());
     }
 
     @Test
@@ -42,6 +42,7 @@ public class GameTest {
     @Test
     public void nameShouldNotBeNull() {
         game.setName(null);
+        String uri = game.getUri();
         validator.assertErrors(1);
     }
 

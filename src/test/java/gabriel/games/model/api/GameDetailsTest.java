@@ -3,6 +3,7 @@ package gabriel.games.model.api;
 import gabriel.games.model.util.EntityValidator;
 import gabriel.games.model.util.GenericWord;
 import gabriel.games.model.api.embedded.Rating;
+import gabriel.games.util.ModelUtil;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
 import org.junit.jupiter.api.BeforeEach;
@@ -57,12 +58,9 @@ public class GameDetailsTest {
 
     @Test
     public void equalsContract() {
-        Game prefab1 = new Game(1L, "name1", "uri1");
-        Game prefab2 = new Game(2L, "name2", "uri2");
-
         EqualsVerifier.forClass(GameDetails.class)
                 .suppress(Warning.ALL_FIELDS_SHOULD_BE_USED)
-                .withPrefabValues(Game.class, prefab1, prefab2)
+                .withPrefabValues(Game.class, ModelUtil.makeGame(1L), ModelUtil.makeGame(2L))
                 .verify();
     }
 }

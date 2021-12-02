@@ -15,7 +15,7 @@ public class ModelUtil {
 
     public static GameDto makeGameDto(String filler) {
         String uri = filler.toLowerCase().replace(" ", "-");
-        Double rating = ThreadLocalRandom.current().nextDouble(0.0, 10.0);
+        double rating = ThreadLocalRandom.current().nextInt(0, 11);
         return GameDto.builder()
                 .uri(uri)
                 .name(filler)
@@ -32,7 +32,7 @@ public class ModelUtil {
 
     public static Game makeGame(long id) {
         String value = Long.toString(id);
-        return new Game(id, value, value);
+        return new Game(id, value);
     }
 
     public static Platform makePlatform(long id) {

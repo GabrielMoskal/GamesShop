@@ -20,6 +20,17 @@ public class EntityValidator<T> {
     public void assertErrors(int numOfErrors) {
         Set<ConstraintViolation<T>> violations = validator.validate(validated);
 
-        assertEquals(numOfErrors, violations.size());
+        assertEquals(numOfErrors, violations.size(), errorMessage(violations));
+    }
+
+    private String errorMessage(Set<ConstraintViolation<T>> violations) {
+        StringBuffer msg = new StringBuffer();
+        violations.forEach((e) -> {
+            msg.append("\n");
+            msg.append(e.getPropertyPath());
+            msg.append(": ");
+            msg.append(e.getMessage());
+        });
+        return msg.toString();
     }
 }

@@ -30,7 +30,7 @@ public class Game {
 
     @NotNull
     @Size(min = 1, max = 128)
-    @Pattern(regexp = "([a-z_0-9]*)")
+    @Pattern(regexp = "([a-z-_0-9]*)")
     @ToString.Include
     private String uri;
 
@@ -53,12 +53,16 @@ public class Game {
     )
     private Set<Company> companies;
 
-    public Game(final Long id, final String name, final String uri) {
+    public Game(final Long id, final String name) {
         this.id = id;
         this.name = name;
-        this.uri = uri;
+        makeUri(name);
         this.platforms = new HashSet<>();
         this.companies = new HashSet<>();
+    }
+
+    private void makeUri(final String name) {
+        this.uri = name.toLowerCase().replace(" ", "-");
     }
 
     @Override

@@ -26,7 +26,7 @@ public class GameRepositoryIT {
     }
 
     private Game makeExpected() {
-        return new Game(4L, "Test Name", "test-name");
+        return new Game(4L, "Test Name");
     }
 
     private Game makeActual(String uri) {
