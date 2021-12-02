@@ -2,7 +2,6 @@ package gabriel.games.model.auth.mapper;
 
 import gabriel.games.model.auth.dto.UserDto;
 import gabriel.games.model.auth.User;
-import gabriel.games.model.auth.mapper.UserDtoMapper;
 import gabriel.games.util.UserUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,7 +21,7 @@ public class UserMapperTest {
     public void setUp() {
         this.passwordEncoder = new BCryptPasswordEncoder();
         this.userMapper = new UserDtoMapper(this.passwordEncoder);
-        this.userDto = new UserUtil().userDto();
+        this.userDto = new UserUtil().makeUserDto("username", "password");
     }
 
     @Test

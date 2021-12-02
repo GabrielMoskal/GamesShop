@@ -3,24 +3,21 @@ package gabriel.games.service;
 import gabriel.games.model.auth.dto.UserDto;
 import gabriel.games.controller.auth.exception.UserAlreadyExistsException;
 import gabriel.games.model.auth.User;
+import gabriel.games.model.auth.mapper.UserDtoMapper;
 import gabriel.games.repository.UserRepository;
 import gabriel.games.service.exception.InvalidObjectValuesException;
 import gabriel.games.util.UserUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.mockito.Mockito;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -29,27 +26,18 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-@ActiveProfiles("test")
-@ExtendWith(SpringExtension.class)
-@SpringBootTest
-public class UserServiceIT {
+public class UserServiceTest {
 
-    @Autowired
-    private UserService userService;
-
-    @Autowired
-    private PasswordEncoder encoder;
-
-    @MockBean
     private UserRepository userRepository;
-
-    @Autowired
+    private UserService userService;
     private UserDto userDto;
-
     private User user;
 
     @BeforeEach
     public void setUp() {
+        this.userRepository = Mockito.mock(UserRepository.class);
+        this.userService = new UserService(this.userRepository, new UserDtoMapper(new BCryptPasswordEncoder()));
+        this.userDto = UserUtil.makeUserDto("username", "password");
         this.user = UserUtil.makeUser(userDto.getUsername(), userDto.getPassword());
     }
 
@@ -58,7 +46,6 @@ public class UserServiceIT {
         mockFindByUsername(Optional.of(user));
 
         UserDetails result = userService.loadUserByUsername(user.getUsername());
-
         String capturedUsername = verifyFindByUsernameInteractions();
 
         assertEquals(user.getUsername(), capturedUsername);
@@ -90,9 +77,7 @@ public class UserServiceIT {
     @Test
     public void register_ValidUserDtoGiven_ShouldSaveValidUserToDatabase() throws UserAlreadyExistsException {
         mockSave();
-
         userService.register(userDto);
-
         User result = verifySaveInteractions();
         assertUserIsValid(userDto, result);
     }
@@ -121,6 +106,7 @@ public class UserServiceIT {
 
     private void assertUserIsValid(UserDto expected, User result) {
         Collection<GrantedAuthority> expectedAuthorities =  Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"));
+        PasswordEncoder encoder = new BCryptPasswordEncoder();
 
         assertEquals(expected.getUsername(), result.getUsername());
         assertTrue(encoder.matches(expected.getPassword(), result.getPassword()));
