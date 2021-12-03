@@ -8,8 +8,6 @@ import javax.validation.Valid;
 import javax.validation.constraints.*;
 import java.util.Objects;
 
-@Getter
-@Setter
 @Builder
 @ToString(onlyExplicitlyIncluded = true)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)

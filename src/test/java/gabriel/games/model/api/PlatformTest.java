@@ -2,7 +2,8 @@ package gabriel.games.model.api;
 
 import gabriel.games.model.util.EntityValidator;
 import gabriel.games.model.util.GenericWord;
-import gabriel.games.util.ModelUtil;
+import gabriel.games.model.util.ReflectionSetter;
+import gabriel.games.util.Models;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
 import org.junit.jupiter.api.BeforeEach;
@@ -10,13 +11,14 @@ import org.junit.jupiter.api.Test;
 
 public class PlatformTest {
 
-    private Platform platform;
     private EntityValidator<Platform> validator;
+    private ReflectionSetter<Platform> setter;
 
     @BeforeEach
     public void setUp() {
-        this.platform = ModelUtil.makePlatform(1L);
-        this.validator = new EntityValidator<>(this.platform);
+        Platform platform = Models.makePlatform(1L);
+        this.validator = new EntityValidator<>(platform);
+        this.setter = new ReflectionSetter<>(platform);
     }
 
     @Test
@@ -26,26 +28,26 @@ public class PlatformTest {
 
     @Test
     public void nameShouldNotBeNull() {
-        platform.setName(null);
+        setter.set("name", null);
         validator.assertErrors(1);
     }
 
     @Test
     public void nameShouldBeAtLeast1CharacterLong() {
-        platform.setName("");
+        setter.set("name", "");
         validator.assertErrors(1);
     }
 
     @Test
     public void nameShouldBeMax50CharactersLong() {
         GenericWord genericWord = new GenericWord();
-        platform.setName(genericWord.make(51));
+        setter.set("name", genericWord.make(51));
         validator.assertErrors(1);
     }
 
     @Test
     public void gamesShouldNotBeNull() {
-        platform.setGames(null);
+        setter.set("games", null);
         validator.assertErrors(1);
     }
 
@@ -53,7 +55,7 @@ public class PlatformTest {
     public void equalsContract() {
         EqualsVerifier.forClass(Platform.class)
                 .suppress(Warning.ALL_FIELDS_SHOULD_BE_USED)
-                .withPrefabValues(GamePlatform.class, ModelUtil.makeGamePlatform(1L), ModelUtil.makeGamePlatform(2L))
+                .withPrefabValues(GamePlatform.class, Models.makeGamePlatform(1L), Models.makeGamePlatform(2L))
                 .verify();
     }
 }

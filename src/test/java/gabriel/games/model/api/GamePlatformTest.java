@@ -1,26 +1,23 @@
 package gabriel.games.model.api;
 
 import gabriel.games.model.util.EntityValidator;
-import gabriel.games.model.api.embedded.GamePlatformKey;
-import gabriel.games.util.ModelUtil;
+import gabriel.games.model.util.ReflectionSetter;
+import gabriel.games.util.Models;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.sql.Date;
-
 public class GamePlatformTest {
 
-    private GamePlatform gamePlatform;
     private EntityValidator<GamePlatform> validator;
+    private ReflectionSetter<GamePlatform> setter;
 
     @BeforeEach
     public void setUp() {
-        this.gamePlatform = new GamePlatform();
-        this.gamePlatform.setId(new GamePlatformKey(1L, 1L));
-        this.gamePlatform.setReleaseDate(new Date(System.currentTimeMillis()));
-        this.validator = new EntityValidator<>(this.gamePlatform);
+        GamePlatform gamePlatform = Models.makeGamePlatform(1L);
+        this.validator = new EntityValidator<>(gamePlatform);
+        this.setter = new ReflectionSetter<>(gamePlatform);
     }
 
     @Test
@@ -30,7 +27,7 @@ public class GamePlatformTest {
 
     @Test
     public void releaseDateIsNotNull() {
-        gamePlatform.setReleaseDate(null);
+        setter.set("releaseDate", null);
         validator.assertErrors(1);
     }
 
@@ -38,8 +35,8 @@ public class GamePlatformTest {
     public void equalsContract() {
         EqualsVerifier.forClass(GamePlatform.class)
                 .suppress(Warning.SURROGATE_KEY)
-                .withPrefabValues(Game.class, ModelUtil.makeGame(1), ModelUtil.makeGame(2))
-                .withPrefabValues(Platform.class, ModelUtil.makePlatform(1), ModelUtil.makePlatform(2))
+                .withPrefabValues(Game.class, Models.makeGame(1), Models.makeGame(2))
+                .withPrefabValues(Platform.class, Models.makePlatform(1), Models.makePlatform(2))
                 .verify();
     }
 }

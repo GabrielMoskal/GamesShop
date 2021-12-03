@@ -6,7 +6,7 @@ import gabriel.games.model.auth.dto.UserDto;
 import gabriel.games.controller.auth.exception.UserAlreadyExistsException;
 import gabriel.games.repository.UserRepository;
 import gabriel.games.service.UserService;
-import gabriel.games.util.UserUtil;
+import gabriel.games.util.Users;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -48,12 +48,12 @@ public class RegistrationControllerIT {
 
     @BeforeEach
     public void setUp() {
-        userDto = UserUtil.makeUserDto("valid_name", "valid_pass");
+        userDto = Users.makeUserDto("valid_name", "valid_pass");
     }
 
     @Test
     public void register_ShouldReturnEmptyUserJsonWithLink() throws Exception {
-        userDto = UserUtil.makeUserDto("", "");
+        userDto = Users.makeUserDto("", "");
         ResultActions resultActions = performGet().andExpect(status().isOk());
         verifyJson(resultActions);
     }
@@ -84,7 +84,7 @@ public class RegistrationControllerIT {
                 .andExpect(status().is2xxSuccessful());
 
         verifyMethodCalls();
-        userDto = UserUtil.makeUserDto(userDto.getUsername(), "");
+        userDto = Users.makeUserDto(userDto.getUsername(), "");
         verifyJson(resultActions);
     }
 
@@ -125,7 +125,7 @@ public class RegistrationControllerIT {
 
     @Test
     public void processRegistration_InvalidUserDtoGiven_ShouldReturnTheSameUserDtoAsJsonWithErrors() throws Exception {
-        userDto = UserUtil.makeUserDto("a", userDto.getPassword());
+        userDto = Users.makeUserDto("a", userDto.getPassword());
         addExpectedErrorsToUserDto("Nazwa użytkownika musi zawierać między 5 a 20 znaków.");
 
         ResultActions resultActions = performPostRegister().andExpect(status().is4xxClientError());

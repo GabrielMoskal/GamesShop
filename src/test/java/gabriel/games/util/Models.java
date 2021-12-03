@@ -6,12 +6,14 @@ import gabriel.games.model.api.GamePlatform;
 import gabriel.games.model.api.Platform;
 import gabriel.games.model.api.dto.GameDto;
 import gabriel.games.model.api.embedded.GamePlatformKey;
+import gabriel.games.model.util.ReflectionSetter;
 
+import java.lang.reflect.Constructor;
 import java.sql.Date;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class ModelUtil {
+public class Models {
 
     public static GameDto makeGameDto(String filler) {
         String uri = filler.toLowerCase().replace(" ", "-");
@@ -52,10 +54,26 @@ public class ModelUtil {
     }
 
     public static GamePlatform makeGamePlatform(long id) {
-        GamePlatform gamePlatform = new GamePlatform();
-        gamePlatform.setId(new GamePlatformKey(id, id));
-        gamePlatform.setReleaseDate(new Date(System.currentTimeMillis()));
+        GamePlatform gamePlatform = null;
+        try {
+            gamePlatform = makeGamePlatformInstance();
+            fillFields(gamePlatform, id);
+        } catch (ReflectiveOperationException e) {
+            e.printStackTrace();
+        }
         return gamePlatform;
+    }
+
+    private static GamePlatform makeGamePlatformInstance() throws ReflectiveOperationException {
+        Constructor<GamePlatform> constructor = GamePlatform.class.getDeclaredConstructor();
+        constructor.setAccessible(true);
+        return constructor.newInstance();
+    }
+
+    private static void fillFields(GamePlatform gamePlatform, long id) {
+        ReflectionSetter<GamePlatform> setter = new ReflectionSetter<>(gamePlatform);
+        setter.set("id", new GamePlatformKey(id, id));
+        setter.set("releaseDate", new Date(System.currentTimeMillis()));
     }
 
     public static Set<GamePlatform> makeValidGamePlatforms() {

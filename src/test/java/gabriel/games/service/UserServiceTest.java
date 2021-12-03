@@ -6,7 +6,7 @@ import gabriel.games.model.auth.User;
 import gabriel.games.model.auth.mapper.UserDtoMapper;
 import gabriel.games.repository.UserRepository;
 import gabriel.games.service.exception.InvalidObjectValuesException;
-import gabriel.games.util.UserUtil;
+import gabriel.games.util.Users;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -37,8 +37,8 @@ public class UserServiceTest {
     public void setUp() {
         this.userRepository = Mockito.mock(UserRepository.class);
         this.userService = new UserService(this.userRepository, new UserDtoMapper(new BCryptPasswordEncoder()));
-        this.userDto = UserUtil.makeUserDto("username", "password");
-        this.user = UserUtil.makeUser(userDto.getUsername(), userDto.getPassword());
+        this.userDto = Users.makeUserDto("username", "password");
+        this.user = Users.makeUser(userDto.getUsername(), userDto.getPassword());
     }
 
     @Test

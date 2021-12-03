@@ -1,7 +1,7 @@
 package gabriel.games.repository;
 
 import gabriel.games.model.api.Game;
-import gabriel.games.util.ModelUtil;
+import gabriel.games.util.Models;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +20,7 @@ public class GameRepositoryIT {
     @Test
     public void findByUri_ExistingGameUriGiven_ReturnsExistingGame() {
         Game expected = makeExpected();
-        Game actual = makeActual(expected.getUri());
+        Game actual = makeActual();
 
         assertGameValid(expected, actual);
     }
@@ -29,8 +29,8 @@ public class GameRepositoryIT {
         return new Game(4L, "Test Name");
     }
 
-    private Game makeActual(String uri) {
-        return repository.findByUri(uri).orElse(ModelUtil.makeGame(1));
+    private Game makeActual() {
+        return repository.findByUri("test-name").orElse(Models.makeGame(1));
     }
 
     private void assertGameValid(Game expectedGame, Game actualGame) {

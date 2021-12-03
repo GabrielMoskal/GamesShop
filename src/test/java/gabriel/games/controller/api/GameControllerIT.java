@@ -4,7 +4,7 @@ import gabriel.games.controller.util.JsonValidator;
 import gabriel.games.model.api.dto.GameDto;
 import gabriel.games.service.GameService;
 import gabriel.games.service.exception.ObjectNotFoundException;
-import gabriel.games.util.ModelUtil;
+import gabriel.games.util.Models;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -38,7 +38,7 @@ public class GameControllerIT {
 
     @BeforeEach
     public void setUp() {
-        this.gameDto = ModelUtil.makeGameDto("Multiple words value");
+        this.gameDto = Models.makeGameDto("Multiple words value");
     }
 
     @Test
@@ -82,7 +82,7 @@ public class GameControllerIT {
 
     @Test
     public void description_ExistingDifferentResourcePathGiven_ShouldReturnValidJson() throws Exception {
-        gameDto = ModelUtil.makeGameDto("different values");
+        gameDto = Models.makeGameDto("different values");
         shouldReturnValidJson();
     }
 
@@ -100,7 +100,7 @@ public class GameControllerIT {
 
     @Test
     public void description_ExistingDifferentResourcePathGiven_ShouldReturnValidLink() throws Exception {
-        gameDto = ModelUtil.makeGameDto("different values");
+        gameDto = Models.makeGameDto("different values");
         shouldReturnValidLink();
     }
 

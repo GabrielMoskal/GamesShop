@@ -6,7 +6,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.util.Collections;
 
-public class UserUtil {
+public class Users {
 
     public static User makeUser(String username, String password) {
         return new User(

@@ -1,6 +1,5 @@
 package gabriel.games.model.auth;
 
-import gabriel.games.model.auth.User;
 import gabriel.games.service.exception.InvalidObjectValuesException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -12,7 +11,7 @@ import javax.validation.Validator;
 
 import java.util.*;
 
-import static gabriel.games.util.UserUtil.makeUser;
+import static gabriel.games.util.Users.makeUser;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class UserTest {

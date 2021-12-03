@@ -8,10 +8,8 @@ import javax.validation.constraints.NotNull;
 import java.sql.Date;
 import java.util.Objects;
 
-@Getter
-@Setter
 @ToString
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 public class GamePlatform {
 

@@ -3,7 +3,7 @@ package gabriel.games.model.api.dto;
 import gabriel.games.model.util.EntityValidator;
 import gabriel.games.model.util.GenericWord;
 import gabriel.games.model.util.ReflectionSetter;
-import gabriel.games.util.ModelUtil;
+import gabriel.games.util.Models;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -17,7 +17,7 @@ public class GameDtoTest {
 
     @BeforeEach
     public void setUp() {
-        GameDto gameDto = ModelUtil.makeGameDto("Multiple words value");
+        GameDto gameDto = Models.makeGameDto("Multiple words value");
         this.setter = new ReflectionSetter<>(gameDto);
         this.validator = new EntityValidator<>(gameDto);
         this.genericWord = new GenericWord();
@@ -30,158 +30,158 @@ public class GameDtoTest {
 
     @Test
     public void uriShouldNotBeNull() {
-        setter.setValue("uri", null);
+        setter.set("uri", null);
         validator.assertErrors(1);
     }
 
     @Test
     public void uriShouldBeAtLeast1CharacterLong() {
-        setter.setValue("uri", "");
+        setter.set("uri", "");
         validator.assertErrors(1);
     }
 
     @Test
     public void uriShouldBeMax128CharacterLong() {
-        setter.setValue("uri", genericWord.make(129));
+        setter.set("uri", genericWord.make(129));
         validator.assertErrors(1);
     }
 
     @Test
     public void nameShouldNotBeNull() {
-        setter.setValue("name", null);
+        setter.set("name", null);
         validator.assertErrors(1);
     }
 
     @Test
     public void nameShouldBeAtLeast1CharacterLong() {
-        setter.setValue("name", "");
+        setter.set("name", "");
         validator.assertErrors(1);
     }
 
     @Test
     public void nameShouldBeMax128CharacterLong() {
-        setter.setValue("name", genericWord.make(129));
+        setter.set("name", genericWord.make(129));
         validator.assertErrors(1);
     }
 
     @Test
     public void descriptionShouldNotBeNull() {
-        setter.setValue("description", null);
+        setter.set("description", null);
         validator.assertErrors(1);
     }
 
     @Test
     public void descriptionShouldBeMax1024CharacterLong() {
-        setter.setValue("description", genericWord.make(1025));
+        setter.set("description", genericWord.make(1025));
         validator.assertErrors(1);
     }
 
     @Test
     public void webpageShouldNotBeNull() {
-        setter.setValue("webpage", null);
+        setter.set("webpage", null);
         validator.assertErrors(1);
     }
 
     @Test
     public void webpageShouldBeMax256CharacterLong() {
-        setter.setValue("webpage", genericWord.make(257));
+        setter.set("webpage", genericWord.make(257));
         validator.assertErrors(1);
     }
 
     @Test
     public void playerRatingShouldNotBeNull() {
-        setter.setValue("playerRating", null);
+        setter.set("playerRating", null);
         validator.assertErrors(1);
     }
 
     @Test
     public void playerRatingShouldNotBeNegative() {
-        setter.setValue("playerRating", -0.5);
+        setter.set("playerRating", -0.5);
         validator.assertErrors(1);
     }
 
     @Test
     public void playerRatingShouldBeMax10() {
-        setter.setValue("playerRating", 10.1);
+        setter.set("playerRating", 10.1);
         validator.assertErrors(1);
     }
 
     @Test
     public void reviewerRatingShouldNotBeNull() {
-        setter.setValue("reviewerRating", null);
+        setter.set("reviewerRating", null);
         validator.assertErrors(1);
     }
 
     @Test
     public void reviewerRatingShouldNotBeNegative() {
-        setter.setValue("reviewerRating", -0.1);
+        setter.set("reviewerRating", -0.1);
         validator.assertErrors(1);
     }
 
     @Test
     public void reviewerRatingShouldBeMax10() {
-        setter.setValue("reviewerRating", 11.0);
+        setter.set("reviewerRating", 11.0);
         validator.assertErrors(1);
     }
 
     @Test
     public void platformsShouldNotBeNull() {
-        setter.setValue("platforms", null);
+        setter.set("platforms", null);
         validator.assertErrors(1);
     }
 
     @Test
     public void platformsContentShouldNotBeNull() {
         List<String> platforms = new ArrayList<>(Arrays.asList(null, null));
-        setter.setValue("platforms", platforms);
+        setter.set("platforms", platforms);
         validator.assertErrors(2);
     }
 
     @Test
     public void platformsShouldNotBeEmpty() {
-        setter.setValue("platforms", Collections.emptyList());
+        setter.set("platforms", Collections.emptyList());
         validator.assertErrors(1);
     }
 
     @Test
     public void platformsContentShouldBeAtLeast1CharacterLong() {
-        setter.setValue("platforms", Arrays.asList("", "valid", ""));
+        setter.set("platforms", Arrays.asList("", "valid", ""));
         validator.assertErrors(2);
     }
 
     @Test
     public void platformsContentShouldBeMax50CharacterLong() {
-        setter.setValue("platforms", Collections.singletonList(genericWord.make(51)));
+        setter.set("platforms", Collections.singletonList(genericWord.make(51)));
         validator.assertErrors(1);
     }
 
     @Test
     public void releaseDateShouldNotBeNull() {
-        setter.setValue("releaseDate", null);
+        setter.set("releaseDate", null);
         validator.assertErrors(1);
     }
 
     @Test
     public void producerShouldNotBeNull() {
-        setter.setValue("producer", null);
+        setter.set("producer", null);
         validator.assertErrors(1);
     }
 
     @Test
     public void producerShouldBeMax128CharacterLong() {
-        setter.setValue("producer", genericWord.make(129));
+        setter.set("producer", genericWord.make(129));
         validator.assertErrors(1);
     }
 
     @Test
     public void publisherShouldNotBeNull() {
-        setter.setValue("publisher", null);
+        setter.set("publisher", null);
         validator.assertErrors(1);
     }
 
     @Test
     public void publisherShouldBeMax128CharacterLong() {
-        setter.setValue("publisher", genericWord.make(129));
+        setter.set("publisher", genericWord.make(129));
         validator.assertErrors(1);
     }
 }

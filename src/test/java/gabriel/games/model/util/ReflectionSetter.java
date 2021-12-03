@@ -1,5 +1,7 @@
 package gabriel.games.model.util;
 
+import lombok.SneakyThrows;
+
 import java.lang.reflect.Field;
 
 public class ReflectionSetter<T> {
@@ -10,17 +12,24 @@ public class ReflectionSetter<T> {
         this.object = object;
     }
 
-    public void setValue(final String fieldName, final Object value) {
+    public void set(final String fieldName, final Object value) {
         try {
-            set(fieldName, value);
+            setField(fieldName, value);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private void set(final String fieldName, final Object value) throws Exception {
+    private void setField(final String fieldName, final Object value) throws Exception {
         Field field = this.object.getClass().getDeclaredField(fieldName);
         field.setAccessible(true);
         field.set(this.object, value);
+    }
+
+    @SneakyThrows
+    public Object getFieldValue(String name) {
+        Field field = object.getClass().getDeclaredField(name);
+        field.setAccessible(true);
+        return field.get(object);
     }
 }

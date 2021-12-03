@@ -1,7 +1,7 @@
 package gabriel.games.repository;
 
 import gabriel.games.model.auth.User;
-import gabriel.games.util.UserUtil;
+import gabriel.games.util.Users;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -33,18 +33,18 @@ public class JdbcUserRepositoryIT {
 
     @BeforeEach
     public void setUp() {
-        this.defaultUser = UserUtil.makeUser("defaultUsername", "defaultPassword");
+        this.defaultUser = Users.makeUser("defaultUsername", "defaultPassword");
     }
 
     @Test
     public void findByUsername_ExistingUsernameGiven_ShouldReturnExistingUser() {
-        User expected = UserUtil.makeUser("user1", "password1");
+        User expected = Users.makeUser("user1", "password1");
         assertUsersAreTheSame(expected);
     }
 
     private void assertUsersAreTheSame(User user) {
         UserDetails result = userRepository.findByUsername(user.getUsername())
-                .orElse(UserUtil.makeUser("noname", "nopass"));
+                .orElse(Users.makeUser("noname", "nopass"));
         User expected = new User(
                 user.getUsername().toLowerCase(),
                 user.getPassword(),
@@ -57,20 +57,20 @@ public class JdbcUserRepositoryIT {
 
     @Test
     public void findByUsername_ExistingDifferentUsernameGiven_ShouldReturnExistingUser() {
-        User expected = UserUtil.makeUser("user2", "password2");
+        User expected = Users.makeUser("user2", "password2");
         assertUsersAreTheSame(expected);
     }
 
     @Test
     public void findByUsername_NonExistingUsernameGiven_ShouldReturnOptionalEmpty() {
-        User user = UserUtil.makeUser("doesntExist", "password");
+        User user = Users.makeUser("doesntExist", "password");
         Optional<User> result = userRepository.findByUsername(user.getUsername());
         assertFalse("Optional<UserDetails> should be empty", result.isPresent());
     }
 
     @Test
     public void findByUsername_ExistingUsernameDifferentCaseGiven_ShouldReturnExistingUser() {
-        User expected = UserUtil.makeUser("USER1", "password1");
+        User expected = Users.makeUser("USER1", "password1");
         assertUsersAreTheSame(expected);
     }
 
@@ -99,7 +99,7 @@ public class JdbcUserRepositoryIT {
 
     @Test
     public void save_NotExistingUserGiven_ShouldExistInDatabase() {
-        User expected = UserUtil.makeUser("qwerty1", "newPassword");
+        User expected = Users.makeUser("qwerty1", "newPassword");
 
         assertSavesUsersCorrectly(expected);
     }
@@ -126,7 +126,7 @@ public class JdbcUserRepositoryIT {
 
     @Test
     public void save_ExistingUserGiven_ShouldThrowException() {
-        User user = UserUtil.makeUser("user1", "password1");
+        User user = Users.makeUser("user1", "password1");
         assertThrows(DuplicateKeyException.class, () -> userRepository.save(user));
     }
 
