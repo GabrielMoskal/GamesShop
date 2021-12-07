@@ -9,6 +9,7 @@ import javax.validation.constraints.*;
 import java.util.Objects;
 
 @Builder
+@Getter
 @ToString(onlyExplicitlyIncluded = true)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)

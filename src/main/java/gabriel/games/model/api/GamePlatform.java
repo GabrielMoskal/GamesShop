@@ -8,6 +8,7 @@ import javax.validation.constraints.NotNull;
 import java.sql.Date;
 import java.util.Objects;
 
+@Getter
 @ToString
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity

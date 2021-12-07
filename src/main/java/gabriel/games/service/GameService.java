@@ -1,12 +1,19 @@
 package gabriel.games.service;
 
-import gabriel.games.model.api.dto.GameDto;
+import gabriel.games.model.api.Game;
+import gabriel.games.repository.GameRepository;
+import gabriel.games.service.exception.ObjectNotFoundException;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
+@AllArgsConstructor
 public class GameService {
-    //TODO
-    public GameDto findByUri(String uri) {
-        return null;
+
+    private GameRepository repository;
+
+    public Game findByUri(final String uri) {
+        return repository.findByUri(uri)
+                .orElseThrow(() -> new ObjectNotFoundException("Game with given uri not found."));
     }
 }

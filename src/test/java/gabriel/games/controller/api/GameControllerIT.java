@@ -2,6 +2,7 @@ package gabriel.games.controller.api;
 
 import gabriel.games.controller.util.JsonValidator;
 import gabriel.games.model.api.dto.GameDto;
+import gabriel.games.model.api.mapper.GameMapper;
 import gabriel.games.service.GameService;
 import gabriel.games.service.exception.ObjectNotFoundException;
 import gabriel.games.util.Models;
@@ -17,6 +18,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -36,6 +38,9 @@ public class GameControllerIT {
     @MockBean
     private GameService gameService;
 
+    @MockBean
+    private GameMapper gameMapper;
+
     @BeforeEach
     public void setUp() {
         this.gameDto = Models.makeGameDto("Multiple words value");
@@ -53,7 +58,7 @@ public class GameControllerIT {
     }
 
     private void mockFindByName() {
-        when(gameService.findByUri(gameDto.getUri())).thenReturn(gameDto);
+        when(gameMapper.toGameDto(any())).thenReturn(gameDto);
     }
 
     private ResultActions performGetRequest() throws Exception {

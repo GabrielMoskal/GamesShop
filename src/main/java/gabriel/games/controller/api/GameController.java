@@ -1,9 +1,11 @@
 package gabriel.games.controller.api;
 
+import gabriel.games.model.api.Game;
 import gabriel.games.model.api.dto.GameDto;
+import gabriel.games.model.api.mapper.GameMapper;
 import gabriel.games.service.GameService;
 import gabriel.games.service.exception.ObjectNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
@@ -16,14 +18,11 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 @RestController
 @RequestMapping(path = "/api/game", produces = "application/json")
 @CrossOrigin(origins = "*")
+@AllArgsConstructor
 public class GameController {
 
     private final GameService gameService;
-
-    @Autowired
-    public GameController(GameService gameService) {
-        this.gameService = gameService;
-    }
+    private final GameMapper gameMapper;
 
     @GetMapping(path = "/{uri}")
     public ResponseEntity<EntityModel<GameDto>> description(@PathVariable String uri) {
@@ -35,7 +34,13 @@ public class GameController {
     }
 
     private ResponseEntity<EntityModel<GameDto>> findGame(String uri) {
-        GameDto gameDto = gameService.findByUri(uri);
+        Game game = gameService.findByUri(uri);
+        GameDto gameDto = gameMapper.toGameDto(game);
+
+        return makeResponse(gameDto);
+    }
+
+    private ResponseEntity<EntityModel<GameDto>> makeResponse(GameDto gameDto) {
         EntityModel<GameDto> entityModel = EntityModel.of(gameDto);
         entityModel.add(makeLink(gameDto));
         return new ResponseEntity<>(entityModel, HttpStatus.OK);

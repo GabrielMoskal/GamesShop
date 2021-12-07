@@ -8,6 +8,7 @@ import javax.validation.constraints.Size;
 import java.util.Objects;
 import java.util.Set;
 
+@Getter
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -29,12 +30,8 @@ public class Platform {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof Platform)) {
-            return false;
-        }
+        if (this == o) return true;
+        if (!(o instanceof Platform)) return false;
 
         Platform platform = (Platform) o;
 
