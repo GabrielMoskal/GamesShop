@@ -21,7 +21,7 @@ public class UserMapperTest {
     public void setUp() {
         this.passwordEncoder = new BCryptPasswordEncoder();
         this.userMapper = new UserDtoMapper(this.passwordEncoder);
-        this.userDto = new Users().makeUserDto("username", "password");
+        this.userDto = Users.makeUserDto("username", "password");
     }
 
     @Test

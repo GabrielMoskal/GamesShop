@@ -5,8 +5,8 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import org.hibernate.validator.constraints.Range;
 
+import javax.validation.Valid;
 import javax.validation.constraints.*;
-import java.sql.Date;
 import java.util.List;
 
 @Builder
@@ -40,10 +40,7 @@ public class GameDto {
 
     @NotNull
     @Size(min = 1, message = "{platform.size}")
-    private final List<@NotNull @Size(min = 1, max = 50) String> platforms;
-
-    @NotNull
-    private final Date releaseDate;
+    private final List<@Valid GamePlatformDto> platforms;
 
     @NotNull
     @Size(max = 128, message = "{producer.size}")

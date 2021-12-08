@@ -19,8 +19,12 @@ public class JsonValidator {
         return MockMvcResultMatchers.jsonPath(expression, is(matcher));
     }
 
-    public <T> void expect(String expression, T matcher) throws Exception {
-        resultActions.andExpect(jsonPath(expression, matcher));
+    public <T> void expect(String expression, T matcher) {
+        try {
+            resultActions.andExpect(jsonPath(expression, matcher));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void verifyJsonLinks(String path) {

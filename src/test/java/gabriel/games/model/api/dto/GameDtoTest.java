@@ -131,34 +131,15 @@ public class GameDtoTest {
     }
 
     @Test
-    public void platformsContentShouldNotBeNull() {
-        List<String> platforms = new ArrayList<>(Arrays.asList(null, null));
-        setter.set("platforms", platforms);
-        validator.assertErrors(2);
-    }
-
-    @Test
     public void platformsShouldNotBeEmpty() {
         setter.set("platforms", Collections.emptyList());
         validator.assertErrors(1);
     }
 
     @Test
-    public void platformsContentShouldBeAtLeast1CharacterLong() {
-        setter.set("platforms", Arrays.asList("", "valid", ""));
+    public void platformsAreValidated() {
+        setter.set("platforms", Collections.singletonList(new GamePlatformDto(null, null)));
         validator.assertErrors(2);
-    }
-
-    @Test
-    public void platformsContentShouldBeMax50CharacterLong() {
-        setter.set("platforms", Collections.singletonList(genericWord.make(51)));
-        validator.assertErrors(1);
-    }
-
-    @Test
-    public void releaseDateShouldNotBeNull() {
-        setter.set("releaseDate", null);
-        validator.assertErrors(1);
     }
 
     @Test

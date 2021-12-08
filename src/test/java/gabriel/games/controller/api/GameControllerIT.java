@@ -2,6 +2,7 @@ package gabriel.games.controller.api;
 
 import gabriel.games.controller.util.JsonValidator;
 import gabriel.games.model.api.dto.GameDto;
+import gabriel.games.model.api.dto.GamePlatformDto;
 import gabriel.games.model.api.mapper.GameMapper;
 import gabriel.games.service.GameService;
 import gabriel.games.service.exception.ObjectNotFoundException;
@@ -17,6 +18,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+
+import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -70,7 +73,7 @@ public class GameControllerIT {
         uri += gameDto.getUri();
     }
 
-    private void verifyJson(ResultActions resultActions) throws Exception {
+    private void verifyJson(ResultActions resultActions) {
         jsonValidator = new JsonValidator(resultActions);
 
         jsonValidator.expect("uri", gameDto.getUri());
@@ -79,10 +82,17 @@ public class GameControllerIT {
         jsonValidator.expect("webpage", gameDto.getWebpage());
         jsonValidator.expect("playerRating", gameDto.getPlayerRating());
         jsonValidator.expect("reviewerRating", gameDto.getReviewerRating());
-        jsonValidator.expect("platforms", gameDto.getPlatforms());
-        jsonValidator.expect("releaseDate", gameDto.getReleaseDate().toString());
+        validatePlatforms(gameDto.getPlatforms());
         jsonValidator.expect("producer", gameDto.getProducer());
         jsonValidator.expect("publisher", gameDto.getPublisher());
+    }
+
+    private void validatePlatforms(List<GamePlatformDto> platforms) {
+        platforms.forEach((t) -> {
+            String platformPath = "platforms[" + platforms.indexOf(t) + "]";
+            jsonValidator.expect(platformPath + ".platformName", t.getPlatformName());
+            jsonValidator.expect(platformPath + ".releaseDate", t.getReleaseDate().toString());
+        });
     }
 
     @Test

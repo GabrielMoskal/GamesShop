@@ -5,6 +5,7 @@ import gabriel.games.model.api.Game;
 import gabriel.games.model.api.GamePlatform;
 import gabriel.games.model.api.Platform;
 import gabriel.games.model.api.dto.GameDto;
+import gabriel.games.model.api.dto.GamePlatformDto;
 import gabriel.games.model.api.embedded.GamePlatformKey;
 import gabriel.games.model.util.ReflectionSetter;
 
@@ -18,6 +19,10 @@ public class Models {
     public static GameDto makeGameDto(String filler) {
         String uri = filler.toLowerCase().replace(" ", "-");
         double rating = ThreadLocalRandom.current().nextInt(0, 11);
+        List<GamePlatformDto> platforms = Arrays.asList(
+                new GamePlatformDto(filler + "1", new Date(System.currentTimeMillis())),
+                new GamePlatformDto(filler + "2", new Date(System.currentTimeMillis()))
+        );
         return GameDto.builder()
                 .uri(uri)
                 .name(filler)
@@ -25,8 +30,7 @@ public class Models {
                 .webpage("https://" + uri + ".com")
                 .playerRating(rating)
                 .reviewerRating(rating)
-                .platforms(Arrays.asList(filler + "1", filler + "2"))
-                .releaseDate(new java.sql.Date(System.currentTimeMillis()))
+                .platforms(platforms)
                 .producer(filler)
                 .publisher(filler)
                 .build();
