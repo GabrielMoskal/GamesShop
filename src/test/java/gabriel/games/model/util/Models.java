@@ -1,13 +1,13 @@
-package gabriel.games.util;
+package gabriel.games.model.util;
 
 import gabriel.games.model.api.Company;
 import gabriel.games.model.api.Game;
 import gabriel.games.model.api.GamePlatform;
 import gabriel.games.model.api.Platform;
+import gabriel.games.model.api.dto.CompanyDto;
 import gabriel.games.model.api.dto.GameDto;
 import gabriel.games.model.api.dto.GamePlatformDto;
 import gabriel.games.model.api.embedded.GamePlatformKey;
-import gabriel.games.model.util.ReflectionSetter;
 
 import java.lang.reflect.Constructor;
 import java.sql.Date;
@@ -19,10 +19,7 @@ public class Models {
     public static GameDto makeGameDto(String filler) {
         String uri = filler.toLowerCase().replace(" ", "-");
         double rating = ThreadLocalRandom.current().nextInt(0, 11);
-        List<GamePlatformDto> platforms = Arrays.asList(
-                new GamePlatformDto(filler + "1", new Date(System.currentTimeMillis())),
-                new GamePlatformDto(filler + "2", new Date(System.currentTimeMillis()))
-        );
+
         return GameDto.builder()
                 .uri(uri)
                 .name(filler)
@@ -30,10 +27,24 @@ public class Models {
                 .webpage("https://" + uri + ".com")
                 .playerRating(rating)
                 .reviewerRating(rating)
-                .platforms(platforms)
-                .producer(filler)
-                .publisher(filler)
+                .platforms(makeGamePlatformDtoList(filler))
+                .companies(makeCompanyDtoList(filler))
                 .build();
+    }
+
+    private static List<GamePlatformDto> makeGamePlatformDtoList(String filler) {
+        Date date = new Date(System.currentTimeMillis());
+        return Arrays.asList(
+                new GamePlatformDto(filler + "1", date),
+                new GamePlatformDto(filler + "2", date)
+        );
+    }
+
+    private static List<CompanyDto> makeCompanyDtoList(String filler) {
+        return Arrays.asList(
+                new CompanyDto(filler + "1", Arrays.asList(filler + "1", filler + "2")),
+                new CompanyDto(filler + "2", Collections.singletonList(filler + "2"))
+        );
     }
 
     public static Game makeGame(long id) {

@@ -2,7 +2,7 @@ package gabriel.games.model.api;
 
 import gabriel.games.model.util.EntityValidator;
 import gabriel.games.model.util.ReflectionSetter;
-import gabriel.games.util.Models;
+import gabriel.games.model.util.Models;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
 import org.junit.jupiter.api.BeforeEach;

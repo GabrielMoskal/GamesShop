@@ -2,7 +2,7 @@ package gabriel.games.model.auth.mapper;
 
 import gabriel.games.model.auth.dto.UserDto;
 import gabriel.games.model.auth.User;
-import gabriel.games.util.Users;
+import gabriel.games.model.util.Users;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;

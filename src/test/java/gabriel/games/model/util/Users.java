@@ -1,4 +1,4 @@
-package gabriel.games.util;
+package gabriel.games.model.util;
 
 import gabriel.games.model.auth.dto.UserDto;
 import gabriel.games.model.auth.User;

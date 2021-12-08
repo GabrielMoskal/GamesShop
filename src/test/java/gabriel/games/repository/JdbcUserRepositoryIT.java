@@ -1,7 +1,7 @@
 package gabriel.games.repository;
 
 import gabriel.games.model.auth.User;
-import gabriel.games.util.Users;
+import gabriel.games.model.util.Users;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

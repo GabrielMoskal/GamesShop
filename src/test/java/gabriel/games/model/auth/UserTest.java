@@ -11,7 +11,7 @@ import javax.validation.Validator;
 
 import java.util.*;
 
-import static gabriel.games.util.Users.makeUser;
+import static gabriel.games.model.util.Users.makeUser;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class UserTest {

@@ -6,7 +6,7 @@ import gabriel.games.model.auth.dto.UserDto;
 import gabriel.games.controller.auth.exception.UserAlreadyExistsException;
 import gabriel.games.repository.UserRepository;
 import gabriel.games.service.UserService;
-import gabriel.games.util.Users;
+import gabriel.games.model.util.Users;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

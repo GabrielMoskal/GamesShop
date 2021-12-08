@@ -3,7 +3,7 @@ package gabriel.games.model.auth.dto;
 import gabriel.games.model.util.EntityValidator;
 import gabriel.games.model.util.GenericWord;
 import gabriel.games.model.util.ReflectionSetter;
-import gabriel.games.util.Users;
+import gabriel.games.model.util.Users;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

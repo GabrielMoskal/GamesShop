@@ -6,7 +6,7 @@ import gabriel.games.model.auth.User;
 import gabriel.games.model.auth.mapper.UserDtoMapper;
 import gabriel.games.repository.UserRepository;
 import gabriel.games.service.exception.InvalidObjectValuesException;
-import gabriel.games.util.Users;
+import gabriel.games.model.util.Users;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;

@@ -39,14 +39,11 @@ public class GameDto {
     private final Double reviewerRating;
 
     @NotNull
-    @Size(min = 1, message = "{platform.size}")
+    @Size(min = 1, message = "{platforms.size}")
     private final List<@Valid GamePlatformDto> platforms;
 
     @NotNull
-    @Size(max = 128, message = "{producer.size}")
-    private final String producer;
+    @Size(min = 1, message = "{companies.size}")
+    private final List<@Valid CompanyDto> companies;
 
-    @NotNull
-    @Size(max = 128, message = "{publisher.size}")
-    private final String publisher;
 }

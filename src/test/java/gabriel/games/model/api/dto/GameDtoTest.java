@@ -3,7 +3,7 @@ package gabriel.games.model.api.dto;
 import gabriel.games.model.util.EntityValidator;
 import gabriel.games.model.util.GenericWord;
 import gabriel.games.model.util.ReflectionSetter;
-import gabriel.games.util.Models;
+import gabriel.games.model.util.Models;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -143,26 +143,20 @@ public class GameDtoTest {
     }
 
     @Test
-    public void producerShouldNotBeNull() {
-        setter.set("producer", null);
+    public void companiesShouldNotBeNull() {
+        setter.set("companies", null);
         validator.assertErrors(1);
     }
 
     @Test
-    public void producerShouldBeMax128CharacterLong() {
-        setter.set("producer", genericWord.make(129));
+    public void companiesShouldNotBeEmpty() {
+        setter.set("companies", Collections.emptyList());
         validator.assertErrors(1);
     }
 
     @Test
-    public void publisherShouldNotBeNull() {
-        setter.set("publisher", null);
-        validator.assertErrors(1);
-    }
-
-    @Test
-    public void publisherShouldBeMax128CharacterLong() {
-        setter.set("publisher", genericWord.make(129));
-        validator.assertErrors(1);
+    public void companiesAreValidated() {
+        setter.set("companies", Collections.singletonList(new CompanyDto(null, null)));
+        validator.assertErrors(2);
     }
 }

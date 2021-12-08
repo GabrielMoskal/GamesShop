@@ -1,12 +1,13 @@
 package gabriel.games.controller.api;
 
 import gabriel.games.controller.util.JsonValidator;
+import gabriel.games.model.api.dto.CompanyDto;
 import gabriel.games.model.api.dto.GameDto;
 import gabriel.games.model.api.dto.GamePlatformDto;
 import gabriel.games.model.api.mapper.GameMapper;
 import gabriel.games.service.GameService;
 import gabriel.games.service.exception.ObjectNotFoundException;
-import gabriel.games.util.Models;
+import gabriel.games.model.util.Models;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -76,22 +77,33 @@ public class GameControllerIT {
     private void verifyJson(ResultActions resultActions) {
         jsonValidator = new JsonValidator(resultActions);
 
+        validateGame(gameDto);
+        validatePlatforms(gameDto.getPlatforms());
+        validateCompanies(gameDto.getCompanies());
+    }
+
+    private void validateGame(GameDto gameDto) {
         jsonValidator.expect("uri", gameDto.getUri());
         jsonValidator.expect("name", gameDto.getName());
         jsonValidator.expect("description", gameDto.getDescription());
         jsonValidator.expect("webpage", gameDto.getWebpage());
         jsonValidator.expect("playerRating", gameDto.getPlayerRating());
         jsonValidator.expect("reviewerRating", gameDto.getReviewerRating());
-        validatePlatforms(gameDto.getPlatforms());
-        jsonValidator.expect("producer", gameDto.getProducer());
-        jsonValidator.expect("publisher", gameDto.getPublisher());
     }
 
     private void validatePlatforms(List<GamePlatformDto> platforms) {
-        platforms.forEach((t) -> {
-            String platformPath = "platforms[" + platforms.indexOf(t) + "]";
-            jsonValidator.expect(platformPath + ".platformName", t.getPlatformName());
-            jsonValidator.expect(platformPath + ".releaseDate", t.getReleaseDate().toString());
+        platforms.forEach((platform) -> {
+            String platformPath = "platforms[" + platforms.indexOf(platform) + "]";
+            jsonValidator.expect(platformPath + ".platformName", platform.getPlatformName());
+            jsonValidator.expect(platformPath + ".releaseDate", platform.getReleaseDate().toString());
+        });
+    }
+
+    private void validateCompanies(List<CompanyDto> companies) {
+        companies.forEach((company) -> {
+            String companyPath = "companies[" + companies.indexOf(company) + "]";
+            jsonValidator.expect(companyPath + ".name", company.getName());
+            jsonValidator.expect(companyPath + ".types", company.getTypes());
         });
     }
 

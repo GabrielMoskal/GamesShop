@@ -1,7 +1,7 @@
 package gabriel.games.repository;
 
 import gabriel.games.model.api.Game;
-import gabriel.games.util.Models;
+import gabriel.games.model.util.Models;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
