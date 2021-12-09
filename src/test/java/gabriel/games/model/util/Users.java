@@ -8,6 +8,10 @@ import java.util.Collections;
 
 public class Users {
 
+    private Users() {
+        throw new AssertionError();
+    }
+
     public static User makeUser(String username, String password) {
         return new User(
                 username,

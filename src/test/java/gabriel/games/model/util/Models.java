@@ -16,6 +16,10 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class Models {
 
+    private Models() {
+        throw new AssertionError();
+    }
+
     public static GameDto makeGameDto(String filler) {
         String uri = filler.toLowerCase().replace(" ", "-");
         double rating = ThreadLocalRandom.current().nextInt(0, 11);
