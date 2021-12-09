@@ -25,7 +25,7 @@ public class UserMapperTest {
     }
 
     @Test
-    public void toUser_UserDtoGiven_ReturnsCorrectUser() {
+    public void toUser_UserDtoGiven_ShouldReturnCorrectUser() {
         assertConversionCorrect(userDto);
     }
 

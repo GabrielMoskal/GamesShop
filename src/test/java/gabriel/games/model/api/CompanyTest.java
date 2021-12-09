@@ -9,18 +9,24 @@ import nl.jqno.equalsverifier.Warning;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.Collections;
+import java.util.*;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class CompanyTest {
 
+    private Company company;
     private EntityValidator<Company> validator;
     private ReflectionSetter<Company> setter;
 
     @BeforeEach
     public void setUp() {
-        Company company = new Company(1L, "company name", Collections.emptySet(), Collections.emptySet());
-        this.validator = new EntityValidator<>(company);
-        this.setter = new ReflectionSetter<>(company);
+        this.company = new Company(1L, "company name", Collections.emptySet(), Collections.emptySet());
+        this.validator = new EntityValidator<>(this.company);
+        this.setter = new ReflectionSetter<>(this.company);
     }
 
     @Test
@@ -45,6 +51,33 @@ public class CompanyTest {
         GenericWord genericWord = new GenericWord();
         setter.set("name", genericWord.make(129));
         validator.assertErrors(1);
+    }
+
+    @Test
+    public void getCompanyTypeNames_ShouldReturnValidNames() {
+        addValidCompanyTypes();
+        List<String> expected = Arrays.asList("type1", "type2");
+        List<String> actual = company.getCompanyTypeNames();
+        assertThat(expected).hasSameElementsAs(actual);
+    }
+
+    private void addValidCompanyTypes() {
+        Set<CompanyType> companyTypes = new HashSet<>();
+        companyTypes.add(mockCompanyType(1));
+        companyTypes.add(mockCompanyType(2));
+        setter.set("types", companyTypes);
+    }
+
+    private CompanyType mockCompanyType(int index) {
+        CompanyType companyType = mock(CompanyType.class);
+        when(companyType.getType()).thenReturn("type" + index);
+        return companyType;
+    }
+
+    @Test
+    public void getCompanyTypesNames_ShouldNeverReturnNull() {
+        setter.set("types", null);
+        assertNotNull(company.getCompanyTypeNames());
     }
 
     @Test

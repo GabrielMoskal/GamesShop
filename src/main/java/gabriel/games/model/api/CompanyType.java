@@ -8,6 +8,7 @@ import javax.validation.constraints.Size;
 import java.util.Objects;
 import java.util.Set;
 
+@Getter
 @ToString
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
