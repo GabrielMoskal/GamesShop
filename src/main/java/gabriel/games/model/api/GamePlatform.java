@@ -8,7 +8,6 @@ import javax.validation.constraints.NotNull;
 import java.sql.Date;
 import java.util.Objects;
 
-@Getter
 @ToString
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
@@ -28,7 +27,13 @@ public class GamePlatform {
     private Platform platform;
 
     @NotNull
+    @Getter
     private Date releaseDate;
+
+    public String getPlatformName() {
+        Objects.requireNonNull(platform, "platform should not be null");
+        return platform.getName();
+    }
 
     @Override
     public boolean equals(Object o) {

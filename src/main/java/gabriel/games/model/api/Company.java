@@ -7,7 +7,6 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.*;
 
-@Getter
 @ToString
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
@@ -16,16 +15,15 @@ public class Company {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Getter(value = AccessLevel.NONE)
     private Long id;
 
     @NotNull
     @Size(min = 1, max = 128)
+    @Getter
     private String name;
 
     @ManyToMany(mappedBy = "companies")
     @ToString.Exclude
-    @Getter(AccessLevel.NONE)
     private Set<Game> games;
 
     @ManyToMany

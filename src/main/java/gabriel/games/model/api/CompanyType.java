@@ -8,7 +8,6 @@ import javax.validation.constraints.Size;
 import java.util.Objects;
 import java.util.Set;
 
-@Getter
 @ToString
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
@@ -22,6 +21,7 @@ public class CompanyType {
 
     @NotNull
     @Size(min = 1, max = 50)
+    @Getter
     private String type;
 
     @ManyToMany(mappedBy = "types")

@@ -8,7 +8,6 @@ import javax.validation.constraints.Size;
 import java.util.Objects;
 import java.util.Set;
 
-@Getter
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -21,6 +20,7 @@ public class Platform {
 
     @NotNull
     @Size(min = 1, max = 50)
+    @Getter
     private String name;
 
     @NotNull

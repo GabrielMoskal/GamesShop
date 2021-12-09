@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.ToString;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -11,6 +12,7 @@ import java.sql.Date;
 
 @Getter
 @AllArgsConstructor
+@ToString
 @EqualsAndHashCode
 public class GamePlatformDto {
 

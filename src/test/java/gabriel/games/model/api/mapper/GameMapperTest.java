@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 public class GameMapperTest {
 
     @Test
-    public void toGameDto_GameGiven_ReturnsValidGameDto() {
+    public void toGameDto_GameGiven_ShouldReturnValidGameDto() {
         // TODO
     }
 }
