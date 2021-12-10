@@ -6,6 +6,7 @@ import gabriel.games.model.api.dto.GameDetailsDto;
 import gabriel.games.model.api.dto.GameDto;
 import gabriel.games.model.api.dto.GamePlatformDto;
 import gabriel.games.model.api.embedded.GamePlatformKey;
+import gabriel.games.model.api.embedded.Rating;
 
 import java.lang.reflect.Constructor;
 import java.sql.Date;
@@ -58,6 +59,20 @@ public class Models {
     public static Game makeGame(long id) {
         String value = Long.toString(id);
         return new Game(id, value);
+    }
+
+    public static GameDetails makeGameDetails(long id) {
+        return GameDetails.builder()
+                .gameId(id)
+                .description("description " + id)
+                .webpage("www.test-webpage" + id + ".com")
+                .ratingPlayers(makeRating(2.5 + id))
+                .ratingReviewer(makeRating(3.5 + id))
+                .build();
+    }
+
+    private static Rating makeRating(double rating) {
+        return new Rating(String.valueOf(rating));
     }
 
     public static Platform makePlatform(long id) {

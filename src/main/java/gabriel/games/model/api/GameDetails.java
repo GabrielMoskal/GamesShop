@@ -6,6 +6,7 @@ import lombok.*;
 import javax.persistence.*;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
+import java.math.BigDecimal;
 import java.util.Objects;
 
 @Builder
@@ -22,11 +23,13 @@ public class GameDetails {
     @NotNull
     @Size(max = 1024)
     @ToString.Include
+    @Getter
     private String description;
 
     @NotNull
     @Size(max = 256)
     @ToString.Include
+    @Getter
     private String webpage;
 
     @Embedded
@@ -45,6 +48,16 @@ public class GameDetails {
     @MapsId
     @JoinColumn(name = "game_id")
     private Game game;
+
+    public BigDecimal getRatingPlayers() {
+        Objects.requireNonNull(ratingPlayers, "ratingPlayers should not be null");
+        return ratingPlayers.getRating();
+    }
+
+    public BigDecimal getRatingReviewer() {
+        Objects.requireNonNull(ratingReviewer, "ratingReviewer should not be null");
+        return ratingReviewer.getRating();
+    }
 
     @Override
     public boolean equals(Object o) {
