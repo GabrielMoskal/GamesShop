@@ -3,6 +3,7 @@ package gabriel.games.model.api.mapper;
 import gabriel.games.model.api.GameDetails;
 import gabriel.games.model.api.dto.GameDetailsDto;
 import gabriel.games.model.api.embedded.Rating;
+import gabriel.games.model.util.Models;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -19,7 +20,7 @@ public class GameDetailsMapperTest {
 
     @Test
     public void toGameDetailsDto_GameDetailsGiven_ShouldReturnValidGameDetailsDto() {
-        GameDetailsDto expected = makeExpected(1);
+        GameDetailsDto expected = Models.makeGameDetailsDto("1");
         assertConversionCorrect(expected);
     }
 
@@ -28,15 +29,6 @@ public class GameDetailsMapperTest {
         GameDetailsDto actual = mapper.toGameDetailsDto(gameDetails);
 
         assertEquals(expected, actual);
-    }
-
-    private GameDetailsDto makeExpected(int filler) {
-        return GameDetailsDto.builder()
-                .description("description" + filler)
-                .webpage("www.webpage"  + filler + ".com")
-                .ratingPlayers(3.5 + filler)
-                .ratingReviewer(4.5 + filler)
-                .build();
     }
 
     private GameDetails convertToDetails(GameDetailsDto details) {
@@ -50,7 +42,7 @@ public class GameDetailsMapperTest {
 
     @Test
     public void toGameDetailsDto_DifferentGameDetailsGiven_ShouldReturnValidGameDto() {
-        GameDetailsDto expected = makeExpected(2);
+        GameDetailsDto expected = Models.makeGameDetailsDto("2");
         assertConversionCorrect(expected);
     }
 }

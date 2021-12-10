@@ -31,7 +31,7 @@ public class Models {
                 .build();
     }
 
-    private static GameDetailsDto makeGameDetailsDto(String filler) {
+    public static GameDetailsDto makeGameDetailsDto(String filler) {
         double rating = ThreadLocalRandom.current().nextInt(0, 11);
         return GameDetailsDto.builder()
                 .description(filler)
