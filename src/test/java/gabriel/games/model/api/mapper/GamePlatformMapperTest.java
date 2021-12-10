@@ -25,10 +25,10 @@ public class GamePlatformMapperTest {
         String platformName = "platform name";
         Date releaseDate = new Date(1L);
 
-        assertConversionCorrect(platformName, releaseDate);
+        assertMappingCorrect(platformName, releaseDate);
     }
 
-    private void assertConversionCorrect(String platformName, Date releaseDate) {
+    private void assertMappingCorrect(String platformName, Date releaseDate) {
         GamePlatform gamePlatform = mockGamePlatform(platformName, releaseDate);
         GamePlatformDto expected = new GamePlatformDto(platformName, releaseDate);
         GamePlatformDto actual = mapper.toGamePlatformDto(gamePlatform);
@@ -49,6 +49,6 @@ public class GamePlatformMapperTest {
         String platformName = "different name";
         Date releaseDate = Date.valueOf("2000-01-21");
 
-        assertConversionCorrect(platformName, releaseDate);
+        assertMappingCorrect(platformName, releaseDate);
     }
 }

@@ -21,10 +21,10 @@ public class GameDetailsMapperTest {
     @Test
     public void toGameDetailsDto_GameDetailsGiven_ShouldReturnValidGameDetailsDto() {
         GameDetailsDto expected = Models.makeGameDetailsDto("1");
-        assertConversionCorrect(expected);
+        assertMappingCorrect(expected);
     }
 
-    private void assertConversionCorrect(GameDetailsDto expected) {
+    private void assertMappingCorrect(GameDetailsDto expected) {
         GameDetails gameDetails = convertToDetails(expected);
         GameDetailsDto actual = mapper.toGameDetailsDto(gameDetails);
 
@@ -43,6 +43,6 @@ public class GameDetailsMapperTest {
     @Test
     public void toGameDetailsDto_DifferentGameDetailsGiven_ShouldReturnValidGameDto() {
         GameDetailsDto expected = Models.makeGameDetailsDto("2");
-        assertConversionCorrect(expected);
+        assertMappingCorrect(expected);
     }
 }

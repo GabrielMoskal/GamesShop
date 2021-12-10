@@ -2,7 +2,9 @@ package gabriel.games.model.api.mapper;
 
 import gabriel.games.model.api.GameDetails;
 import gabriel.games.model.api.dto.GameDetailsDto;
+import org.springframework.stereotype.Component;
 
+@Component
 public class GameDetailsMapper {
 
     public GameDetailsDto toGameDetailsDto(GameDetails gameDetails) {

@@ -3,13 +3,16 @@ package gabriel.games.model.api.dto;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.ToString;
 
 import javax.validation.Valid;
 import javax.validation.constraints.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Builder
 @Getter
+@ToString
 @EqualsAndHashCode
 public class GameDto {
 
@@ -27,10 +30,12 @@ public class GameDto {
 
     @NotNull
     @Size(min = 1, message = "{platforms.size}")
-    private final List<@Valid GamePlatformDto> platforms;
+    @Builder.Default
+    private final List<@Valid GamePlatformDto> platforms = new ArrayList<>();
 
     @NotNull
     @Size(min = 1, message = "{companies.size}")
-    private final List<@Valid CompanyDto> companies;
+    @Builder.Default
+    private final List<@Valid CompanyDto> companies = new ArrayList<>();
 
 }

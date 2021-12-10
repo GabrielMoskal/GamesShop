@@ -22,10 +22,10 @@ public class CompanyMapperTest {
 
     @Test
     public void toCompanyDto_CompanyGiven_ShouldReturnValidCompanyDto() {
-        assertConversionCorrect("name", Arrays.asList("type1", "type2"));
+        assertMappingCorrect("name", Arrays.asList("type1", "type2"));
     }
 
-    private void assertConversionCorrect(String name, List<String> types) {
+    private void assertMappingCorrect(String name, List<String> types) {
         Company company = mockCompany(name, types);
         CompanyDto expected = new CompanyDto(name, types);
         CompanyDto actual = mapper.toCompanyDto(company);
@@ -42,6 +42,6 @@ public class CompanyMapperTest {
 
     @Test
     public void toCompanyDto_DifferentCompanyGiven_ShouldReturnValidCompanyDto() {
-        assertConversionCorrect("different name", Arrays.asList("different1", "different2"));
+        assertMappingCorrect("different name", Arrays.asList("different1", "different2"));
     }
 }

@@ -41,15 +41,15 @@ public class Models {
                 .build();
     }
 
-    private static List<GamePlatformDto> makeGamePlatformDtoList(String filler) {
+    public static List<GamePlatformDto> makeGamePlatformDtoList(String filler) {
         Date date = new Date(System.currentTimeMillis());
-        return Arrays.asList(
-                new GamePlatformDto(filler + "1", date),
-                new GamePlatformDto(filler + "2", date)
-        );
+        List<GamePlatformDto> gamePlatformDtos = new ArrayList<>();
+        gamePlatformDtos.add(new GamePlatformDto(filler + 1, date));
+        gamePlatformDtos.add(new GamePlatformDto(filler + 2, date));
+        return gamePlatformDtos;
     }
 
-    private static List<CompanyDto> makeCompanyDtoList(String filler) {
+    public static List<CompanyDto> makeCompanyDtoList(String filler) {
         return Arrays.asList(
                 new CompanyDto(filler + "1", Arrays.asList(filler + "1", filler + "2")),
                 new CompanyDto(filler + "2", Collections.singletonList(filler + "2"))

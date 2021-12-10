@@ -24,21 +24,25 @@ public class Game {
     @NotNull
     @Size(min = 1, max = 128)
     @ToString.Include
+    @Getter
     private String name;
 
     @NotNull
     @Size(min = 1, max = 128)
     @Pattern(regexp = "([a-z-_0-9]*)")
     @ToString.Include
+    @Getter
     private String uri;
 
     @OneToOne(mappedBy = "game", cascade = CascadeType.ALL)
     @PrimaryKeyJoinColumn
+    @Getter
     private GameDetails details;
 
     @NotNull
     @Size(min = 1)
     @OneToMany(mappedBy = "game")
+    @Getter
     private Set<GamePlatform> platforms;
 
     @NotNull
@@ -49,6 +53,7 @@ public class Game {
             joinColumns = @JoinColumn(name = "game_id"),
             inverseJoinColumns = @JoinColumn(name = "company_id")
     )
+    @Getter
     private Set<Company> companies;
 
     public Game(final Long id, final String name) {
