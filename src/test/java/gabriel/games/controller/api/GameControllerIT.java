@@ -1,24 +1,19 @@
 package gabriel.games.controller.api;
 
 import gabriel.games.controller.util.JsonValidator;
-import gabriel.games.model.api.dto.CompanyDto;
-import gabriel.games.model.api.dto.GameDto;
-import gabriel.games.model.api.dto.GamePlatformDto;
+import gabriel.games.model.api.dto.*;
 import gabriel.games.model.api.mapper.GameMapper;
 import gabriel.games.service.GameService;
 import gabriel.games.service.exception.ObjectNotFoundException;
 import gabriel.games.model.util.Models;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.*;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.*;
 
 import java.util.List;
 
@@ -78,6 +73,7 @@ public class GameControllerIT {
         jsonValidator = new JsonValidator(resultActions);
 
         validateGame(gameDto);
+        validateDetails(gameDto.getDetails());
         validatePlatforms(gameDto.getPlatforms());
         validateCompanies(gameDto.getCompanies());
     }
@@ -85,10 +81,13 @@ public class GameControllerIT {
     private void validateGame(GameDto gameDto) {
         jsonValidator.expect("uri", gameDto.getUri());
         jsonValidator.expect("name", gameDto.getName());
-        jsonValidator.expect("description", gameDto.getDescription());
-        jsonValidator.expect("webpage", gameDto.getWebpage());
-        jsonValidator.expect("playerRating", gameDto.getPlayerRating());
-        jsonValidator.expect("reviewerRating", gameDto.getReviewerRating());
+    }
+
+    private void validateDetails(GameDetailsDto details) {
+        jsonValidator.expect("details.description", details.getDescription());
+        jsonValidator.expect("details.webpage", details.getWebpage());
+        jsonValidator.expect("details.ratingPlayers", details.getRatingPlayers());
+        jsonValidator.expect("details.ratingReviewer", details.getRatingReviewer());
     }
 
     private void validatePlatforms(List<GamePlatformDto> platforms) {

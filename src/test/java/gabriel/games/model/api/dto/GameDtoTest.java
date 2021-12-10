@@ -65,63 +65,19 @@ public class GameDtoTest {
     }
 
     @Test
-    public void descriptionShouldNotBeNull() {
-        setter.set("description", null);
+    public void detailsShouldNotBeNull() {
+        setter.set("details", null);
         validator.assertErrors(1);
     }
 
     @Test
-    public void descriptionShouldBeMax1024CharacterLong() {
-        setter.set("description", genericWord.make(1025));
-        validator.assertErrors(1);
-    }
-
-    @Test
-    public void webpageShouldNotBeNull() {
-        setter.set("webpage", null);
-        validator.assertErrors(1);
-    }
-
-    @Test
-    public void webpageShouldBeMax256CharacterLong() {
-        setter.set("webpage", genericWord.make(257));
-        validator.assertErrors(1);
-    }
-
-    @Test
-    public void playerRatingShouldNotBeNull() {
-        setter.set("playerRating", null);
-        validator.assertErrors(1);
-    }
-
-    @Test
-    public void playerRatingShouldNotBeNegative() {
-        setter.set("playerRating", -0.5);
-        validator.assertErrors(1);
-    }
-
-    @Test
-    public void playerRatingShouldBeMax10() {
-        setter.set("playerRating", 10.1);
-        validator.assertErrors(1);
-    }
-
-    @Test
-    public void reviewerRatingShouldNotBeNull() {
-        setter.set("reviewerRating", null);
-        validator.assertErrors(1);
-    }
-
-    @Test
-    public void reviewerRatingShouldNotBeNegative() {
-        setter.set("reviewerRating", -0.1);
-        validator.assertErrors(1);
-    }
-
-    @Test
-    public void reviewerRatingShouldBeMax10() {
-        setter.set("reviewerRating", 11.0);
-        validator.assertErrors(1);
+    public void detailsShouldBeValidated() {
+        GameDetailsDto details = GameDetailsDto.builder()
+                .description(null)
+                .webpage(null)
+                .build();
+        setter.set("details", details);
+        validator.assertErrors(2);
     }
 
     @Test

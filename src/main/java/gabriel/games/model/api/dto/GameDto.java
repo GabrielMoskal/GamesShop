@@ -3,7 +3,6 @@ package gabriel.games.model.api.dto;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import org.hibernate.validator.constraints.Range;
 
 import javax.validation.Valid;
 import javax.validation.constraints.*;
@@ -23,20 +22,8 @@ public class GameDto {
     private final String name;
 
     @NotNull
-    @Size(max = 1024, message = "{description.size}")
-    private final String description;
-
-    @NotNull
-    @Size(max = 256, message = "{webpage.size}")
-    private final String webpage;
-
-    @NotNull
-    @Range(min = 0L, max = 10L, message = "{playerRating.size}")
-    private final Double playerRating;
-
-    @NotNull
-    @Range(min = 0L, max = 10L, message = "{reviewerRating.size}")
-    private final Double reviewerRating;
+    @Valid
+    private final GameDetailsDto details;
 
     @NotNull
     @Size(min = 1, message = "{platforms.size}")

@@ -1,10 +1,8 @@
 package gabriel.games.model.util;
 
-import gabriel.games.model.api.Company;
-import gabriel.games.model.api.Game;
-import gabriel.games.model.api.GamePlatform;
-import gabriel.games.model.api.Platform;
+import gabriel.games.model.api.*;
 import gabriel.games.model.api.dto.CompanyDto;
+import gabriel.games.model.api.dto.GameDetailsDto;
 import gabriel.games.model.api.dto.GameDto;
 import gabriel.games.model.api.dto.GamePlatformDto;
 import gabriel.games.model.api.embedded.GamePlatformKey;
@@ -22,17 +20,23 @@ public class Models {
 
     public static GameDto makeGameDto(String filler) {
         String uri = filler.toLowerCase().replace(" ", "-");
-        double rating = ThreadLocalRandom.current().nextInt(0, 11);
 
         return GameDto.builder()
                 .uri(uri)
                 .name(filler)
-                .description(filler)
-                .webpage("https://" + uri + ".com")
-                .playerRating(rating)
-                .reviewerRating(rating)
+                .details(makeGameDetailsDto(filler))
                 .platforms(makeGamePlatformDtoList(filler))
                 .companies(makeCompanyDtoList(filler))
+                .build();
+    }
+
+    private static GameDetailsDto makeGameDetailsDto(String filler) {
+        double rating = ThreadLocalRandom.current().nextInt(0, 11);
+        return GameDetailsDto.builder()
+                .description(filler)
+                .webpage("https://example" + filler + ".com")
+                .ratingPlayers(rating)
+                .ratingReviewer(rating)
                 .build();
     }
 
