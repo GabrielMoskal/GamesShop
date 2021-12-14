@@ -11,7 +11,6 @@ import gabriel.games.model.api.embedded.Rating;
 import java.lang.reflect.Constructor;
 import java.sql.Date;
 import java.util.*;
-import java.util.concurrent.ThreadLocalRandom;
 
 public class Models {
 
@@ -25,24 +24,23 @@ public class Models {
         return GameDto.builder()
                 .uri(uri)
                 .name(filler)
-                .details(makeGameDetailsDto(filler))
+                .details(makeGameDetailsDto(uri))
                 .platforms(makeGamePlatformDtoList(filler))
                 .companies(makeCompanyDtoList(filler))
                 .build();
     }
 
     public static GameDetailsDto makeGameDetailsDto(String filler) {
-        double rating = ThreadLocalRandom.current().nextInt(0, 11);
         return GameDetailsDto.builder()
                 .description(filler)
-                .webpage("https://example" + filler + ".com")
-                .ratingPlayers(rating)
-                .ratingReviewer(rating)
+                .webpage("https://www." + filler + ".com")
+                .ratingPlayers(1.0)
+                .ratingReviewer(5.0)
                 .build();
     }
 
     public static List<GamePlatformDto> makeGamePlatformDtoList(String filler) {
-        Date date = new Date(System.currentTimeMillis());
+        Date date = new Date(0);
         List<GamePlatformDto> gamePlatformDtos = new ArrayList<>();
         gamePlatformDtos.add(new GamePlatformDto(filler + 1, date));
         gamePlatformDtos.add(new GamePlatformDto(filler + 2, date));

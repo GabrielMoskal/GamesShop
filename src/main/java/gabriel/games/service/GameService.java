@@ -16,4 +16,9 @@ public class GameService {
         return repository.findByUri(uri)
                 .orElseThrow(() -> new ObjectNotFoundException("Game with given uri not found."));
     }
+
+    public Game save(final Game game) {
+        // TODO
+        return null;
+    }
 }

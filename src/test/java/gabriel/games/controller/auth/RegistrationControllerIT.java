@@ -4,19 +4,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import gabriel.games.controller.util.JsonValidator;
 import gabriel.games.model.auth.dto.UserDto;
 import gabriel.games.controller.auth.exception.UserAlreadyExistsException;
-import gabriel.games.repository.UserRepository;
 import gabriel.games.service.UserService;
 import gabriel.games.model.util.Users;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
@@ -29,9 +25,7 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@ExtendWith(SpringExtension.class)
 @WebMvcTest(RegistrationController.class)
-@AutoConfigureMockMvc
 public class RegistrationControllerIT {
 
     private UserDto userDto;
@@ -39,9 +33,6 @@ public class RegistrationControllerIT {
 
     @Autowired
     private MockMvc mockMvc;
-
-    @MockBean
-    private UserRepository userRepository;
 
     @MockBean
     private UserService userService;
@@ -89,7 +80,7 @@ public class RegistrationControllerIT {
     }
 
     private ResultActions performPostRegister() throws Exception {
-        String inputJson = transformUserDtoToJson();
+        String inputJson = writeUserDtoAsJson();
 
         return mockMvc.perform(
                 post("/register")
@@ -99,7 +90,7 @@ public class RegistrationControllerIT {
         );
     }
 
-    private String transformUserDtoToJson() throws Exception {
+    private String writeUserDtoAsJson() throws Exception {
         ObjectMapper objectMapper = new ObjectMapper();
         return objectMapper.writeValueAsString(userDto);
     }
@@ -113,7 +104,7 @@ public class RegistrationControllerIT {
         ArgumentCaptor<UserDto> userDtoCaptor = ArgumentCaptor.forClass(UserDto.class);
 
         verify(userService, times(1)).register(userDtoCaptor.capture());
-        verifyNoMoreInteractions(userRepository);
+        verifyNoMoreInteractions(userService);
 
         return userDtoCaptor;
     }

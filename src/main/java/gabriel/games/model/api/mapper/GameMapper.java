@@ -57,4 +57,8 @@ public class GameMapper {
         return companyDtos;
     }
 
+    public Game toGame(GameDto gameDto) {
+        // TODO
+        return null;
+    }
 }

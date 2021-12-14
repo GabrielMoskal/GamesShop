@@ -15,19 +15,21 @@ public class JsonValidator {
         this.resultActions = resultActions;
     }
 
-    private <T> ResultMatcher jsonPath(String expression, T matcher) {
-        return MockMvcResultMatchers.jsonPath(expression, is(matcher));
+    public <T> void expect(String expression, T matcher) {
+        ResultMatcher resultMatcher = MockMvcResultMatchers.jsonPath(expression, is(matcher));
+        tryToExpect(resultMatcher);
     }
 
-    public <T> void expect(String expression, T matcher) {
+    private void tryToExpect(ResultMatcher resultMatcher) {
         try {
-            resultActions.andExpect(jsonPath(expression, matcher));
+            resultActions.andExpect(resultMatcher);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     public void verifyJsonLinks(String path) {
-        MockMvcResultMatchers.jsonPath("_links.self.href", endsWith(path));
+        ResultMatcher resultMatcher = MockMvcResultMatchers.jsonPath("_links.self.href", endsWith(path));
+        tryToExpect(resultMatcher);
     }
 }

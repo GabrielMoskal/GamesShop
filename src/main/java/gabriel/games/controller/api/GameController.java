@@ -12,6 +12,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
@@ -36,14 +38,13 @@ public class GameController {
     private ResponseEntity<EntityModel<GameDto>> findGame(String uri) {
         Game game = gameService.findByUri(uri);
         GameDto gameDto = gameMapper.toGameDto(game);
-
-        return makeResponse(gameDto);
+        return makeResponse(gameDto, HttpStatus.OK);
     }
 
-    private ResponseEntity<EntityModel<GameDto>> makeResponse(GameDto gameDto) {
+    private ResponseEntity<EntityModel<GameDto>> makeResponse(GameDto gameDto, HttpStatus status) {
         EntityModel<GameDto> entityModel = EntityModel.of(gameDto);
         entityModel.add(makeLink(gameDto));
-        return new ResponseEntity<>(entityModel, HttpStatus.OK);
+        return new ResponseEntity<>(entityModel, status);
     }
 
     private Link makeLink(GameDto gameDto) {
@@ -52,5 +53,12 @@ public class GameController {
 
     private ResponseEntity<EntityModel<GameDto>> notFound() {
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    @PostMapping(consumes = "application/json")
+    private ResponseEntity<EntityModel<GameDto>> postGame(@Valid @RequestBody GameDto gameDto) {
+        Game game = gameMapper.toGame(gameDto);
+        gameService.save(game);
+        return makeResponse(gameDto, HttpStatus.CREATED);
     }
 }
