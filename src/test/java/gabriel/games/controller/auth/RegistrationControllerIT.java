@@ -1,10 +1,11 @@
 package gabriel.games.controller.auth;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import gabriel.games.controller.util.JsonValidator;
+import gabriel.games.controller.util.UserValidator;
 import gabriel.games.model.auth.dto.UserDto;
 import gabriel.games.controller.auth.exception.UserAlreadyExistsException;
-import gabriel.games.service.UserService;
+import gabriel.games.model.dto.ErrorDto;
+import gabriel.games.service.*;
 import gabriel.games.model.util.Users;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,11 +14,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.*;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
@@ -28,25 +28,25 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(RegistrationController.class)
 public class RegistrationControllerIT {
 
+    private String uri;
     private UserDto userDto;
-    private JsonValidator jsonValidator;
-
-    @Autowired
-    private MockMvc mockMvc;
-
-    @MockBean
-    private UserService userService;
+    private UserValidator userValidator;
+    @Autowired private MockMvc mockMvc;
+    @MockBean private UserService userService;
+    @MockBean private ErrorService errorService;
 
     @BeforeEach
     public void setUp() {
-        userDto = Users.makeUserDto("valid_name", "valid_pass");
+        this.uri = "/register";
+        this.userDto = Users.makeUserDto("valid_name", "valid_pass");
+        this.userValidator = new UserValidator();
     }
 
     @Test
     public void register_ShouldReturnEmptyUserJsonWithLink() throws Exception {
         userDto = Users.makeUserDto("", "");
         ResultActions resultActions = performGet().andExpect(status().isOk());
-        verifyJson(resultActions);
+        userValidator.validate(resultActions, uri, userDto);
     }
 
     private ResultActions performGet() throws Exception {
@@ -56,19 +56,6 @@ public class RegistrationControllerIT {
         );
     }
 
-    private void verifyJson(ResultActions resultActions) throws Exception {
-        jsonValidator = new JsonValidator(resultActions);
-        verifyJsonContent();
-        jsonValidator.verifyJsonLinks("/register");
-    }
-
-    private void verifyJsonContent() throws Exception {
-        jsonValidator.expect("username", userDto.getUsername());
-        jsonValidator.expect("password", userDto.getPassword());
-        jsonValidator.expect("confirmedPassword", userDto.getConfirmedPassword());
-        jsonValidator.expect("errors", userDto.getErrors());
-    }
-
     @Test
     public void processRegistration_ValidUserDtoGiven_ShouldSaveUserAndReturnUserDtoAsJson() throws Exception {
         ResultActions resultActions = performPostRegister()
@@ -76,7 +63,7 @@ public class RegistrationControllerIT {
 
         verifyMethodCalls();
         userDto = Users.makeUserDto(userDto.getUsername(), "");
-        verifyJson(resultActions);
+        userValidator.validate(resultActions, uri, userDto);
     }
 
     private ResultActions performPostRegister() throws Exception {
@@ -102,10 +89,8 @@ public class RegistrationControllerIT {
 
     private ArgumentCaptor<UserDto> verifyInteractions() {
         ArgumentCaptor<UserDto> userDtoCaptor = ArgumentCaptor.forClass(UserDto.class);
-
         verify(userService, times(1)).register(userDtoCaptor.capture());
         verifyNoMoreInteractions(userService);
-
         return userDtoCaptor;
     }
 
@@ -118,44 +103,29 @@ public class RegistrationControllerIT {
     public void processRegistration_InvalidUserDtoGiven_ShouldReturnTheSameUserDtoAsJsonWithErrors() throws Exception {
         userDto = Users.makeUserDto("a", userDto.getPassword());
         addExpectedErrorsToUserDto("Nazwa użytkownika musi zawierać między 5 a 20 znaków.");
-
+        mockErrorService();
         ResultActions resultActions = performPostRegister().andExpect(status().is4xxClientError());
-
-        verifyJson(resultActions);
+        userValidator.validate(resultActions, uri, userDto);
     }
 
-    private void addExpectedErrorsToUserDto(String expectedErrorMessage) {
-        addExpectedErrors(expectedErrorMessage);
+    private void addExpectedErrorsToUserDto(String errorMessage) {
+        List<ErrorDto> fieldErrors = new ArrayList<>();
+        fieldErrors.add(new ErrorDto(ErrorDto.Type.FIELD_ERROR, "username", errorMessage));
+        userDto.setErrors(fieldErrors);
     }
 
-    private void addExpectedErrors(final String errorMessage) {
-        Map<String, String> fieldErrors = addExpectedFieldErrors(errorMessage);
-        Map<String, Map<String, String>> errors = addErrors(fieldErrors);
-        userDto.setErrors(errors);
-    }
-
-    private Map<String, String> addExpectedFieldErrors(String errorMessage) {
-        Map<String, String> fieldErrors = new HashMap<>();
-        fieldErrors.put("username", errorMessage);
-        return fieldErrors;
-    }
-
-    private Map<String, Map<String, String>> addErrors(Map<String, String> fieldErrors) {
-        Map<String, Map<String, String>> errors = new HashMap<>();
-        errors.put("objectErrors", new HashMap<>());
-        errors.put("fieldErrors", fieldErrors);
-        return errors;
+    private void mockErrorService() {
+        when(errorService.toErrorDtos(any())).thenReturn(userDto.getErrors());
     }
 
     @Test
-    public void processRegistration_ExistingUserDtoGiven_ShouldReturnTheSameUserDtoAsJsonWithLocalizedErrors() throws Exception {
+    public void processRegistration_ExistingUserDtoGiven_ShouldReturnTheSameUserDtoAsJsonWithErrors() throws Exception {
         mockUserService();
         addExpectedErrorsToUserDto("Użytkownik o podanej nazwie istnieje.");
-
+        mockErrorService();
         ResultActions resultActions = performPostRegister().andExpect(status().is4xxClientError());
-
         verifyInteractions();
-        verifyJson(resultActions);
+        userValidator.validate(resultActions, uri, userDto);
     }
 
     private void mockUserService() {

@@ -8,14 +8,12 @@ import org.springframework.test.web.servlet.ResultActions;
 
 import java.util.List;
 
-public class GameValidator {
+public class GameValidator extends DtoValidator {
 
-    private JsonValidator jsonValidator;
     private GameDto expected;
-    private String uri;
 
-    public void validate(ResultActions resultActions, GameDto expected, String uri) {
-        setMembers(resultActions, expected, uri);
+    public void validate(ResultActions resultActions, String uri, GameDto expected) {
+        setMembers(resultActions, uri, expected);
         validateGame();
         validateDetails();
         validatePlatforms();
@@ -23,10 +21,9 @@ public class GameValidator {
         validateLink();
     }
 
-    private void setMembers(ResultActions resultActions, GameDto expected, String uri) {
-        this.jsonValidator = new JsonValidator(resultActions);
+    private void setMembers(ResultActions resultActions, String uri, GameDto expected) {
+        super.setMembers(resultActions, uri);
         this.expected = expected;
-        this.uri = uri;
     }
 
     private void validateGame() {
@@ -58,9 +55,5 @@ public class GameValidator {
             jsonValidator.expect(companyPath + ".name", company.getName());
             jsonValidator.expect(companyPath + ".types", company.getTypes());
         });
-    }
-
-    private void validateLink() {
-        jsonValidator.verifyJsonLinks(uri);
     }
 }

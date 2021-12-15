@@ -27,15 +27,9 @@ public class GameControllerIT {
     private String uri;
     private GameDto gameDto;
     private GameValidator gameValidator;
-
-    @Autowired
-    private MockMvc mockMvc;
-
-    @MockBean
-    private GameService gameService;
-
-    @MockBean
-    private GameMapper gameMapper;
+    @Autowired private MockMvc mockMvc;
+    @MockBean private GameService gameService;
+    @MockBean private GameMapper gameMapper;
 
     @BeforeEach
     public void setUp() {
@@ -52,7 +46,7 @@ public class GameControllerIT {
 
     private void shouldReturnValidJson() throws Exception {
         ResultActions resultActions = performGetRequest();
-        gameValidator.validate(resultActions, gameDto, uri);
+        gameValidator.validate(resultActions, uri, gameDto);
     }
 
     private ResultActions performGetRequest() throws Exception {
@@ -111,7 +105,7 @@ public class GameControllerIT {
     public void postGame_GameDtoGiven_ShouldReturnValidJson() throws Exception {
         ResultActions resultActions = performPostRequest();
         updateUri();
-        gameValidator.validate(resultActions, gameDto, uri);
+        gameValidator.validate(resultActions, uri, gameDto);
     }
 
     @Test

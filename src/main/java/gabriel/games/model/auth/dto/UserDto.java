@@ -4,12 +4,13 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import gabriel.games.model.auth.validator.FieldMatch;
 import gabriel.games.model.auth.validator.Word;
+import gabriel.games.model.dto.ErrorDto;
 import lombok.Data;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @FieldMatch(first = "password", second = "confirmedPassword", message = "{password.match}")
@@ -30,7 +31,7 @@ public class UserDto {
     @Size(min = 7, max = 20, message = "{confirmedPassword.size}")
     private final String confirmedPassword;
 
-    private Map<String, Map<String, String>> errors;
+    private List<ErrorDto> errors;
 
     @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
     public UserDto(
@@ -41,6 +42,6 @@ public class UserDto {
         this.username = username;
         this.password = password;
         this.confirmedPassword = confirmedPassword;
-        this.errors = new HashMap<>();
+        this.errors = new ArrayList<>();
     }
 }
