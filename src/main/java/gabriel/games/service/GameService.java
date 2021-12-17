@@ -18,7 +18,6 @@ public class GameService {
     }
 
     public Game save(final Game game) {
-        // TODO
-        return null;
+        return repository.save(game);
     }
 }

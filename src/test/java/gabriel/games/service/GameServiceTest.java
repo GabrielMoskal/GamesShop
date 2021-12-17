@@ -3,14 +3,11 @@ package gabriel.games.service;
 import gabriel.games.model.api.Game;
 import gabriel.games.repository.GameRepository;
 import gabriel.games.service.exception.ObjectNotFoundException;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
+import org.junit.jupiter.api.*;
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 public class GameServiceTest {
@@ -24,30 +21,29 @@ public class GameServiceTest {
         this.service = new GameService(this.repository);
     }
 
-    @Test
-    public void findByUri_ExistingUriGiven_ShouldReturnValidGame() {
-        compareByUri("name");
-    }
-
-    private void compareByUri(String name) {
-        Game expected = makeExpected(name);
-        mockRepository(name, expected);
-        Game actual = service.findByUri(name);
-
-        assertEquals(expected, actual);
-    }
-
     private Game makeExpected(String name) {
         return new Game(1L, name);
     }
 
-    private void mockRepository(String uri, Game expected) {
-        when(repository.findByUri(uri)).thenReturn(Optional.of(expected));
+    @Test
+    public void findByUri_ExistingUriGiven_ShouldReturnValidGame() {
+        testFindByUri("name");
+    }
+
+    private void testFindByUri(String name) {
+        Game expected = makeExpected(name);
+        mockFindByUri(expected);
+        Game actual = service.findByUri(expected.getUri());
+        assertEquals(expected, actual);
+    }
+
+    private void mockFindByUri(Game game) {
+        when(repository.findByUri(game.getUri())).thenReturn(Optional.of(game));
     }
 
     @Test
     public void findByUri_DifferentExistingUriGiven_ShouldReturnValidGame() {
-        compareByUri("different");
+        testFindByUri("different");
     }
 
     @Test
@@ -58,8 +54,37 @@ public class GameServiceTest {
 
     @Test
     public void findByUri_AnyUriGiven_VerifyInteractions() {
-        ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
-        repository.findByUri(anyString());
-        verify(repository, times(1)).findByUri(captor.capture());
+        String gameName = "name";
+        mockFindByUri(makeExpected(gameName));
+        service.findByUri(gameName);
+        verify(repository).findByUri(gameName);
+    }
+
+    @Test
+    public void save_ValidGameGiven_ShouldReturnValidGame() {
+        testSave("name");
+    }
+
+    private void testSave(String name) {
+        Game expected = makeExpected(name);
+        mockSave(expected);
+        Game actual = service.save(expected);
+        assertEquals(expected, actual);
+    }
+
+    private void mockSave(Game game) {
+        when(repository.save(any())).thenReturn(game);
+    }
+
+    @Test
+    public void save_DifferentValidGameGiven_ShouldReturnValidGame() {
+        testSave("different");
+    }
+
+    @Test
+    public void save_AnyGameGiven_VerifyInteractions() {
+        Game game = makeExpected("name");
+        service.save(game);
+        verify(repository).save(any());
     }
 }
