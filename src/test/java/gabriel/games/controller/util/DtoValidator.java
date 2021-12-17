@@ -5,14 +5,12 @@ import org.springframework.test.web.servlet.ResultActions;
 public class DtoValidator {
 
     JsonValidator jsonValidator;
-    private String uri;
 
-    void setMembers(ResultActions resultActions, String uri) {
+    void setMembers(ResultActions resultActions) {
         this.jsonValidator = new JsonValidator(resultActions);
-        this.uri = uri;
     }
 
-    void validateLink() {
+    void validateLink(String uri) {
         jsonValidator.verifyJsonLinks(uri);
     }
 }

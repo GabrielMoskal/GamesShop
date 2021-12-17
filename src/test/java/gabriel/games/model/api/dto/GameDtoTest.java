@@ -1,11 +1,7 @@
 package gabriel.games.model.api.dto;
 
-import gabriel.games.model.util.EntityValidator;
-import gabriel.games.model.util.GenericWord;
-import gabriel.games.model.util.ReflectionSetter;
-import gabriel.games.model.util.Models;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import gabriel.games.model.util.*;
+import org.junit.jupiter.api.*;
 
 import java.util.*;
 
@@ -31,12 +27,6 @@ public class GameDtoTest {
     @Test
     public void uriShouldNotBeNull() {
         setter.set("uri", null);
-        validator.assertErrors(1);
-    }
-
-    @Test
-    public void uriShouldBeAtLeast1CharacterLong() {
-        setter.set("uri", "");
         validator.assertErrors(1);
     }
 

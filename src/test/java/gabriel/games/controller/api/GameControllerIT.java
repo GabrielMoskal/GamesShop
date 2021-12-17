@@ -24,8 +24,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(GameController.class)
 public class GameControllerIT {
 
-    private String uri;
-    private GameDto gameDto;
+    private final String PATH = "/api/game/";
+    private GameDto expected;
     private GameValidator gameValidator;
     @Autowired private MockMvc mockMvc;
     @MockBean private GameService gameService;
@@ -33,10 +33,13 @@ public class GameControllerIT {
 
     @BeforeEach
     public void setUp() {
-        this.uri = "/api/game/";
-        this.gameDto = Models.makeGameDto("Multiple words value");
+        this.expected = Models.makeGameDto("Multiple words value");
         this.gameValidator = new GameValidator();
         mockGameMapper();
+    }
+
+    private void mockGameMapper() {
+        when(gameMapper.toGameDto(any())).thenReturn(expected);
     }
 
     @Test
@@ -46,32 +49,24 @@ public class GameControllerIT {
 
     private void shouldReturnValidJson() throws Exception {
         ResultActions resultActions = performGetRequest();
-        gameValidator.validate(resultActions, uri, gameDto);
+        gameValidator.validate(resultActions, expected);
     }
 
     private ResultActions performGetRequest() throws Exception {
-        updateUri();
-        mockGameMapper();
-        return mockMvc.perform(get(uri).contentType(MediaType.APPLICATION_JSON_VALUE));
-    }
-
-    private void mockGameMapper() {
-        when(gameMapper.toGameDto(any())).thenReturn(gameDto);
-    }
-
-    private void updateUri() {
-        uri += gameDto.getUri();
+        String urlTemplate = PATH + expected.getUri();
+        return mockMvc.perform(get(urlTemplate).contentType(MediaType.APPLICATION_JSON_VALUE));
     }
 
     @Test
     public void description_ExistingDifferentResourcePathGiven_ShouldReturnValidJson() throws Exception {
-        gameDto = Models.makeGameDto("different values");
+        expected = Models.makeGameDto("different values");
+        mockGameMapper();
         shouldReturnValidJson();
     }
 
     @Test
     public void description_NonExistingResourcePathGiven_ShouldReturn404() throws Exception {
-        when(gameService.findByUri(gameDto.getUri())).thenThrow(new ObjectNotFoundException("msg"));
+        when(gameService.findByUri(expected.getUri())).thenThrow(new ObjectNotFoundException("msg"));
         performGetRequest().andExpect(status().isNotFound());
     }
 
@@ -86,17 +81,22 @@ public class GameControllerIT {
     }
 
     private ResultActions performPostRequest() throws Exception {
-        mockGameMapper();
-        String gameDtoAsJson = writeGameDtoAsJson();
+        String gameDtoAsJson = preparePostRequest();
+
         return mockMvc.perform(
-                post(uri)
+                post(PATH)
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(gameDtoAsJson)
         );
     }
 
-    private String writeGameDtoAsJson() throws Exception {
+    private String preparePostRequest() throws Exception {
+        GameDto content = Models.makeGameDto(expected.getName(), "");
+        return writeGameDtoAsJson(content);
+    }
+
+    private String writeGameDtoAsJson(GameDto gameDto) throws Exception {
         ObjectMapper objectMapper = new ObjectMapper();
         return objectMapper.writeValueAsString(gameDto);
     }
@@ -104,8 +104,7 @@ public class GameControllerIT {
     @Test
     public void postGame_GameDtoGiven_ShouldReturnValidJson() throws Exception {
         ResultActions resultActions = performPostRequest();
-        updateUri();
-        gameValidator.validate(resultActions, uri, gameDto);
+        gameValidator.validate(resultActions, expected);
     }
 
     @Test
@@ -117,11 +116,5 @@ public class GameControllerIT {
     private void verifyPostMethodCalls() {
         Game game = verify(gameMapper).toGame(any());
         verify(gameService).save(game);
-    }
-
-    @Test
-    public void postGame_InvalidGameDtoGiven_ShouldThrowException() throws Exception {
-        gameDto = GameDto.builder().build();
-        performPostRequest();
     }
 }

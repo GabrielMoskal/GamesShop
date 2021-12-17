@@ -6,16 +6,13 @@ import gabriel.games.model.api.mapper.GameMapper;
 import gabriel.games.service.GameService;
 import gabriel.games.service.exception.ObjectNotFoundException;
 import lombok.AllArgsConstructor;
-import org.springframework.hateoas.EntityModel;
-import org.springframework.hateoas.Link;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.hateoas.*;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 
 @RestController
 @RequestMapping(path = "/api/game", produces = "application/json")
@@ -59,6 +56,7 @@ public class GameController {
     private ResponseEntity<EntityModel<GameDto>> postGame(@Valid @RequestBody GameDto gameDto) {
         Game game = gameMapper.toGame(gameDto);
         gameService.save(game);
-        return makeResponse(gameDto, HttpStatus.CREATED);
+        GameDto responseBody = gameMapper.toGameDto(game);
+        return makeResponse(responseBody, HttpStatus.CREATED);
     }
 }

@@ -21,6 +21,10 @@ public class Models {
     public static GameDto makeGameDto(String filler) {
         String uri = filler.toLowerCase().replace(" ", "-");
 
+        return makeGameDto(filler, uri);
+    }
+
+    public static GameDto makeGameDto(String filler, String uri) {
         return GameDto.builder()
                 .uri(uri)
                 .name(filler)

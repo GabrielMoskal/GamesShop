@@ -1,9 +1,6 @@
 package gabriel.games.controller.util;
 
-import gabriel.games.model.api.dto.CompanyDto;
-import gabriel.games.model.api.dto.GameDetailsDto;
-import gabriel.games.model.api.dto.GameDto;
-import gabriel.games.model.api.dto.GamePlatformDto;
+import gabriel.games.model.api.dto.*;
 import org.springframework.test.web.servlet.ResultActions;
 
 import java.util.List;
@@ -12,17 +9,17 @@ public class GameValidator extends DtoValidator {
 
     private GameDto expected;
 
-    public void validate(ResultActions resultActions, String uri, GameDto expected) {
-        setMembers(resultActions, uri, expected);
+    public void validate(ResultActions resultActions, GameDto expected) {
+        setMembers(resultActions, expected);
         validateGame();
         validateDetails();
         validatePlatforms();
         validateCompanies();
-        validateLink();
+        validateLink(expected.getUri());
     }
 
-    private void setMembers(ResultActions resultActions, String uri, GameDto expected) {
-        super.setMembers(resultActions, uri);
+    private void setMembers(ResultActions resultActions, GameDto expected) {
+        super.setMembers(resultActions);
         this.expected = expected;
     }
 

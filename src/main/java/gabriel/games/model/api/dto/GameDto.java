@@ -1,14 +1,10 @@
 package gabriel.games.model.api.dto;
 
-import lombok.Builder;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.ToString;
+import lombok.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Builder
 @Getter
@@ -17,7 +13,7 @@ import java.util.List;
 public class GameDto {
 
     @NotNull
-    @Size(min = 1, max = 128, message = "{uri.size}")
+    @Size(max = 128, message = "{uri.size}")
     private final String uri;
 
     @NotNull

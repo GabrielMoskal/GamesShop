@@ -11,14 +11,14 @@ public class UserValidator extends DtoValidator {
     private UserDto expected;
 
     public void validate(ResultActions resultActions, String uri, UserDto expected) {
-        setMembers(resultActions, uri, expected);
+        setMembers(resultActions, expected);
         validateUserDetails();
         validateErrors();
-        validateLink();
+        validateLink(uri);
     }
 
-    private void setMembers(ResultActions resultActions, String uri, UserDto expected) {
-        super.setMembers(resultActions, uri);
+    private void setMembers(ResultActions resultActions, UserDto expected) {
+        super.setMembers(resultActions);
         this.expected = expected;
     }
 

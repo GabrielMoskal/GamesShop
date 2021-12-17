@@ -7,8 +7,7 @@ import gabriel.games.controller.auth.exception.UserAlreadyExistsException;
 import gabriel.games.model.dto.ErrorDto;
 import gabriel.games.service.*;
 import gabriel.games.model.util.Users;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -16,8 +15,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.*;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
@@ -28,7 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(RegistrationController.class)
 public class RegistrationControllerIT {
 
-    private String uri;
+    private final String PATH = "/register";
     private UserDto userDto;
     private UserValidator userValidator;
     @Autowired private MockMvc mockMvc;
@@ -37,7 +35,6 @@ public class RegistrationControllerIT {
 
     @BeforeEach
     public void setUp() {
-        this.uri = "/register";
         this.userDto = Users.makeUserDto("valid_name", "valid_pass");
         this.userValidator = new UserValidator();
     }
@@ -46,7 +43,7 @@ public class RegistrationControllerIT {
     public void register_ShouldReturnEmptyUserJsonWithLink() throws Exception {
         userDto = Users.makeUserDto("", "");
         ResultActions resultActions = performGet().andExpect(status().isOk());
-        userValidator.validate(resultActions, uri, userDto);
+        userValidator.validate(resultActions, PATH, userDto);
     }
 
     private ResultActions performGet() throws Exception {
@@ -63,7 +60,7 @@ public class RegistrationControllerIT {
 
         verifyMethodCalls();
         userDto = Users.makeUserDto(userDto.getUsername(), "");
-        userValidator.validate(resultActions, uri, userDto);
+        userValidator.validate(resultActions, PATH, userDto);
     }
 
     private ResultActions performPostRegister() throws Exception {
@@ -105,7 +102,7 @@ public class RegistrationControllerIT {
         addExpectedErrorsToUserDto("Nazwa użytkownika musi zawierać między 5 a 20 znaków.");
         mockErrorService();
         ResultActions resultActions = performPostRegister().andExpect(status().is4xxClientError());
-        userValidator.validate(resultActions, uri, userDto);
+        userValidator.validate(resultActions, PATH, userDto);
     }
 
     private void addExpectedErrorsToUserDto(String errorMessage) {
@@ -125,7 +122,7 @@ public class RegistrationControllerIT {
         mockErrorService();
         ResultActions resultActions = performPostRegister().andExpect(status().is4xxClientError());
         verifyInteractions();
-        userValidator.validate(resultActions, uri, userDto);
+        userValidator.validate(resultActions, PATH, userDto);
     }
 
     private void mockUserService() {

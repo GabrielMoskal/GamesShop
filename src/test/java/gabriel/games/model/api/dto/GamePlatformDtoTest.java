@@ -1,10 +1,7 @@
 package gabriel.games.model.api.dto;
 
-import gabriel.games.model.util.EntityValidator;
-import gabriel.games.model.util.GenericWord;
-import gabriel.games.model.util.ReflectionSetter;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import gabriel.games.model.util.*;
+import org.junit.jupiter.api.*;
 
 import java.sql.Date;
 
