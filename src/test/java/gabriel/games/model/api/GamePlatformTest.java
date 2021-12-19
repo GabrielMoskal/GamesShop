@@ -1,8 +1,6 @@
 package gabriel.games.model.api;
 
-import gabriel.games.model.util.EntityValidator;
-import gabriel.games.model.util.ReflectionSetter;
-import gabriel.games.model.util.Models;
+import gabriel.games.model.util.*;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
 import org.junit.jupiter.api.BeforeEach;
@@ -74,8 +72,8 @@ public class GamePlatformTest {
     public void equalsContract() {
         EqualsVerifier.forClass(GamePlatform.class)
                 .suppress(Warning.SURROGATE_KEY)
-                .withPrefabValues(Game.class, Models.makeGame(1), Models.makeGame(2))
-                .withPrefabValues(Platform.class, Models.makePlatform(1), Models.makePlatform(2))
+                .withPrefabValues(Game.class, mock(Game.class), mock(Game.class))
+                .withPrefabValues(Platform.class, mock(Platform.class), mock(Platform.class))
                 .verify();
     }
 }

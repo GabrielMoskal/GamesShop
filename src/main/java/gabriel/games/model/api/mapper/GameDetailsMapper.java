@@ -15,4 +15,9 @@ public class GameDetailsMapper {
                 .ratingReviewer(gameDetails.getRatingReviewer().doubleValue())
                 .build();
     }
+
+    public GameDetails toGameDetails(GameDetailsDto gameDetailsDto) {
+        // TODO
+        return null;
+    }
 }

@@ -1,19 +1,11 @@
 package gabriel.games.model.api.mapper;
 
-import gabriel.games.model.api.Company;
-import gabriel.games.model.api.Game;
-import gabriel.games.model.api.GameDetails;
-import gabriel.games.model.api.GamePlatform;
-import gabriel.games.model.api.dto.CompanyDto;
-import gabriel.games.model.api.dto.GameDetailsDto;
-import gabriel.games.model.api.dto.GameDto;
-import gabriel.games.model.api.dto.GamePlatformDto;
+import gabriel.games.model.api.*;
+import gabriel.games.model.api.dto.*;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Component
 @AllArgsConstructor
@@ -24,9 +16,9 @@ public class GameMapper {
     private final CompanyMapper companyMapper;
 
     public GameDto toGameDto(Game game) {
-        GameDetailsDto detailsDto = mapGameDetails(game.getDetails());
-        List<GamePlatformDto> platformDtos = mapGamePlatforms(game.getPlatforms());
-        List<CompanyDto> companyDtos = mapCompanies(game.getCompanies());
+        GameDetailsDto detailsDto = toGameDetailsDto(game.getDetails());
+        List<GamePlatformDto> platformDtos = toGamePlatformDtos(game.getPlatforms());
+        List<CompanyDto> companyDtos = toCompanyDtos(game.getCompanies());
 
         return GameDto.builder()
                 .name(game.getName())
@@ -37,7 +29,7 @@ public class GameMapper {
                 .build();
     }
 
-    private GameDetailsDto mapGameDetails(GameDetails details) {
+    private GameDetailsDto toGameDetailsDto(GameDetails details) {
         GameDetailsDto detailsDto = null;
         if (details != null) {
             detailsDto = detailsMapper.toGameDetailsDto(details);
@@ -45,20 +37,51 @@ public class GameMapper {
         return detailsDto;
     }
 
-    private List<GamePlatformDto> mapGamePlatforms(Set<GamePlatform> platforms) {
+    private List<GamePlatformDto> toGamePlatformDtos(Set<GamePlatform> platforms) {
         List<GamePlatformDto> platformDtos = new ArrayList<>();
         platforms.forEach((platform) -> platformDtos.add(platformMapper.toGamePlatformDto(platform)));
         return platformDtos;
     }
 
-    private List<CompanyDto> mapCompanies(Set<Company> companies) {
+    private List<CompanyDto> toCompanyDtos(Set<Company> companies) {
         List<CompanyDto> companyDtos = new ArrayList<>();
         companies.forEach((company) -> companyDtos.add(companyMapper.toCompanyDto(company)));
         return companyDtos;
     }
 
     public Game toGame(GameDto gameDto) {
-        // TODO
-        return null;
+        Game game = new Game(gameDto.getName());
+        addGameDetails(game, gameDto);
+        addGamePlatforms(game, gameDto);
+        addCompanies(game, gameDto);
+        return game;
     }
+
+    private void addGameDetails(Game game, GameDto gameDto) {
+        GameDetails gameDetails = detailsMapper.toGameDetails(gameDto.getDetails());
+        game.setDetails(gameDetails);
+    }
+
+    private void addGamePlatforms(Game game, GameDto gameDto) {
+        Set<GamePlatform> platforms = toGamePlatforms(gameDto.getPlatforms());
+        game.setPlatforms(platforms);
+    }
+
+    private Set<GamePlatform> toGamePlatforms(List<GamePlatformDto> platformDtos) {
+        Set<GamePlatform> platforms = new HashSet<>();
+        platformDtos.forEach((platformDto) -> platforms.add(platformMapper.toGamePlatform(platformDto)));
+        return platforms;
+    }
+
+    private void addCompanies(Game game, GameDto gameDto) {
+        Set<Company> companies = toCompanies(gameDto.getCompanies());
+        game.setCompanies(companies);
+    }
+
+    private Set<Company> toCompanies(List<CompanyDto> companyDtos) {
+        Set<Company> companies = new HashSet<>();
+        companyDtos.forEach((companyDto) -> companies.add(companyMapper.toCompany(companyDto)));
+        return companies;
+    }
+
 }

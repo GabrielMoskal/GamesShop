@@ -8,8 +8,14 @@ import java.util.List;
 
 @Component
 public class CompanyMapper {
-    public CompanyDto toCompanyDto(final Company company) {
+
+    public CompanyDto toCompanyDto(Company company) {
         List<String> types = company.getCompanyTypeNames();
         return new CompanyDto(company.getName(), types);
+    }
+
+    public Company toCompany(CompanyDto companyDto) {
+        // TODO
+        return null;
     }
 }

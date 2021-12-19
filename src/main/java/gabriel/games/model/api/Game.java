@@ -3,12 +3,8 @@ package gabriel.games.model.api;
 import lombok.*;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import javax.validation.constraints.*;
+import java.util.*;
 
 @ToString(onlyExplicitlyIncluded = true)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -37,12 +33,14 @@ public class Game {
     @OneToOne(mappedBy = "game", cascade = CascadeType.ALL)
     @PrimaryKeyJoinColumn
     @Getter
+    @Setter
     private GameDetails details;
 
     @NotNull
     @Size(min = 1)
     @OneToMany(mappedBy = "game")
     @Getter
+    @Setter
     private Set<GamePlatform> platforms;
 
     @NotNull
@@ -54,10 +52,10 @@ public class Game {
             inverseJoinColumns = @JoinColumn(name = "company_id")
     )
     @Getter
+    @Setter
     private Set<Company> companies;
 
-    public Game(final Long id, final String name) {
-        this.id = id;
+    public Game(String name) {
         this.name = name;
         makeUri(name);
         this.platforms = new HashSet<>();

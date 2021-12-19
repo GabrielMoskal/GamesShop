@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import gabriel.games.controller.util.GameValidator;
 import gabriel.games.model.api.Game;
 import gabriel.games.model.api.dto.*;
-import gabriel.games.model.api.mapper.GameMapper;
+import gabriel.games.model.api.mapper.*;
 import gabriel.games.service.GameService;
 import gabriel.games.service.exception.ObjectNotFoundException;
 import gabriel.games.model.util.Models;
@@ -28,13 +28,14 @@ public class GameControllerIT {
     private GameDto expected;
     private GameValidator gameValidator;
     @Autowired private MockMvc mockMvc;
-    @MockBean private GameService gameService;
     @MockBean private GameMapper gameMapper;
+    @MockBean private GameService gameService;
 
     @BeforeEach
     public void setUp() {
         this.expected = Models.makeGameDto("Multiple words value");
         this.gameValidator = new GameValidator();
+        when(gameService.findByUri(expected.getUri())).thenReturn(new Game(expected.getName()));
         mockGameMapper();
     }
 
@@ -116,5 +117,35 @@ public class GameControllerIT {
     private void verifyPostMethodCalls() {
         Game game = verify(gameMapper).toGame(any());
         verify(gameService).save(game);
+    }
+
+    @Test
+    public void patchGame_SingleAttributeUpdateGiven_ShouldReturn200() throws Exception {
+        performPatchRequest().andExpect(status().isOk());
+    }
+
+    private ResultActions performPatchRequest() throws Exception {
+        return mockMvc.perform(patch(PATH + expected.getUri())
+                .with(csrf())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(expected.getUri())
+                .content("name")
+                .content("different name")
+        );
+    }
+
+    @Test
+    public void patchGame_SingleAttributeUpdateGiven_ShouldReturnUpdatedGame() throws Exception {
+        expected = GameDto.builder()
+                .uri("different-name")
+                .name("different name")
+                .details(expected.getDetails())
+                .platforms(expected.getPlatforms())
+                .companies(expected.getCompanies())
+                .build();
+
+        mockGameMapper();
+        ResultActions resultActions = performPatchRequest();
+        gameValidator.validate(resultActions, expected);
     }
 }

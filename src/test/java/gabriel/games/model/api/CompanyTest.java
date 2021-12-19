@@ -1,9 +1,6 @@
 package gabriel.games.model.api;
 
-import gabriel.games.model.util.EntityValidator;
-import gabriel.games.model.util.GenericWord;
-import gabriel.games.model.util.ReflectionSetter;
-import gabriel.games.model.util.Models;
+import gabriel.games.model.util.*;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
 import org.junit.jupiter.api.BeforeEach;
@@ -84,8 +81,8 @@ public class CompanyTest {
     public void equalsContract() {
         EqualsVerifier.forClass(Company.class)
                 .suppress(Warning.ALL_FIELDS_SHOULD_BE_USED)
-                .withPrefabValues(Game.class, Models.makeGame(1), Models.makeGame(2))
-                .withPrefabValues(Company.class, Models.makeCompany(1), Models.makeCompany(2))
+                .withPrefabValues(Game.class, mock(Game.class), mock(Game.class))
+                .withPrefabValues(Company.class, mock(Company.class), mock(Company.class))
                 .verify();
     }
 }

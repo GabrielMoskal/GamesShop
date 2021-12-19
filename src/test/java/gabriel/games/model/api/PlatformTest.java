@@ -1,13 +1,12 @@
 package gabriel.games.model.api;
 
-import gabriel.games.model.util.EntityValidator;
-import gabriel.games.model.util.GenericWord;
-import gabriel.games.model.util.ReflectionSetter;
-import gabriel.games.model.util.Models;
+import gabriel.games.model.util.*;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import static org.mockito.Mockito.mock;
 
 public class PlatformTest {
 
@@ -55,7 +54,7 @@ public class PlatformTest {
     public void equalsContract() {
         EqualsVerifier.forClass(Platform.class)
                 .suppress(Warning.ALL_FIELDS_SHOULD_BE_USED)
-                .withPrefabValues(GamePlatform.class, Models.makeGamePlatform(1L), Models.makeGamePlatform(2L))
+                .withPrefabValues(GamePlatform.class, mock(GamePlatform.class), mock(GamePlatform.class))
                 .verify();
     }
 }

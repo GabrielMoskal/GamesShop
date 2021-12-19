@@ -1,9 +1,6 @@
 package gabriel.games.model.api;
 
-import gabriel.games.model.util.EntityValidator;
-import gabriel.games.model.util.GenericWord;
-import gabriel.games.model.util.ReflectionSetter;
-import gabriel.games.model.util.Models;
+import gabriel.games.model.util.*;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.mock;
 
 public class GameTest {
 
@@ -21,7 +19,7 @@ public class GameTest {
 
     @BeforeEach
     public void setUp() {
-        Game game = new Game(1L, "valid name");
+        Game game = new Game("valid name");
         this.validator = new EntityValidator<>(game);
         this.setter = new ReflectionSetter<>(game);
         this.genericWord = new GenericWord();
@@ -31,7 +29,6 @@ public class GameTest {
 
     @Test
     public void constructorTest() {
-        assertEquals(1L, setter.getFieldValue("id"));
         assertEquals("valid name", setter.getFieldValue("name"));
         assertEquals("valid-name", setter.getFieldValue("uri"));
     }
@@ -117,9 +114,9 @@ public class GameTest {
     public void equalsContract() {
         EqualsVerifier.forClass(Game.class)
                 .suppress(Warning.ALL_FIELDS_SHOULD_BE_USED)
-                .withPrefabValues(Game.class, Models.makeGame(1L), Models.makeGame(2L))
-                .withPrefabValues(GamePlatform.class, Models.makeGamePlatform(1L), Models.makeGamePlatform(2L))
-                .withPrefabValues(Company.class, Models.makeCompany(1L), Models.makeCompany(2L))
+                .withPrefabValues(Game.class, mock(Game.class), mock(Game.class))
+                .withPrefabValues(GamePlatform.class, mock(GamePlatform.class), mock(GamePlatform.class))
+                .withPrefabValues(Company.class, mock(Company.class), mock(Company.class))
                 .verify();
     }
 

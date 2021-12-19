@@ -2,7 +2,6 @@ package gabriel.games.model.api.mapper;
 
 import gabriel.games.model.api.*;
 import gabriel.games.model.api.dto.*;
-import gabriel.games.model.util.Models;
 import org.junit.jupiter.api.*;
 
 import java.util.*;
@@ -14,15 +13,16 @@ import static org.mockito.Mockito.*;
 public class GameMapperTest {
 
     private Game game;
-    private GameMapper gameMapper;
+    private GameDto gameDto;
     private GameDetailsMapper gameDetailsMapper;
     private GamePlatformMapper gamePlatformMapper;
     private CompanyMapper companyMapper;
-    private GameDto expected;
+    private GameMapper gameMapper;
 
     @BeforeEach
     public void setUp() {
         this.game = mock(Game.class);
+        this.gameDto = mock(GameDto.class);
         this.gameDetailsMapper = mock(GameDetailsMapper.class);
         this.gamePlatformMapper = mock(GamePlatformMapper.class);
         this.companyMapper = mock(CompanyMapper.class);
@@ -31,121 +31,143 @@ public class GameMapperTest {
 
     @Test
     public void toGameDto_NameGiven_ShouldContainValidName() {
-        expected = GameDto.builder().name("name").build();
-        when(game.getName()).thenReturn(expected.getName());
-
-        assertMappingCorrect();
+        GameDto expected = GameDto.builder().name("name").build();
+        assertToGameDtoMappingCorrect(expected);
     }
 
-    private void assertMappingCorrect() {
+    private void assertToGameDtoMappingCorrect(GameDto expected) {
+        when(game.getName()).thenReturn(expected.getName());
+        when(game.getUri()).thenReturn(expected.getUri());
         GameDto actual = gameMapper.toGameDto(game);
-
         assertEquals(expected, actual);
     }
 
     @Test
     public void toGameDto_DifferentNameGiven_ShouldContainValidName() {
-        expected = GameDto.builder().name("different").build();
-        when(game.getName()).thenReturn(expected.getName());
-
-        assertMappingCorrect();
+        GameDto expected = GameDto.builder().name("different").build();
+        assertToGameDtoMappingCorrect(expected);
     }
 
     @Test
     public void toGameDto_UriGiven_ShouldContainValidUri() {
-        expected = GameDto.builder().uri("uri").build();
-        when(game.getUri()).thenReturn(expected.getUri());
-
-        assertMappingCorrect();
+        GameDto expected = GameDto.builder().uri("uri").build();
+        assertToGameDtoMappingCorrect(expected);
     }
 
     @Test
     public void toGameDto_DifferentUriGiven_ShouldContainValidUri() {
-        expected = GameDto.builder().uri("different").build();
-        when(game.getUri()).thenReturn(expected.getUri());
-
-        assertMappingCorrect();
+        GameDto expected = GameDto.builder().uri("different").build();
+        assertToGameDtoMappingCorrect(expected);
     }
 
     @Test
     public void toGameDto_GameDetailsGiven_ShouldContainValidGameDetails() {
-        GameDetailsDto detailsDto = Models.makeGameDetailsDto("test");
-
-        assertGameDetailsDtoValid(detailsDto);
+        GameDetailsDto detailsDto = stubGameDetailsDto();
+        GameDto expected = GameDto.builder().details(detailsDto).build();
+        assertToGameDtoMappingCorrect(expected);
     }
 
-    private void assertGameDetailsDtoValid(GameDetailsDto detailsDto) {
-        stubDetails(detailsDto);
-        expected = GameDto.builder().details(detailsDto).build();
-
-        assertMappingCorrect();
-    }
-
-    private void stubDetails(GameDetailsDto detailsDto) {
-        when(gameDetailsMapper.toGameDetailsDto(any())).thenReturn(detailsDto);
+    private GameDetailsDto stubGameDetailsDto() {
+        GameDetailsDto gameDetailsDto = mock(GameDetailsDto.class);
+        when(gameDetailsMapper.toGameDetailsDto(any())).thenReturn(gameDetailsDto);
         when(game.getDetails()).thenReturn(mock(GameDetails.class));
-    }
-
-    @Test
-    public void toGameDto_DifferentGameDetailsGiven_ShouldContainValidGameDetails() {
-        GameDetailsDto detailsDto = Models.makeGameDetailsDto("different");
-
-        assertGameDetailsDtoValid(detailsDto);
+        return gameDetailsDto;
     }
 
     @Test
     public void toGameDto_GamePlatformsGiven_ShouldContainValidGamePlatforms() {
-        List<GamePlatformDto> platformDtos = Models.makeGamePlatformDtoList("test");
-
-        assertGamePlatformsValid(platformDtos);
+        List<GamePlatformDto> platformDtos = stubGamePlatformDtos();
+        GameDto expected = GameDto.builder().platforms(platformDtos).build();
+        assertToGameDtoMappingCorrect(expected);
     }
 
-    private void assertGamePlatformsValid(List<GamePlatformDto> platformDtos) {
-        expected = GameDto.builder().platforms(platformDtos).build();
-        stubDetails(platformDtos);
-
-        assertMappingCorrect();
-    }
-
-    private void stubDetails(List<GamePlatformDto> platformDtos) {
-        Set<GamePlatform> platforms = new HashSet<>(Arrays.asList(mock(GamePlatform.class), mock(GamePlatform.class)));
+    private List<GamePlatformDto> stubGamePlatformDtos() {
+        List<GamePlatformDto> platformDtos = Collections.singletonList(mock(GamePlatformDto.class));
+        Set<GamePlatform> platforms = new HashSet<>(Collections.singletonList(mock(GamePlatform.class)));
         when(game.getPlatforms()).thenReturn(platforms);
-        when(gamePlatformMapper.toGamePlatformDto(any()))
-                .thenReturn(platformDtos.get(0), platformDtos.get(1));
-    }
-
-    @Test
-    public void toGameDto_DifferentGamePlatformsGiven_ShouldContainValidGamePlatforms() {
-        List<GamePlatformDto> platformDtos = Models.makeGamePlatformDtoList("different");
-
-        assertGamePlatformsValid(platformDtos);
+        when(gamePlatformMapper.toGamePlatformDto(any())).thenReturn(platformDtos.get(0));
+        return platformDtos;
     }
 
     @Test
     public void toGameDto_CompaniesGiven_ShouldReturnValidCompanies() {
-        List<CompanyDto> companyDtos = Models.makeCompanyDtoList("test");
-
-        assertCompaniesValid(companyDtos);
+        List<CompanyDto> companyDtos = stubCompanyDtos();
+        GameDto expected = GameDto.builder().companies(companyDtos).build();
+        assertToGameDtoMappingCorrect(expected);
     }
 
-    private void assertCompaniesValid(List<CompanyDto> companyDtos) {
-        expected = GameDto.builder().companies(companyDtos).build();
-        stubCompanies(companyDtos);
-
-        assertMappingCorrect();
-    }
-
-    private void stubCompanies(List<CompanyDto> companyDtos) {
-        Set<Company> companies = new HashSet<>(Arrays.asList(mock(Company.class), mock(Company.class)));
+    private List<CompanyDto> stubCompanyDtos() {
+        List<CompanyDto> companyDtos = Collections.singletonList(mock(CompanyDto.class));
+        Set<Company> companies = new HashSet<>(Collections.singletonList(mock(Company.class)));
         when(game.getCompanies()).thenReturn(companies);
-        when(companyMapper.toCompanyDto(any()))
-                .thenReturn(companyDtos.get(0), companyDtos.get(1));
+        when(companyMapper.toCompanyDto(any())).thenReturn(companyDtos.get(0));
+        return companyDtos;
     }
 
     @Test
-    public void toGameDto_DifferentCompaniesGiven_ShouldReturnValidCompanies() {
-        List<CompanyDto> companyDtos = Models.makeCompanyDtoList("different");
-
-        assertCompaniesValid(companyDtos);
+    public void toGame_NameGiven_ShouldContainValidName() {
+        Game expected = new Game("name");
+        assertToGameMappingCorrect(expected);
     }
+
+    private void assertToGameMappingCorrect(Game expected) {
+        when(gameDto.getName()).thenReturn(expected.getName());
+        Game actual = gameMapper.toGame(gameDto);
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void toGame_DifferentNameGiven_ShouldContainValidName() {
+        Game expected = new Game("different name");
+        assertToGameMappingCorrect(expected);
+    }
+
+    @Test
+    public void toGame_GameDetailsGiven_ShouldContainValidDetails() {
+        GameDetails gameDetails = stubGameDetails();
+        stubGetName();
+        Game actual = gameMapper.toGame(gameDto);
+        assertEquals(gameDetails, actual.getDetails());
+    }
+
+    private GameDetails stubGameDetails() {
+        GameDetails gameDetails = mock(GameDetails.class);
+        when(gameDetailsMapper.toGameDetails(any())).thenReturn(gameDetails);
+        return gameDetails;
+    }
+
+    private void stubGetName() {
+        when(gameDto.getName()).thenReturn("name");
+    }
+
+    @Test
+    public void toGame_GamePlatformDtosGiven_ShouldContainValidGamePlatforms() {
+        Set<GamePlatform> gamePlatforms = stubGamePlatforms();
+        stubGetName();
+        Game actual = gameMapper.toGame(gameDto);
+        assertEquals(gamePlatforms, actual.getPlatforms());
+    }
+
+    private Set<GamePlatform> stubGamePlatforms() {
+        Set<GamePlatform> gamePlatforms = new HashSet<>(Collections.singletonList(mock(GamePlatform.class)));
+        when(gamePlatformMapper.toGamePlatform(any())).thenReturn(gamePlatforms.iterator().next());
+        when(gameDto.getPlatforms()).thenReturn(Collections.singletonList(mock(GamePlatformDto.class)));
+        return gamePlatforms;
+    }
+
+    @Test
+    public void toGame_CompaniesDtoGiven_ShouldContainValidCompanies() {
+        Set<Company> companies = stubCompanies();
+        stubGetName();
+        Game actual = gameMapper.toGame(gameDto);
+        assertEquals(companies, actual.getCompanies());
+    }
+
+    private Set<Company> stubCompanies() {
+        Set<Company> companies = new HashSet<>(Collections.singletonList(mock(Company.class)));
+        when(companyMapper.toCompany(any())).thenReturn(companies.iterator().next());
+        when(gameDto.getCompanies()).thenReturn(Collections.singletonList(mock(CompanyDto.class)));
+        return companies;
+    }
+
 }

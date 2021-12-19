@@ -52,11 +52,18 @@ public class GameController {
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @PostMapping(consumes = "application/json")
-    private ResponseEntity<EntityModel<GameDto>> postGame(@Valid @RequestBody GameDto gameDto) {
+    @PostMapping()
+    public ResponseEntity<EntityModel<GameDto>> postGame(@Valid @RequestBody GameDto gameDto) {
         Game game = gameMapper.toGame(gameDto);
         gameService.save(game);
         GameDto responseBody = gameMapper.toGameDto(game);
         return makeResponse(responseBody, HttpStatus.CREATED);
+    }
+
+    @PatchMapping(path = "/{uri}")
+    public ResponseEntity<EntityModel<GameDto>> patchGame(@PathVariable String uri) {
+        Game game = gameService.findByUri(uri);
+        GameDto responseBody = gameMapper.toGameDto(game);
+        return makeResponse(responseBody, HttpStatus.OK);
     }
 }

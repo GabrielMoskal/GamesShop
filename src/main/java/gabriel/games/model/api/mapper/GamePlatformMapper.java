@@ -8,9 +8,15 @@ import java.sql.Date;
 
 @Component
 public class GamePlatformMapper {
+
     public GamePlatformDto toGamePlatformDto(GamePlatform gamePlatform) {
         String platformName = gamePlatform.getPlatformName();
         Date releaseDate = gamePlatform.getReleaseDate();
         return new GamePlatformDto(platformName, releaseDate);
+    }
+
+    public GamePlatform toGamePlatform(GamePlatformDto gamePlatformDto) {
+        //TODO
+        return null;
     }
 }

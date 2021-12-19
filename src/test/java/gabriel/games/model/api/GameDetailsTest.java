@@ -1,10 +1,7 @@
 package gabriel.games.model.api;
 
-import gabriel.games.model.util.EntityValidator;
-import gabriel.games.model.util.GenericWord;
+import gabriel.games.model.util.*;
 import gabriel.games.model.api.embedded.Rating;
-import gabriel.games.model.util.ReflectionSetter;
-import gabriel.games.model.util.Models;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,6 +11,7 @@ import java.math.BigDecimal;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.mock;
 
 public class GameDetailsTest {
 
@@ -109,7 +107,7 @@ public class GameDetailsTest {
     public void equalsContract() {
         EqualsVerifier.forClass(GameDetails.class)
                 .suppress(Warning.ALL_FIELDS_SHOULD_BE_USED)
-                .withPrefabValues(Game.class, Models.makeGame(1L), Models.makeGame(2L))
+                .withPrefabValues(Game.class, mock(Game.class), mock(Game.class))
                 .verify();
     }
 }

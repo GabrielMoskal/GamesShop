@@ -22,7 +22,7 @@ public class GameServiceTest {
     }
 
     private Game makeExpected(String name) {
-        return new Game(1L, name);
+        return new Game(name);
     }
 
     @Test

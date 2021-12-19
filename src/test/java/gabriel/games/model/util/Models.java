@@ -1,12 +1,8 @@
 package gabriel.games.model.util;
 
 import gabriel.games.model.api.*;
-import gabriel.games.model.api.dto.CompanyDto;
-import gabriel.games.model.api.dto.GameDetailsDto;
-import gabriel.games.model.api.dto.GameDto;
-import gabriel.games.model.api.dto.GamePlatformDto;
-import gabriel.games.model.api.embedded.GamePlatformKey;
-import gabriel.games.model.api.embedded.Rating;
+import gabriel.games.model.api.dto.*;
+import gabriel.games.model.api.embedded.*;
 
 import java.lang.reflect.Constructor;
 import java.sql.Date;
@@ -56,11 +52,6 @@ public class Models {
                 new CompanyDto(filler + "1", Arrays.asList(filler + "1", filler + "2")),
                 new CompanyDto(filler + "2", Collections.singletonList(filler + "2"))
         );
-    }
-
-    public static Game makeGame(long id) {
-        String value = Long.toString(id);
-        return new Game(id, value);
     }
 
     public static GameDetails makeGameDetails(long id) {
