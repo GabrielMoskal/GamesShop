@@ -29,7 +29,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class GameControllerIT {
 
     private final String PATH = "/api/game/";
-    private GameDto expected;
     private GameValidator gameValidator;
     @Autowired private MockMvc mockMvc;
     @MockBean private GameMapper gameMapper;
@@ -37,57 +36,57 @@ public class GameControllerIT {
 
     @BeforeEach
     public void setUp() {
-        this.expected = makeGameDto();
         this.gameValidator = new GameValidator();
-        stubControllerMembers();
     }
 
-    private GameDto makeGameDto() {
+    private GameDto makeGameDto(String filler) {
         return GameDto.builder()
-                .uri("test")
-                .name("test")
+                .uri(filler)
+                .name(filler)
                 .details(
                         GameDetailsDto.builder()
-                                .description("description")
-                                .webpage("www.webpage.com")
+                                .description(filler)
+                                .webpage(filler)
                                 .ratingPlayers(1.0)
                                 .ratingReviewer(2.0)
                                 .build()
                 )
                 .platforms(
-                        Collections.singletonList(new GamePlatformDto("name", new Date(0)))
+                        Collections.singletonList(new GamePlatformDto(filler, new Date(0)))
                 )
                 .companies(
-                        Collections.singletonList(new CompanyDto("company name", Collections.singletonList("type")))
+                        Collections.singletonList(new CompanyDto(filler, Collections.singletonList(filler)))
                 )
                 .build();
     }
 
-    private void stubControllerMembers() {
+    @Test
+    public void description_ExistingResourcePathGiven_ShouldReturnValidJson() throws Exception {
+        GameDto expected = makeGameDto("filler");
+        stubControllerMembers(expected);
+        ResultActions resultActions = performGetRequest(expected);
+        gameValidator.validate(resultActions, expected);
+        verifyGameServiceInteractions(expected);
+        verifyGameMapperInteractions(expected);
+    }
+
+    private void stubControllerMembers(GameDto expected) {
         when(gameService.findByUri(expected.getUri())).thenReturn(new Game(expected.getName()));
         when(gameMapper.toGameDto(any())).thenReturn(expected);
     }
 
-    @Test
-    public void description_ExistingResourcePathGiven_ShouldReturnValidJson() throws Exception {
-        ResultActions resultActions = performGetRequest();
-        gameValidator.validate(resultActions, expected);
-        verifyGameServiceInteractions();
-        verifyGameMapperInteractions();
-    }
-
-    private ResultActions performGetRequest() throws Exception {
+    private ResultActions performGetRequest(GameDto expected) throws Exception {
         String urlTemplate = PATH + expected.getUri();
         return mockMvc.perform(get(urlTemplate).contentType(MediaType.APPLICATION_JSON_VALUE));
     }
 
-    private void verifyGameServiceInteractions() {
+    private void verifyGameServiceInteractions(GameDto expected) {
         ArgumentCaptor<String> uriCaptor = ArgumentCaptor.forClass(String.class);
         verify(gameService).findByUri(uriCaptor.capture());
         assertThat(uriCaptor.getValue()).isEqualTo(expected.getUri());
     }
 
-    private void verifyGameMapperInteractions() {
+    private void verifyGameMapperInteractions(GameDto expected) {
         ArgumentCaptor<Game> gameCaptor = ArgumentCaptor.forClass(Game.class);
         verify(gameMapper).toGameDto(gameCaptor.capture());
         assertThat(gameCaptor.getValue().getName()).isEqualTo(expected.getName());
@@ -96,23 +95,27 @@ public class GameControllerIT {
 
     @Test
     public void description_NonExistingResourcePathGiven_ShouldReturn404() throws Exception {
+        GameDto expected = makeGameDto("filler");
         when(gameService.findByUri(expected.getUri())).thenThrow(new ObjectNotFoundException("msg"));
-        performGetRequest().andExpect(status().isNotFound());
+        performGetRequest(expected).andExpect(status().isNotFound());
     }
 
     @Test
     public void description_ExistingResourcePathGiven_ShouldReturn200() throws Exception {
-        stubControllerMembers();
-        performGetRequest().andExpect(status().isOk());
+        GameDto expected = makeGameDto("filler");
+        stubControllerMembers(expected);
+        performGetRequest(expected).andExpect(status().isOk());
     }
 
     @Test
-    public void postGame_GameDtoGiven_ShouldReturn201() throws Exception {
-        performPostRequest().andExpect(status().isCreated());
+    public void postGame_ValidGameDtoGiven_ShouldReturn201() throws Exception {
+        GameDto expected = makeGameDto("filler");
+        stubControllerMembers(expected);
+        performPostRequest(expected).andExpect(status().isCreated());
     }
 
-    private ResultActions performPostRequest() throws Exception {
-        String gameDtoAsJson = writeGameDtoAsJson();
+    private ResultActions performPostRequest(GameDto expected) throws Exception {
+        String gameDtoAsJson = writeGameDtoAsJson(expected);
 
         return mockMvc.perform(
                 post(PATH)
@@ -122,20 +125,24 @@ public class GameControllerIT {
         );
     }
 
-    private String writeGameDtoAsJson() throws Exception {
+    private String writeGameDtoAsJson(GameDto expected) throws Exception {
         ObjectMapper objectMapper = new ObjectMapper();
         return objectMapper.writeValueAsString(expected);
     }
 
     @Test
-    public void postGame_GameDtoGiven_ShouldReturnValidJson() throws Exception {
-        ResultActions resultActions = performPostRequest();
+    public void postGame_ValidGameDtoGiven_ShouldReturnValidJson() throws Exception {
+        GameDto expected = makeGameDto("filler");
+        stubControllerMembers(expected);
+        ResultActions resultActions = performPostRequest(expected);
         gameValidator.validate(resultActions, expected);
     }
 
     @Test
     public void postGame_GameDtoGiven_VerifyMethodCalls() throws Exception {
-        performPostRequest();
+        GameDto expected = makeGameDto("filler");
+        stubControllerMembers(expected);
+        performPostRequest(expected);
         verifyPostMethodCalls();
     }
 
@@ -145,11 +152,19 @@ public class GameControllerIT {
     }
 
     @Test
-    public void patchGame_SingleAttributeUpdateGiven_ShouldReturn200() throws Exception {
-        performPatchRequest().andExpect(status().isOk());
+    public void postGame_InvalidGameDtoGiven_ShouldReturn400() throws Exception {
+        GameDto invalid = makeGameDto(null);
+        performPostRequest(invalid).andExpect(status().isBadRequest());
     }
 
-    private ResultActions performPatchRequest() throws Exception {
+    @Test
+    public void patchGame_SingleAttributeUpdateGiven_ShouldReturn200() throws Exception {
+        GameDto expected = makeGameDto("filler");
+        stubControllerMembers(expected);
+        performPatchRequest(expected).andExpect(status().isOk());
+    }
+
+    private ResultActions performPatchRequest(GameDto expected) throws Exception {
         return mockMvc.perform(patch(PATH + expected.getUri())
                 .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
@@ -161,16 +176,9 @@ public class GameControllerIT {
 
     @Test
     public void patchGame_SingleAttributeUpdateGiven_ShouldReturnUpdatedGame() throws Exception {
-        expected = GameDto.builder()
-                .uri("different-name")
-                .name("different name")
-                .details(expected.getDetails())
-                .platforms(expected.getPlatforms())
-                .companies(expected.getCompanies())
-                .build();
-
-        stubControllerMembers();
-        ResultActions resultActions = performPatchRequest();
+        GameDto expected = makeGameDto("different");
+        stubControllerMembers(expected);
+        ResultActions resultActions = performPatchRequest(expected);
         gameValidator.validate(resultActions, expected);
     }
 }
