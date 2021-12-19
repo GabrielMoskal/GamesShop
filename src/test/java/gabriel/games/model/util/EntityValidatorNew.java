@@ -1,26 +1,26 @@
 package gabriel.games.model.util;
 
-import javax.validation.*;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class EntityValidator<T> {
+public class EntityValidatorNew {
 
-    private final T validated;
-    private final Validator validator;
+    private static final Validator validator;
 
-    public EntityValidator(final T validated) {
-        this.validated = validated;
-        this.validator = Validation.buildDefaultValidatorFactory().getValidator();
+    static {
+        validator = Validation.buildDefaultValidatorFactory().getValidator();
     }
 
-    public void assertErrors(int numOfErrors) {
+    public static <T> void assertErrors(T validated, int numOfErrors) {
         Set<ConstraintViolation<T>> violations = validator.validate(validated);
         assertEquals(numOfErrors, violations.size(), errorMessage(violations));
     }
 
-    private String errorMessage(Set<ConstraintViolation<T>> violations) {
+    private static <T> String errorMessage(Set<ConstraintViolation<T>> violations) {
         StringBuffer msg = new StringBuffer();
         violations.forEach((e) -> {
             msg.append("\n");
@@ -31,3 +31,4 @@ public class EntityValidator<T> {
         return msg.toString();
     }
 }
+
