@@ -3,6 +3,7 @@ package gabriel.games.model.api.dto;
 import gabriel.games.model.util.*;
 import org.junit.jupiter.api.*;
 
+import java.sql.Date;
 import java.util.*;
 
 public class GameDtoTest {
@@ -13,10 +14,31 @@ public class GameDtoTest {
 
     @BeforeEach
     public void setUp() {
-        GameDto gameDto = Models.makeGameDto("Multiple words value");
+        GameDto gameDto = makeGameDto();
         this.setter = new ReflectionSetter<>(gameDto);
         this.validator = new EntityValidator<>(gameDto);
         this.genericWord = new GenericWord();
+    }
+
+    private GameDto makeGameDto() {
+        return GameDto.builder()
+                .uri("test")
+                .name("test")
+                .details(
+                        GameDetailsDto.builder()
+                                .description("description")
+                                .webpage("www.webpage.com")
+                                .ratingPlayers(1.0)
+                                .ratingReviewer(2.0)
+                                .build()
+                )
+                .platforms(
+                        Collections.singletonList(new GamePlatformDto("name", new Date(0)))
+                )
+                .companies(
+                        Collections.singletonList(new CompanyDto("company name", Collections.singletonList("type")))
+                )
+                .build();
     }
 
     @Test

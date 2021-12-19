@@ -7,14 +7,18 @@ import gabriel.games.model.api.dto.*;
 import gabriel.games.model.api.mapper.*;
 import gabriel.games.service.GameService;
 import gabriel.games.service.exception.ObjectNotFoundException;
-import gabriel.games.model.util.Models;
 import org.junit.jupiter.api.*;
+import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.*;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.*;
 
+import java.sql.Date;
+import java.util.Collections;
+
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
@@ -33,24 +37,43 @@ public class GameControllerIT {
 
     @BeforeEach
     public void setUp() {
-        this.expected = Models.makeGameDto("Multiple words value");
+        this.expected = makeGameDto();
         this.gameValidator = new GameValidator();
-        when(gameService.findByUri(expected.getUri())).thenReturn(new Game(expected.getName()));
-        mockGameMapper();
+        stubControllerMembers();
     }
 
-    private void mockGameMapper() {
+    private GameDto makeGameDto() {
+        return GameDto.builder()
+                .uri("test")
+                .name("test")
+                .details(
+                        GameDetailsDto.builder()
+                                .description("description")
+                                .webpage("www.webpage.com")
+                                .ratingPlayers(1.0)
+                                .ratingReviewer(2.0)
+                                .build()
+                )
+                .platforms(
+                        Collections.singletonList(new GamePlatformDto("name", new Date(0)))
+                )
+                .companies(
+                        Collections.singletonList(new CompanyDto("company name", Collections.singletonList("type")))
+                )
+                .build();
+    }
+
+    private void stubControllerMembers() {
+        when(gameService.findByUri(expected.getUri())).thenReturn(new Game(expected.getName()));
         when(gameMapper.toGameDto(any())).thenReturn(expected);
     }
 
     @Test
     public void description_ExistingResourcePathGiven_ShouldReturnValidJson() throws Exception {
-        shouldReturnValidJson();
-    }
-
-    private void shouldReturnValidJson() throws Exception {
         ResultActions resultActions = performGetRequest();
         gameValidator.validate(resultActions, expected);
+        verifyGameServiceInteractions();
+        verifyGameMapperInteractions();
     }
 
     private ResultActions performGetRequest() throws Exception {
@@ -58,11 +81,17 @@ public class GameControllerIT {
         return mockMvc.perform(get(urlTemplate).contentType(MediaType.APPLICATION_JSON_VALUE));
     }
 
-    @Test
-    public void description_ExistingDifferentResourcePathGiven_ShouldReturnValidJson() throws Exception {
-        expected = Models.makeGameDto("different values");
-        mockGameMapper();
-        shouldReturnValidJson();
+    private void verifyGameServiceInteractions() {
+        ArgumentCaptor<String> uriCaptor = ArgumentCaptor.forClass(String.class);
+        verify(gameService).findByUri(uriCaptor.capture());
+        assertThat(uriCaptor.getValue()).isEqualTo(expected.getUri());
+    }
+
+    private void verifyGameMapperInteractions() {
+        ArgumentCaptor<Game> gameCaptor = ArgumentCaptor.forClass(Game.class);
+        verify(gameMapper).toGameDto(gameCaptor.capture());
+        assertThat(gameCaptor.getValue().getName()).isEqualTo(expected.getName());
+        assertThat(gameCaptor.getValue().getUri()).isEqualTo(expected.getUri());
     }
 
     @Test
@@ -73,6 +102,7 @@ public class GameControllerIT {
 
     @Test
     public void description_ExistingResourcePathGiven_ShouldReturn200() throws Exception {
+        stubControllerMembers();
         performGetRequest().andExpect(status().isOk());
     }
 
@@ -82,7 +112,7 @@ public class GameControllerIT {
     }
 
     private ResultActions performPostRequest() throws Exception {
-        String gameDtoAsJson = preparePostRequest();
+        String gameDtoAsJson = writeGameDtoAsJson();
 
         return mockMvc.perform(
                 post(PATH)
@@ -92,14 +122,9 @@ public class GameControllerIT {
         );
     }
 
-    private String preparePostRequest() throws Exception {
-        GameDto content = Models.makeGameDto(expected.getName(), "");
-        return writeGameDtoAsJson(content);
-    }
-
-    private String writeGameDtoAsJson(GameDto gameDto) throws Exception {
+    private String writeGameDtoAsJson() throws Exception {
         ObjectMapper objectMapper = new ObjectMapper();
-        return objectMapper.writeValueAsString(gameDto);
+        return objectMapper.writeValueAsString(expected);
     }
 
     @Test
@@ -144,7 +169,7 @@ public class GameControllerIT {
                 .companies(expected.getCompanies())
                 .build();
 
-        mockGameMapper();
+        stubControllerMembers();
         ResultActions resultActions = performPatchRequest();
         gameValidator.validate(resultActions, expected);
     }

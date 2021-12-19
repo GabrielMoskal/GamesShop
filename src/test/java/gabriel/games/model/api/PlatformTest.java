@@ -1,10 +1,10 @@
 package gabriel.games.model.api;
 
 import gabriel.games.model.util.*;
-import nl.jqno.equalsverifier.EqualsVerifier;
-import nl.jqno.equalsverifier.Warning;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import nl.jqno.equalsverifier.*;
+import org.junit.jupiter.api.*;
+
+import java.util.Collections;
 
 import static org.mockito.Mockito.mock;
 
@@ -15,7 +15,7 @@ public class PlatformTest {
 
     @BeforeEach
     public void setUp() {
-        Platform platform = Models.makePlatform(1L);
+        Platform platform = new Platform(1L, "name", Collections.emptySet());
         this.validator = new EntityValidator<>(platform);
         this.setter = new ReflectionSetter<>(platform);
     }

@@ -2,15 +2,12 @@ package gabriel.games.model.api;
 
 import gabriel.games.model.util.*;
 import gabriel.games.model.api.embedded.Rating;
-import nl.jqno.equalsverifier.EqualsVerifier;
-import nl.jqno.equalsverifier.Warning;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import nl.jqno.equalsverifier.*;
+import org.junit.jupiter.api.*;
 
 import java.math.BigDecimal;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 
 public class GameDetailsTest {
@@ -22,7 +19,13 @@ public class GameDetailsTest {
 
     @BeforeEach
     public void setUp() {
-        this.gameDetails = Models.makeGameDetails(1);
+        this.gameDetails = GameDetails.builder()
+                .gameId(1L)
+                .description("description")
+                .webpage("www.webpage.com")
+                .ratingPlayers(new Rating("2.5"))
+                .ratingReviewer(new Rating("3.5"))
+                .build();
         this.validator = new EntityValidator<>(this.gameDetails);
         this.setter = new ReflectionSetter<>(this.gameDetails);
         this.genericWord = new GenericWord();

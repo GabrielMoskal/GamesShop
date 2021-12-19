@@ -3,9 +3,7 @@ package gabriel.games.model.api.mapper;
 import gabriel.games.model.api.GameDetails;
 import gabriel.games.model.api.dto.GameDetailsDto;
 import gabriel.games.model.api.embedded.Rating;
-import gabriel.games.model.util.Models;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -20,7 +18,12 @@ public class GameDetailsMapperTest {
 
     @Test
     public void toGameDetailsDto_GameDetailsGiven_ShouldReturnValidGameDetailsDto() {
-        GameDetailsDto expected = Models.makeGameDetailsDto("1");
+        GameDetailsDto expected = GameDetailsDto.builder()
+                .description("description")
+                .webpage("www.webpage.com")
+                .ratingPlayers(1.0)
+                .ratingReviewer(2.0)
+                .build();
         assertMappingCorrect(expected);
     }
 
@@ -42,7 +45,12 @@ public class GameDetailsMapperTest {
 
     @Test
     public void toGameDetailsDto_DifferentGameDetailsGiven_ShouldReturnValidGameDto() {
-        GameDetailsDto expected = Models.makeGameDetailsDto("2");
+        GameDetailsDto expected = GameDetailsDto.builder()
+                .description("different")
+                .webpage("www.different.com")
+                .ratingPlayers(1.5)
+                .ratingReviewer(2.5)
+                .build();
         assertMappingCorrect(expected);
     }
 }
