@@ -17,7 +17,6 @@ import org.springframework.test.web.servlet.*;
 
 import java.sql.Date;
 import java.util.Collections;
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -211,8 +210,7 @@ public class GameControllerIT {
     }
 
     private ResultActions performPatchRequest(GameDto expected) throws Exception {
-        List<AttributeUpdateDto> attributeUpdateDtos = Collections.singletonList(new AttributeUpdateDto("name", "attribute value"));
-        String content = objectMapper.writeValueAsString(attributeUpdateDtos);
+        String content = objectMapper.writeValueAsString(expected);
 
         return mockMvc.perform(patch(PATH + expected.getUri())
                 .with(csrf())
@@ -234,31 +232,44 @@ public class GameControllerIT {
     @Test
     public void patchGame_SingleAttributeUpdateGiven_VerifyMethodCalls() throws Exception {
         GameDto gameDto = makeGameDto("filler");
-        AttributeUpdateDto attributeUpdateDto = new AttributeUpdateDto("name", "attribute value");
-        List<AttributeUpdateDto> content = Collections.singletonList(attributeUpdateDto);
-        Game updatedGame = new Game(attributeUpdateDto.getAttributeValue());
+        Game updatedGame = new Game(gameDto.getName());
+        updatedGame.setName("different name");
 
         stubPatchGameInteractions(gameDto, updatedGame);
 
         performPatchRequest(gameDto);
-        verifyPatchGameGameServiceUpdateInteractions(gameDto, content);
-        verifyPatchGameGameMapperToGameDtoInteractions(updatedGame);
+        verifyPatchInteractions(gameDto, updatedGame);
     }
 
     private void stubPatchGameInteractions(GameDto gameDto, Game updatedGame) {
+        when(gameMapper.toGame(any())).thenReturn(updatedGame);
         when(gameMapper.toGameDto(any())).thenReturn(gameDto);
         when(gameService.update(any(), any())).thenReturn(updatedGame);
     }
 
-    private void verifyPatchGameGameServiceUpdateInteractions(GameDto argument, List<AttributeUpdateDto> content) {
-        @SuppressWarnings("unchecked")
-        ArgumentCaptor<List<AttributeUpdateDto>> attributeCaptor = ArgumentCaptor.forClass(List.class);
+    private void verifyPatchInteractions(GameDto gameDto, Game updatedGame) {
+        verifyPatchGameGameMapperToGameInteractions(gameDto);
+        verifyPatchGameGameServiceUpdateInteractions(updatedGame);
+        verifyPatchGameGameMapperToGameDtoInteractions(updatedGame);
+    }
+
+    private void verifyPatchGameGameMapperToGameInteractions(GameDto gameDto) {
+        ArgumentCaptor<GameDto> gameDtoCaptor = ArgumentCaptor.forClass(GameDto.class);
+
+        verify(gameMapper).toGame(gameDtoCaptor.capture());
+
+        GameDto actual = gameDtoCaptor.getValue();
+        assertThat(actual).isEqualTo(gameDto);
+    }
+
+    private void verifyPatchGameGameServiceUpdateInteractions(Game game) {
         ArgumentCaptor<String> uriCaptor = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<Game> gameCaptor = ArgumentCaptor.forClass(Game.class);
 
-        verify(gameService).update(uriCaptor.capture(), attributeCaptor.capture());
+        verify(gameService).update(uriCaptor.capture(), gameCaptor.capture());
 
-        assertThat(attributeCaptor.getValue()).isEqualTo(content);
-        assertThat(uriCaptor.getValue()).isEqualTo(argument.getUri());
+        assertThat(gameCaptor.getValue()).isEqualTo(game);
+        assertThat(uriCaptor.getValue()).isEqualTo(game.getUri());
     }
 
     private void verifyPatchGameGameMapperToGameDtoInteractions(Game updatedGame) {
@@ -267,7 +278,6 @@ public class GameControllerIT {
         verify(gameMapper).toGameDto(gameCaptor.capture());
 
         Game actual = gameCaptor.getValue();
-        assertThat(actual.getUri()).isEqualTo(updatedGame.getUri());
-        assertThat(actual.getName()).isEqualTo(updatedGame.getName());
+        assertThat(actual).isEqualTo(updatedGame);
     }
 }

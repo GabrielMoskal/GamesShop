@@ -1,10 +1,8 @@
 package gabriel.games.model.api;
 
 import gabriel.games.model.util.*;
-import nl.jqno.equalsverifier.EqualsVerifier;
-import nl.jqno.equalsverifier.Warning;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import nl.jqno.equalsverifier.*;
+import org.junit.jupiter.api.*;
 
 import java.util.Collections;
 
@@ -13,10 +11,12 @@ import static org.mockito.Mockito.mock;
 
 public class GameTest {
 
+    private Game expected;
     private GenericWord genericWord;
 
     @BeforeEach
     public void setUp() {
+        this.expected = makeGame("valid name");
         this.genericWord = new GenericWord();
     }
 
@@ -36,82 +36,77 @@ public class GameTest {
 
     @Test
     public void validGameGiven_HasNoErrors() {
-        Game expected = makeGame("valid name");
         EntityValidatorNew.assertErrors(expected,0);
     }
 
     @Test
     public void nameShouldNotBeNull() {
-        assertThrows(NullPointerException.class, () -> makeGame(null));
+        expected.setName(null);
+        EntityValidatorNew.assertErrors(expected,1);
     }
 
     @Test
     public void nameShouldBeAtLeast1CharacterLong() {
-        Game expected = makeGame("");
-        EntityValidatorNew.assertErrors(expected,2);
+        expected.setName("");
+        EntityValidatorNew.assertErrors(expected,1);
     }
 
     @Test
     public void nameShouldBeMax128CharacterLong() {
-        Game expected = makeGame(genericWord.make(129));
-        EntityValidatorNew.assertErrors(expected,2);
+        expected.setName(genericWord.make(129));
+        EntityValidatorNew.assertErrors(expected,1);
     }
 
     @Test
     public void uriShouldNotBeNull() {
-        Game expected = makeGame("valid name");
-        assertNotNull(expected.getUri());
-        EntityValidatorNew.assertErrors(expected,0);
+        expected.setUri(null);
+        EntityValidatorNew.assertErrors(expected,1);
     }
 
     @Test
     public void uriShouldBeAtLeast1CharacterLong() {
-        Game expected = makeGame("");
-        EntityValidatorNew.assertErrors(expected,2);
+        expected.setUri("");
+        EntityValidatorNew.assertErrors(expected,1);
     }
 
     @Test
     public void uriShouldBeMax128CharacterLong() {
-        Game expected = makeGame(genericWord.make(129));
-        EntityValidatorNew.assertErrors(expected,2);
+        expected.setUri(genericWord.make(129));
+        EntityValidatorNew.assertErrors(expected,1);
     }
 
     @Test
     public void uriShouldHaveNoWhiteSpaces() {
-        Game expected = makeGame("some white spaces");
-        EntityValidatorNew.assertErrors(expected,0);
+        expected.setUri("some white spaces");
+        EntityValidatorNew.assertErrors(expected,1);
     }
 
     @Test
     public void uriShouldBeLowercase() {
-        Game expected = makeGame("Uppercase");
-        EntityValidatorNew.assertErrors(expected,0);
+        expected.setUri("Uppercase");
+        EntityValidatorNew.assertErrors(expected,1);
     }
 
     @Test
     public void platformsShouldNotBeNull() {
-        Game expected = makeGame("valid name");
         expected.setPlatforms(null);
         EntityValidatorNew.assertErrors(expected,1);
     }
 
     @Test
     public void platformsShouldNotBeEmpty() {
-        Game expected = makeGame("valid name");
         expected.setPlatforms(Collections.emptySet());
         EntityValidatorNew.assertErrors(expected,1);
     }
 
     @Test
     public void companiesShouldNotBeNull() {
-        Game expected = makeGame("valid name");
         expected.setCompanies(null);
         EntityValidatorNew.assertErrors(expected,1);
     }
 
     @Test
     public void companiesShouldNotBeEmpty() {
-        Game expected = makeGame("valid name");
         expected.setCompanies(Collections.emptySet());
         EntityValidatorNew.assertErrors(expected,1);
     }

@@ -21,6 +21,7 @@ public class Game {
     @Size(min = 1, max = 128)
     @ToString.Include
     @Getter
+    @Setter
     private String name;
 
     @NotNull
@@ -28,6 +29,7 @@ public class Game {
     @Pattern(regexp = "([a-z-_0-9]*)")
     @ToString.Include
     @Getter
+    @Setter
     private String uri;
 
     @OneToOne(mappedBy = "game", cascade = CascadeType.ALL)
@@ -62,8 +64,10 @@ public class Game {
         this.companies = new HashSet<>();
     }
 
-    private void makeUri(final String name) {
-        this.uri = name.toLowerCase().replace(" ", "-");
+    private void makeUri(String name) {
+        if (name != null) {
+            this.uri = name.toLowerCase().replace(" ", "-");
+        }
     }
 
     @Override
