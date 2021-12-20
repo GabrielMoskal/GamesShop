@@ -1,6 +1,7 @@
 package gabriel.games.controller.api;
 
 import gabriel.games.model.api.Game;
+import gabriel.games.model.api.dto.AttributeUpdateDto;
 import gabriel.games.model.api.dto.GameDto;
 import gabriel.games.model.api.mapper.GameMapper;
 import gabriel.games.service.GameService;
@@ -11,6 +12,8 @@ import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+
+import java.util.List;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 
@@ -61,8 +64,9 @@ public class GameController {
     }
 
     @PatchMapping(path = "/{uri}")
-    public ResponseEntity<EntityModel<GameDto>> patchGame(@PathVariable String uri) {
-        Game game = gameService.findByUri(uri);
+    public ResponseEntity<EntityModel<GameDto>> patchGame(@PathVariable String uri,
+                                                          @RequestBody List<AttributeUpdateDto> toUpdate) {
+        Game game = gameService.update(uri, toUpdate);
         GameDto responseBody = gameMapper.toGameDto(game);
         return makeResponse(responseBody, HttpStatus.OK);
     }

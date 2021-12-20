@@ -17,6 +17,7 @@ import org.springframework.test.web.servlet.*;
 
 import java.sql.Date;
 import java.util.Collections;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -33,6 +34,7 @@ public class GameControllerIT {
     @Autowired private MockMvc mockMvc;
     @MockBean private GameMapper gameMapper;
     @MockBean private GameService gameService;
+    @Autowired ObjectMapper objectMapper;
 
     @BeforeEach
     public void setUp() {
@@ -128,7 +130,7 @@ public class GameControllerIT {
     }
 
     private ResultActions performPostRequest(GameDto expected) throws Exception {
-        String gameDtoAsJson = writeGameDtoAsJson(expected);
+        String gameDtoAsJson = objectMapper.writeValueAsString(expected);
 
         return mockMvc.perform(
                 post(PATH)
@@ -136,11 +138,6 @@ public class GameControllerIT {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(gameDtoAsJson)
         );
-    }
-
-    private String writeGameDtoAsJson(GameDto expected) throws Exception {
-        ObjectMapper objectMapper = new ObjectMapper();
-        return objectMapper.writeValueAsString(expected);
     }
 
     @Test
@@ -214,22 +211,63 @@ public class GameControllerIT {
     }
 
     private ResultActions performPatchRequest(GameDto expected) throws Exception {
+        List<AttributeUpdateDto> attributeUpdateDtos = Collections.singletonList(new AttributeUpdateDto("name", "attribute value"));
+        String content = objectMapper.writeValueAsString(attributeUpdateDtos);
+
         return mockMvc.perform(patch(PATH + expected.getUri())
                 .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(expected.getUri())
-                .content("name")
-                .content("different name")
+                .content(content)
         );
     }
 
     @Test
-    public void patchGame_SingleAttributeUpdateGiven_ShouldReturnUpdatedGame() throws Exception {
+    public void patchGame_SingleAttributeUpdateGiven_ShouldReturnValidJson() throws Exception {
         GameDto expected = makeGameDto("different");
 
         when(gameMapper.toGameDto(any())).thenReturn(expected);
 
         ResultActions resultActions = performPatchRequest(expected);
         gameValidator.validate(resultActions, expected);
+    }
+
+    @Test
+    public void patchGame_SingleAttributeUpdateGiven_VerifyMethodCalls() throws Exception {
+        GameDto gameDto = makeGameDto("filler");
+        AttributeUpdateDto attributeUpdateDto = new AttributeUpdateDto("name", "attribute value");
+        List<AttributeUpdateDto> content = Collections.singletonList(attributeUpdateDto);
+        Game updatedGame = new Game(attributeUpdateDto.getAttributeValue());
+
+        stubPatchGameInteractions(gameDto, updatedGame);
+
+        performPatchRequest(gameDto);
+        verifyPatchGameGameServiceUpdateInteractions(gameDto, content);
+        verifyPatchGameGameMapperToGameDtoInteractions(updatedGame);
+    }
+
+    private void stubPatchGameInteractions(GameDto gameDto, Game updatedGame) {
+        when(gameMapper.toGameDto(any())).thenReturn(gameDto);
+        when(gameService.update(any(), any())).thenReturn(updatedGame);
+    }
+
+    private void verifyPatchGameGameServiceUpdateInteractions(GameDto argument, List<AttributeUpdateDto> content) {
+        @SuppressWarnings("unchecked")
+        ArgumentCaptor<List<AttributeUpdateDto>> attributeCaptor = ArgumentCaptor.forClass(List.class);
+        ArgumentCaptor<String> uriCaptor = ArgumentCaptor.forClass(String.class);
+
+        verify(gameService).update(uriCaptor.capture(), attributeCaptor.capture());
+
+        assertThat(attributeCaptor.getValue()).isEqualTo(content);
+        assertThat(uriCaptor.getValue()).isEqualTo(argument.getUri());
+    }
+
+    private void verifyPatchGameGameMapperToGameDtoInteractions(Game updatedGame) {
+        ArgumentCaptor<Game> gameCaptor = ArgumentCaptor.forClass(Game.class);
+
+        verify(gameMapper).toGameDto(gameCaptor.capture());
+
+        Game actual = gameCaptor.getValue();
+        assertThat(actual.getUri()).isEqualTo(updatedGame.getUri());
+        assertThat(actual.getName()).isEqualTo(updatedGame.getName());
     }
 }
