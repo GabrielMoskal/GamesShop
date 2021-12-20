@@ -55,7 +55,7 @@ public class GameController {
     @PostMapping()
     public ResponseEntity<EntityModel<GameDto>> postGame(@Valid @RequestBody GameDto gameDto) {
         Game game = gameMapper.toGame(gameDto);
-        gameService.save(game);
+        game = gameService.save(game);
         GameDto responseBody = gameMapper.toGameDto(game);
         return makeResponse(responseBody, HttpStatus.CREATED);
     }
