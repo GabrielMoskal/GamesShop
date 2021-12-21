@@ -6,6 +6,7 @@ import gabriel.games.model.api.mapper.GameMapper;
 import gabriel.games.service.GameService;
 import gabriel.games.service.exception.ObjectNotFoundException;
 import lombok.AllArgsConstructor;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.hateoas.*;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
@@ -67,5 +68,13 @@ public class GameController {
         game = gameService.update(uri, game);
         GameDto responseBody = gameMapper.toGameDto(game);
         return makeResponse(responseBody, HttpStatus.OK);
+    }
+
+    @DeleteMapping(path = "/{uri}")
+    @ResponseStatus(code = HttpStatus.NO_CONTENT)
+    public void deleteGame(@PathVariable String uri) {
+        try {
+            gameService.deleteByUri(uri);
+        } catch (EmptyResultDataAccessException ignored) {}
     }
 }

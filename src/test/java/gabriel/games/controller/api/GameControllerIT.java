@@ -12,6 +12,7 @@ import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.*;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.*;
 
@@ -236,8 +237,8 @@ public class GameControllerIT {
         updatedGame.setName("different name");
 
         stubPatchGameInteractions(gameDto, updatedGame);
-
         performPatchRequest(gameDto);
+
         verifyPatchInteractions(gameDto, updatedGame);
     }
 
@@ -279,5 +280,38 @@ public class GameControllerIT {
 
         Game actual = gameCaptor.getValue();
         assertThat(actual).isEqualTo(updatedGame);
+    }
+
+    @Test
+    public void deleteGame_ExistingUriGiven_ShouldReturn204() throws Exception {
+        String uri = "uri";
+
+        performDeleteRequest(uri).andExpect(status().isNoContent());
+
+        verifyDeleteGameInteractions(uri);
+    }
+
+    private ResultActions performDeleteRequest(String uri) throws Exception {
+        return mockMvc.perform(delete(PATH + uri)
+                .with(csrf())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(uri))
+        );
+    }
+
+    private void verifyDeleteGameInteractions(String uri) {
+        ArgumentCaptor<String> stringCaptor = ArgumentCaptor.forClass(String.class);
+        verify(gameService).deleteByUri(stringCaptor.capture());
+        String actual = stringCaptor.getValue();
+        assertThat(actual).isEqualTo(uri);
+    }
+
+    @Test
+    public void deleteGame_ExceptionThrown_ShouldReturn204() throws Exception {
+        String uri = "non-existent";
+
+        doThrow(EmptyResultDataAccessException.class).when(gameService).deleteByUri(uri);
+        
+        performDeleteRequest(uri).andExpect(status().isNoContent());
     }
 }

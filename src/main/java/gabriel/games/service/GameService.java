@@ -42,4 +42,8 @@ public class GameService {
         }
         return save(game);
     }
+
+    public void deleteByUri(String uri) {
+
+    }
 }
