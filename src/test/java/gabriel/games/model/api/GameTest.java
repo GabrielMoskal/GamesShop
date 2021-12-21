@@ -4,111 +4,122 @@ import gabriel.games.model.util.*;
 import nl.jqno.equalsverifier.*;
 import org.junit.jupiter.api.*;
 
-import java.util.Collections;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 
 public class GameTest {
 
-    private Game expected;
+    private Game actual;
     private GenericWord genericWord;
 
     @BeforeEach
     public void setUp() {
-        this.expected = makeGame("valid name");
+        this.actual = makeGame("valid name");
         this.genericWord = new GenericWord();
     }
 
     private Game makeGame(String name) {
         Game game = new Game(name);
-        game.setPlatforms(Models.makeValidGamePlatforms());
-        game.setCompanies(Models.makeValidCompanies());
+        game.setPlatforms(makeGamePlatforms());
+        game.setCompanies(makeCompanies());
         return game;
+    }
+
+    private Set<GamePlatform> makeGamePlatforms() {
+        Set<GamePlatform> gamePlatforms = new HashSet<>();
+        gamePlatforms.add(mock(GamePlatform.class));
+        return gamePlatforms;
+    }
+
+    private Set<Company> makeCompanies() {
+        Set<Company> companies = new HashSet<>();
+        companies.add(mock(Company.class));
+        return companies;
     }
 
     @Test
     public void constructorTest() {
-        Game actual = makeGame("valid name");
         assertEquals("valid name", actual.getName());
         assertEquals("valid-name", actual.getUri());
     }
 
     @Test
     public void validGameGiven_HasNoErrors() {
-        EntityValidatorNew.assertErrors(expected,0);
+        EntityValidator.assertErrors(actual,0);
     }
 
     @Test
     public void nameShouldNotBeNull() {
-        expected.setName(null);
-        EntityValidatorNew.assertErrors(expected,1);
+        actual.setName(null);
+        EntityValidator.assertErrors(actual,1);
     }
 
     @Test
     public void nameShouldBeAtLeast1CharacterLong() {
-        expected.setName("");
-        EntityValidatorNew.assertErrors(expected,1);
+        actual.setName("");
+        EntityValidator.assertErrors(actual,1);
     }
 
     @Test
     public void nameShouldBeMax128CharacterLong() {
-        expected.setName(genericWord.make(129));
-        EntityValidatorNew.assertErrors(expected,1);
+        actual.setName(genericWord.make(129));
+        EntityValidator.assertErrors(actual,1);
     }
 
     @Test
     public void uriShouldNotBeNull() {
-        expected.setUri(null);
-        EntityValidatorNew.assertErrors(expected,1);
+        actual.setUri(null);
+        EntityValidator.assertErrors(actual,1);
     }
 
     @Test
     public void uriShouldBeAtLeast1CharacterLong() {
-        expected.setUri("");
-        EntityValidatorNew.assertErrors(expected,1);
+        actual.setUri("");
+        EntityValidator.assertErrors(actual,1);
     }
 
     @Test
     public void uriShouldBeMax128CharacterLong() {
-        expected.setUri(genericWord.make(129));
-        EntityValidatorNew.assertErrors(expected,1);
+        actual.setUri(genericWord.make(129));
+        EntityValidator.assertErrors(actual,1);
     }
 
     @Test
     public void uriShouldHaveNoWhiteSpaces() {
-        expected.setUri("some white spaces");
-        EntityValidatorNew.assertErrors(expected,1);
+        actual.setUri("some white spaces");
+        EntityValidator.assertErrors(actual,1);
     }
 
     @Test
     public void uriShouldBeLowercase() {
-        expected.setUri("Uppercase");
-        EntityValidatorNew.assertErrors(expected,1);
+        actual.setUri("Uppercase");
+        EntityValidator.assertErrors(actual,1);
     }
 
     @Test
     public void platformsShouldNotBeNull() {
-        expected.setPlatforms(null);
-        EntityValidatorNew.assertErrors(expected,1);
+        actual.setPlatforms(null);
+        EntityValidator.assertErrors(actual,1);
     }
 
     @Test
     public void platformsShouldNotBeEmpty() {
-        expected.setPlatforms(Collections.emptySet());
-        EntityValidatorNew.assertErrors(expected,1);
+        actual.setPlatforms(Collections.emptySet());
+        EntityValidator.assertErrors(actual,1);
     }
 
     @Test
     public void companiesShouldNotBeNull() {
-        expected.setCompanies(null);
-        EntityValidatorNew.assertErrors(expected,1);
+        actual.setCompanies(null);
+        EntityValidator.assertErrors(actual,1);
     }
 
     @Test
     public void companiesShouldNotBeEmpty() {
-        expected.setCompanies(Collections.emptySet());
-        EntityValidatorNew.assertErrors(expected,1);
+        actual.setCompanies(Collections.emptySet());
+        EntityValidator.assertErrors(actual,1);
     }
 
     @Test

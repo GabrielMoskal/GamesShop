@@ -10,7 +10,6 @@ import java.util.Set;
 
 @ToString
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
 @Entity
 @Table(name = "company_general_type")
 public class CompanyType {
@@ -27,6 +26,10 @@ public class CompanyType {
     @ManyToMany(mappedBy = "types")
     @ToString.Exclude
     private Set<Company> companies;
+
+    public CompanyType(String type) {
+        this.type = type;
+    }
 
     @Override
     public boolean equals(Object o) {

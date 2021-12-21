@@ -3,78 +3,72 @@ package gabriel.games.model.api;
 import gabriel.games.model.util.*;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class CompanyTest {
 
-    private Company company;
-    private EntityValidator<Company> validator;
-    private ReflectionSetter<Company> setter;
+    private Company actual;
 
-    @BeforeEach
-    public void setUp() {
-        this.company = new Company(1L, "company name", Collections.emptySet(), Collections.emptySet());
-        this.validator = new EntityValidator<>(this.company);
-        this.setter = new ReflectionSetter<>(this.company);
+    @Test
+    public void constructorTest() {
+        Set<CompanyType> companyTypes = makeCompanyTypes();
+        actual = new Company("name", companyTypes);
+
+        assertEquals("name", actual.getName());
+        assertEquals(companyTypes, actual.getTypes());
+    }
+
+    private Set<CompanyType> makeCompanyTypes() {
+        Set<CompanyType> companyTypes = new HashSet<>();
+        companyTypes.add(new CompanyType("type1"));
+        companyTypes.add(new CompanyType("type2"));
+        return companyTypes;
     }
 
     @Test
     public void validCompanyGiven_HasNoErrors() {
-        validator.assertErrors(0);
+        actual = new Company("company name", Collections.emptySet());
+        EntityValidator.assertErrors(actual, 0);
     }
 
     @Test
     public void nameShouldNotBeNull() {
-        setter.set("name", null);
-        validator.assertErrors(1);
+        actual = new Company(null, Collections.emptySet());
+        EntityValidator.assertErrors(actual, 1);
     }
 
     @Test
     public void nameShouldBeAtLeast1CharacterLong() {
-        setter.set("name", "");
-        validator.assertErrors(1);
+        actual = new Company("", Collections.emptySet());
+        EntityValidator.assertErrors(actual, 1);
     }
 
     @Test
     public void nameShouldBeMax128CharactersLong() {
         GenericWord genericWord = new GenericWord();
-        setter.set("name", genericWord.make(129));
-        validator.assertErrors(1);
+        actual = new Company(genericWord.make(129), Collections.emptySet());
+        EntityValidator.assertErrors(actual, 1);
     }
 
     @Test
     public void getCompanyTypeNames_ShouldReturnValidNames() {
-        addValidCompanyTypes();
+        Set<CompanyType> companyTypes = makeCompanyTypes();
+        actual = new Company("name", companyTypes);
         List<String> expected = Arrays.asList("type1", "type2");
-        List<String> actual = company.getCompanyTypeNames();
-        assertThat(expected).hasSameElementsAs(actual);
-    }
-
-    private void addValidCompanyTypes() {
-        Set<CompanyType> companyTypes = new HashSet<>();
-        companyTypes.add(mockCompanyType(1));
-        companyTypes.add(mockCompanyType(2));
-        setter.set("types", companyTypes);
-    }
-
-    private CompanyType mockCompanyType(int index) {
-        CompanyType companyType = mock(CompanyType.class);
-        when(companyType.getType()).thenReturn("type" + index);
-        return companyType;
+        assertThat(expected).hasSameElementsAs(actual.getTypeNames());
     }
 
     @Test
     public void getCompanyTypesNames_ShouldNeverReturnNull() {
-        setter.set("types", null);
-        assertNotNull(company.getCompanyTypeNames());
+        actual = new Company("name", null);
+        assertNotNull(actual.getTypeNames());
     }
 
     @Test

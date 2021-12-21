@@ -29,13 +29,13 @@ public class GamePlatformTest {
     @Test
     public void validGamePlatformGiven_HasNoErrors() {
         actual = makeGamePlatform("name", new Date(0));
-        EntityValidatorNew.assertErrors(actual, 0);
+        EntityValidator.assertErrors(actual, 0);
     }
 
     @Test
     public void releaseDateIsNotNull() {
         actual = makeGamePlatform("name", null);
-        EntityValidatorNew.assertErrors(actual, 1);
+        EntityValidator.assertErrors(actual, 1);
     }
 
     @Test

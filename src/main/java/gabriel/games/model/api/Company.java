@@ -9,7 +9,6 @@ import java.util.*;
 
 @ToString
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
 @Entity
 public class Company {
 
@@ -33,9 +32,15 @@ public class Company {
             inverseJoinColumns = @JoinColumn(name = "type_id")
     )
     @ToString.Exclude
+    @Getter
     private Set<CompanyType> types;
 
-    public List<String> getCompanyTypeNames() {
+    public Company(String name, Set<CompanyType> types) {
+        this.name = name;
+        this.types = types;
+    }
+
+    public List<String> getTypeNames() {
         if (Objects.isNull(types)) {
             return Collections.emptyList();
         } else {

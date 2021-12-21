@@ -23,32 +23,32 @@ public class PlatformTest {
     @Test
     public void validPlatformGiven_HasNoErrors() {
         actual = new Platform("name");
-        EntityValidatorNew.assertErrors(actual, 0);
+        EntityValidator.assertErrors(actual, 0);
     }
 
     @Test
     public void nameShouldNotBeNull() {
         actual = new Platform(null);
-        EntityValidatorNew.assertErrors(actual, 1);
+        EntityValidator.assertErrors(actual, 1);
     }
 
     @Test
     public void nameShouldBeAtLeast1CharacterLong() {
         actual = new Platform("");
-        EntityValidatorNew.assertErrors(actual, 1);
+        EntityValidator.assertErrors(actual, 1);
     }
 
     @Test
     public void nameShouldBeMax50CharactersLong() {
         GenericWord genericWord = new GenericWord();
         actual = new Platform(genericWord.make(51));
-        EntityValidatorNew.assertErrors(actual, 1);
+        EntityValidator.assertErrors(actual, 1);
     }
 
     @Test
     public void gamesShouldNotBeNull() {
         actual = new Platform("name");
-        EntityValidatorNew.assertErrors(actual, 0);
+        EntityValidator.assertErrors(actual, 0);
     }
 
     @Test

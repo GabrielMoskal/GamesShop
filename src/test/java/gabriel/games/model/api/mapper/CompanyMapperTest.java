@@ -36,12 +36,26 @@ public class CompanyMapperTest {
     private Company mockCompany(String name, List<String> types) {
         Company company = mock(Company.class);
         when(company.getName()).thenReturn(name);
-        when(company.getCompanyTypeNames()).thenReturn(types);
+        when(company.getTypeNames()).thenReturn(types);
         return company;
     }
 
     @Test
     public void toCompanyDto_DifferentCompanyGiven_ShouldReturnValidCompanyDto() {
         assertMappingCorrect("different name", Arrays.asList("different1", "different2"));
+    }
+
+    @Test
+    public void toCompany_NameGiven_ShouldContainValidName() {
+        CompanyDto companyDto = new CompanyDto("name", Collections.emptyList());
+        Company actual = mapper.toCompany(companyDto);
+        assertEquals(companyDto.getName(), actual.getName());
+    }
+
+    @Test
+    public void toCompany_TypesGiven_ShouldContainValidTypes() {
+        CompanyDto companyDto = new CompanyDto("name", Collections.singletonList("type name"));
+        Company actual = mapper.toCompany(companyDto);
+        assertEquals(companyDto.getTypes(), actual.getTypeNames());
     }
 }

@@ -1,57 +1,53 @@
 package gabriel.games.model.api;
 
-import gabriel.games.model.util.EntityValidator;
-import gabriel.games.model.util.GenericWord;
-import gabriel.games.model.util.ReflectionSetter;
-import gabriel.games.model.util.Models;
+import gabriel.games.model.util.*;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.Collections;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.mock;
 
 public class CompanyTypeTest {
 
-    private EntityValidator<CompanyType> validator;
-    private ReflectionSetter<CompanyType> setter;
+    private CompanyType actual;
 
-    @BeforeEach
-    public void setUp() {
-        CompanyType companyType = new CompanyType(1L, "producer", Collections.emptySet());
-        this.validator = new EntityValidator<>(companyType);
-        this.setter = new ReflectionSetter<>(companyType);
+    @Test
+    public void constructorTest() {
+        actual = new CompanyType("type");
+        assertEquals("type", actual.getType());
     }
 
     @Test
     public void validCompanyTypeGiven_HasNoErrors() {
-        validator.assertErrors(0);
+        actual = new CompanyType("type");
+        EntityValidator.assertErrors(actual, 0);
     }
 
     @Test
     public void typeShouldNotBeNull() {
-        setter.set("type", null);
-        validator.assertErrors(1);
+        actual = new CompanyType(null);
+        EntityValidator.assertErrors(actual, 1);
     }
 
     @Test
     public void typeShouldBeAtLeast1CharacterLong() {
-        setter.set("type", "");
-        validator.assertErrors(1);
+        actual = new CompanyType("");
+        EntityValidator.assertErrors(actual, 1);
     }
 
     @Test
     public void typeShouldBeMax50CharactersLong() {
         GenericWord genericWord = new GenericWord();
-        setter.set("type", genericWord.make(51));
-        validator.assertErrors(1);
+        actual = new CompanyType(genericWord.make(51));
+        EntityValidator.assertErrors(actual, 1);
     }
 
     @Test
     public void equalsContract() {
         EqualsVerifier.forClass(CompanyType.class)
                 .suppress(Warning.ALL_FIELDS_SHOULD_BE_USED)
-                .withPrefabValues(Company.class, Models.makeCompany(1), Models.makeCompany(2))
+                .withPrefabValues(Company.class, mock(Company.class), mock(Company.class))
                 .verify();
     }
 }

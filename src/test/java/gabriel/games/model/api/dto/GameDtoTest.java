@@ -1,6 +1,7 @@
 package gabriel.games.model.api.dto;
 
-import gabriel.games.model.util.*;
+import gabriel.games.model.util.EntityValidator;
+import gabriel.games.model.util.GenericWord;
 import org.junit.jupiter.api.*;
 
 import java.sql.Date;
@@ -8,15 +9,12 @@ import java.util.*;
 
 public class GameDtoTest {
 
-    private ReflectionSetter<GameDto> setter;
-    private EntityValidator<GameDto> validator;
+    private GameDto actual;
     private GenericWord genericWord;
 
     @BeforeEach
     public void setUp() {
-        GameDto gameDto = makeGameDto();
-        this.setter = new ReflectionSetter<>(gameDto);
-        this.validator = new EntityValidator<>(gameDto);
+        this.actual = makeGameDto();
         this.genericWord = new GenericWord();
     }
 
@@ -43,88 +41,82 @@ public class GameDtoTest {
 
     @Test
     public void validGameDtoHasNoErrors() {
-        validator.assertErrors(0);
+        actual = makeGameDto();
+        EntityValidator.assertErrors(actual, 0);
     }
 
     @Test
     public void uriShouldNotBeNull() {
-        setter.set("uri", null);
-        validator.assertErrors(1);
+        actual = GameDto.builder().uri(null).build();
+        EntityValidator.assertPropertyErrors(actual, "uri");
     }
 
     @Test
     public void uriShouldBeMax128CharacterLong() {
-        setter.set("uri", genericWord.make(129));
-        validator.assertErrors(1);
+        actual = GameDto.builder().uri(genericWord.make(129)).build();
+        EntityValidator.assertPropertyErrors(actual, "uri");
     }
 
     @Test
     public void nameShouldNotBeNull() {
-        setter.set("name", null);
-        validator.assertErrors(1);
+        actual = GameDto.builder().name(null).build();
+        EntityValidator.assertPropertyErrors(actual, "name");
+
     }
 
     @Test
     public void nameShouldBeAtLeast1CharacterLong() {
-        setter.set("name", "");
-        validator.assertErrors(1);
+        actual = GameDto.builder().name("").build();
+        EntityValidator.assertPropertyErrors(actual, "name");
     }
 
     @Test
     public void nameShouldBeMax128CharacterLong() {
-        setter.set("name", genericWord.make(129));
-        validator.assertErrors(1);
+        actual = GameDto.builder().name(genericWord.make(129)).build();
+        EntityValidator.assertPropertyErrors(actual, "name");
     }
 
     @Test
     public void detailsShouldNotBeNull() {
-        setter.set("details", null);
-        validator.assertErrors(1);
-    }
-
-    @Test
-    public void detailsShouldBeValidated() {
-        GameDetailsDto details = GameDetailsDto.builder()
-                .description(null)
-                .webpage(null)
-                .build();
-        setter.set("details", details);
-        validator.assertErrors(2);
+        actual = GameDto.builder().details(null).build();
+        EntityValidator.assertPropertyErrors(actual, "details");
     }
 
     @Test
     public void platformsShouldNotBeNull() {
-        setter.set("platforms", null);
-        validator.assertErrors(1);
+        actual = GameDto.builder().platforms(null).build();
+        EntityValidator.assertPropertyErrors(actual, "platforms");
     }
 
     @Test
     public void platformsShouldNotBeEmpty() {
-        setter.set("platforms", Collections.emptyList());
-        validator.assertErrors(1);
+        actual = GameDto.builder()
+                .platforms(Collections.emptyList())
+                .build();
+        EntityValidator.assertPropertyErrors(actual, "platforms");
     }
 
     @Test
     public void platformsAreValidated() {
-        setter.set("platforms", Collections.singletonList(new GamePlatformDto(null, null)));
-        validator.assertErrors(2);
+        actual = GameDto.builder()
+                .platforms(Collections.singletonList(new GamePlatformDto(null, null)))
+                .build();
+        EntityValidator.assertPropertyErrors(actual.getPlatforms().get(0), "name");
     }
 
     @Test
     public void companiesShouldNotBeNull() {
-        setter.set("companies", null);
-        validator.assertErrors(1);
+        actual = GameDto.builder()
+                .companies(null)
+                .build();
+        EntityValidator.assertPropertyErrors(actual, "companies");
     }
 
     @Test
     public void companiesShouldNotBeEmpty() {
-        setter.set("companies", Collections.emptyList());
-        validator.assertErrors(1);
-    }
-
-    @Test
-    public void companiesAreValidated() {
-        setter.set("companies", Collections.singletonList(new CompanyDto(null, null)));
-        validator.assertErrors(2);
+        actual = GameDto.builder()
+                .companies(Collections.emptyList())
+                .build();
+        EntityValidator.assertPropertyErrors(actual, "companies");
     }
 }

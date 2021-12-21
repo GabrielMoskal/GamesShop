@@ -1,7 +1,8 @@
 package gabriel.games.model.api;
 
-import gabriel.games.model.util.*;
 import gabriel.games.model.api.embedded.Rating;
+import gabriel.games.model.util.EntityValidator;
+import gabriel.games.model.util.GenericWord;
 import nl.jqno.equalsverifier.*;
 import org.junit.jupiter.api.*;
 
@@ -12,78 +13,61 @@ import static org.mockito.Mockito.mock;
 
 public class GameDetailsTest {
 
-    private GameDetails gameDetails;
-    private EntityValidator<GameDetails> validator;
-    private ReflectionSetter<GameDetails> setter;
+    private GameDetails actual;
     private GenericWord genericWord;
 
     @BeforeEach
     public void setUp() {
-        this.gameDetails = GameDetails.builder()
+        this.genericWord = new GenericWord();
+    }
+
+    @Test
+    public void validGameDetailsGiven_HasNoErrors() {
+        actual = GameDetails.builder()
                 .gameId(1L)
                 .description("description")
                 .webpage("www.webpage.com")
                 .ratingPlayers(new Rating("2.5"))
                 .ratingReviewer(new Rating("3.5"))
                 .build();
-        this.validator = new EntityValidator<>(this.gameDetails);
-        this.setter = new ReflectionSetter<>(this.gameDetails);
-        this.genericWord = new GenericWord();
-    }
-
-    @Test
-    public void validGameDetailsGiven_HasNoErrors() {
-        validator.assertErrors(0);
+        EntityValidator.assertErrors(actual, 0);
     }
 
     @Test
     public void descriptionShouldNotBeNull() {
-        setter.set("description", null);
-        validator.assertErrors(1);
+        actual = GameDetails.builder().description(null).build();
+        EntityValidator.assertPropertyErrors(actual, "description");
     }
 
     @Test
     public void descriptionShouldBeMax1024CharactersLong() {
-        setter.set("description", genericWord.make(1025));
-        validator.assertErrors(1);
+        actual = GameDetails.builder().description(genericWord.make(1025)).build();
+        EntityValidator.assertPropertyErrors(actual, "description");
     }
 
     @Test
     public void webpageShouldNotBeNull() {
-        setter.set("webpage", null);
-        validator.assertErrors(1);
+        actual = GameDetails.builder().webpage(null).build();
+        EntityValidator.assertPropertyErrors(actual, "webpage");
     }
 
     @Test
     public void webpageShouldBeMax256CharactersLong() {
-        setter.set("webpage", genericWord.make(257));
-        validator.assertErrors(1);
-    }
-
-    @Test
-    public void ratingPlayersShouldBeValidated() {
-        setter.set("ratingPlayers", new Rating("11.0"));
-        validator.assertErrors(1);
-    }
-
-    @Test
-    public void ratingReviewerShouldBeValidated() {
-        setter.set("ratingReviewer", new Rating("11.0"));
-        validator.assertErrors(1);
+        actual = GameDetails.builder().webpage(genericWord.make(257)).build();
+        EntityValidator.assertPropertyErrors(actual, "webpage");
     }
 
     @Test
     public void getRatingPlayers_ShouldReturnValidBigDecimal() {
-        setter.set("ratingPlayers", new Rating("5.0"));
+        actual = GameDetails.builder().ratingPlayers(new Rating("5.0")).build();
         BigDecimal expected = new BigDecimal("5.0");
-        BigDecimal actual = gameDetails.getRatingPlayers();
-        assertEquals(expected, actual);
+        assertEquals(expected, actual.getRatingPlayers());
     }
 
     @Test
     public void getRatingPlayers_NullRatingPlayersGiven_ShouldThrowException() {
-        setter.set("ratingPlayers", null);
-        Throwable exception = assertThrows(NullPointerException.class, () -> gameDetails.getRatingPlayers());
+        actual = GameDetails.builder().ratingPlayers(null).build();
+        Throwable exception = assertThrows(NullPointerException.class, () -> actual.getRatingPlayers());
         String expected = "ratingPlayers should not be null";
         String actual = exception.getMessage();
         assertEquals(expected, actual);
@@ -91,16 +75,15 @@ public class GameDetailsTest {
 
     @Test
     public void getRatingReviewer_ShouldReturnValidBigDecimal() {
-        setter.set("ratingReviewer", new Rating("3.0"));
+        actual = GameDetails.builder().ratingReviewer(new Rating("3.0")).build();
         BigDecimal expected = new BigDecimal("3.0");
-        BigDecimal actual = gameDetails.getRatingReviewer();
-        assertEquals(expected, actual);
+        assertEquals(expected, actual.getRatingReviewer());
     }
 
     @Test
     public void getRatingReviewer_NullRatingReviewerGiven_ShouldThrowException() {
-        setter.set("ratingReviewer", null);
-        Throwable exception = assertThrows(NullPointerException.class, () -> gameDetails.getRatingReviewer());
+        actual = GameDetails.builder().ratingReviewer(null).build();
+        Throwable exception = assertThrows(NullPointerException.class, () -> actual.getRatingReviewer());
         String expected = "ratingReviewer should not be null";
         String actual = exception.getMessage();
         assertEquals(expected, actual);
