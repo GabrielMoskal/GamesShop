@@ -30,6 +30,11 @@ public class GamePlatform {
     @Getter
     private Date releaseDate;
 
+    public GamePlatform(Platform platform, Date releaseDate) {
+        this.platform = platform;
+        this.releaseDate = releaseDate;
+    }
+
     public String getPlatformName() {
         Objects.requireNonNull(platform, "platform should not be null");
         return platform.getName();

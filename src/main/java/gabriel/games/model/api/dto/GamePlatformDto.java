@@ -18,7 +18,7 @@ public class GamePlatformDto {
 
     @NotNull
     @Size(min = 1, max = 50)
-    private final String platformName;
+    private final String name;
 
     @NotNull
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")

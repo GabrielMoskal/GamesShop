@@ -1,6 +1,7 @@
 package gabriel.games.model.api.mapper;
 
 import gabriel.games.model.api.GamePlatform;
+import gabriel.games.model.api.Platform;
 import gabriel.games.model.api.dto.GamePlatformDto;
 import org.springframework.stereotype.Component;
 
@@ -16,7 +17,8 @@ public class GamePlatformMapper {
     }
 
     public GamePlatform toGamePlatform(GamePlatformDto gamePlatformDto) {
-        //TODO
-        return null;
+        Platform platform = new Platform(gamePlatformDto.getName());
+        Date date = gamePlatformDto.getReleaseDate();
+        return new GamePlatform(platform, date);
     }
 }

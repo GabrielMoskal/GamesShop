@@ -5,11 +5,9 @@ import lombok.*;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 @ToString
-@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 public class Platform {
@@ -26,7 +24,13 @@ public class Platform {
     @NotNull
     @OneToMany(mappedBy = "platform")
     @ToString.Exclude
+    @Getter
     private Set<GamePlatform> games;
+
+    public Platform(String name) {
+        this.name = name;
+        this.games = new HashSet<>();
+    }
 
     @Override
     public boolean equals(Object o) {

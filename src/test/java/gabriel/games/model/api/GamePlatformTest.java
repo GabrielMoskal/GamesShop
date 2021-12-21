@@ -3,69 +3,64 @@ package gabriel.games.model.api;
 import gabriel.games.model.util.*;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.sql.Date;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class GamePlatformTest {
 
-    private GamePlatform gamePlatform;
-    private EntityValidator<GamePlatform> validator;
-    private ReflectionSetter<GamePlatform> setter;
+    private GamePlatform actual;
 
-    @BeforeEach
-    public void setUp() {
-        this.gamePlatform = Models.makeGamePlatform(1L);
-        this.validator = new EntityValidator<>(this.gamePlatform);
-        this.setter = new ReflectionSetter<>(this.gamePlatform);
+    @Test
+    public void constructorTest() {
+        actual = new GamePlatform(new Platform("name"), new Date(0));
+        assertEquals("name", actual.getPlatformName());
+        assertEquals(new Date(0), actual.getReleaseDate());
+    }
+
+    private GamePlatform makeGamePlatform(String name, Date date) {
+        return new GamePlatform(new Platform(name), date);
     }
 
     @Test
     public void validGamePlatformGiven_HasNoErrors() {
-        validator.assertErrors(0);
+        actual = makeGamePlatform("name", new Date(0));
+        EntityValidatorNew.assertErrors(actual, 0);
     }
 
     @Test
     public void releaseDateIsNotNull() {
-        setter.set("releaseDate", null);
-        validator.assertErrors(1);
+        actual = makeGamePlatform("name", null);
+        EntityValidatorNew.assertErrors(actual, 1);
     }
 
     @Test
     public void getPlatformName_ReturnsPlatformName() {
-        assertGetPlatformCorrect("platform name");
-    }
+        actual = makeGamePlatform("name", new Date(0));
 
-    private void assertGetPlatformCorrect(String expected) {
-        Platform platform = mockPlatform(expected);
-        setter.set("platform", platform);
-        String actual = gamePlatform.getPlatformName();
-
-        assertEquals(expected, actual);
-    }
-
-    private Platform mockPlatform(String name) {
-        Platform platform = mock(Platform.class);
-        when(platform.getName()).thenReturn(name);
-        return platform;
+        assertEquals("name", actual.getPlatformName());
     }
 
     @Test
     public void getPlatformName_DifferentPlatformGiven_ShouldReturnPlatformName() {
-        assertGetPlatformCorrect("different name");
+        actual = makeGamePlatform("different", new Date(0));
+
+        assertEquals("different", actual.getPlatformName());
     }
 
     @Test
     public void getPlatformName_NullPlatformGiven_ShouldThrowException() {
-        setter.set("platform", null);
-        Throwable exception = assertThrows(NullPointerException.class, () -> gamePlatform.getPlatformName());
-        String expected = "platform should not be null";
-        String actual = exception.getMessage();
-        assertEquals(expected, actual);
+        actual = new GamePlatform(null, new Date(0));
+
+        Throwable exception = assertThrows(NullPointerException.class, () -> actual.getPlatformName());
+        String expectedMsg = "platform should not be null";
+        String actualMsg = exception.getMessage();
+
+        assertEquals(expectedMsg, actualMsg);
     }
 
     @Test

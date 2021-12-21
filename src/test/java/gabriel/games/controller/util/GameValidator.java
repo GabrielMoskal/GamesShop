@@ -40,7 +40,7 @@ public class GameValidator extends DtoValidator {
         List<GamePlatformDto> platforms = expected.getPlatforms();
         platforms.forEach((platform) -> {
             String platformPath = "platforms[" + platforms.indexOf(platform) + "]";
-            jsonValidator.expect(platformPath + ".platformName", platform.getPlatformName());
+            jsonValidator.expect(platformPath + ".name", platform.getName());
             jsonValidator.expect(platformPath + ".releaseDate", platform.getReleaseDate().toString());
         });
     }

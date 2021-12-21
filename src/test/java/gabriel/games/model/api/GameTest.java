@@ -29,9 +29,9 @@ public class GameTest {
 
     @Test
     public void constructorTest() {
-        Game expected = makeGame("valid name");
-        assertEquals("valid name", expected.getName());
-        assertEquals("valid-name", expected.getUri());
+        Game actual = makeGame("valid name");
+        assertEquals("valid name", actual.getName());
+        assertEquals("valid-name", actual.getUri());
     }
 
     @Test

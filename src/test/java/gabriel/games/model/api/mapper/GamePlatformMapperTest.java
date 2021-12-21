@@ -46,9 +46,25 @@ public class GamePlatformMapperTest {
 
     @Test
     public void toGamePlatformDto_DifferentGamePlatformGiven_ShouldReturnValidGamePlatformDto() {
-        String platformName = "different name";
+        String name = "different name";
         Date releaseDate = Date.valueOf("2000-01-21");
 
-        assertMappingCorrect(platformName, releaseDate);
+        assertMappingCorrect(name, releaseDate);
+    }
+
+    @Test
+    public void toGamePlatform_NameGiven_ShouldContainValidName() {
+        GamePlatformDto gamePlatformDto = new GamePlatformDto("name", new Date(0));
+        GamePlatform actual = mapper.toGamePlatform(gamePlatformDto);
+
+        assertEquals(gamePlatformDto.getName(), actual.getPlatformName());
+    }
+
+    @Test
+    public void toGamePlatform_ReleaseDateGiven_ShouldContainValidReleaseDate() {
+        GamePlatformDto gamePlatformDto = new GamePlatformDto("name", Date.valueOf("2000-01-21"));
+        GamePlatform actual = mapper.toGamePlatform(gamePlatformDto);
+
+        assertEquals(gamePlatformDto.getReleaseDate(), actual.getReleaseDate());
     }
 }

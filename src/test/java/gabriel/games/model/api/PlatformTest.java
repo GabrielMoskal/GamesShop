@@ -6,48 +6,49 @@ import org.junit.jupiter.api.*;
 
 import java.util.Collections;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 
 public class PlatformTest {
 
-    private EntityValidator<Platform> validator;
-    private ReflectionSetter<Platform> setter;
+    private Platform actual;
 
-    @BeforeEach
-    public void setUp() {
-        Platform platform = new Platform(1L, "name", Collections.emptySet());
-        this.validator = new EntityValidator<>(platform);
-        this.setter = new ReflectionSetter<>(platform);
+    @Test
+    public void constructorTest() {
+        actual = new Platform("name");
+        assertEquals("name", actual.getName());
+        assertEquals(Collections.emptySet(), actual.getGames());
     }
 
     @Test
     public void validPlatformGiven_HasNoErrors() {
-        validator.assertErrors(0);
+        actual = new Platform("name");
+        EntityValidatorNew.assertErrors(actual, 0);
     }
 
     @Test
     public void nameShouldNotBeNull() {
-        setter.set("name", null);
-        validator.assertErrors(1);
+        actual = new Platform(null);
+        EntityValidatorNew.assertErrors(actual, 1);
     }
 
     @Test
     public void nameShouldBeAtLeast1CharacterLong() {
-        setter.set("name", "");
-        validator.assertErrors(1);
+        actual = new Platform("");
+        EntityValidatorNew.assertErrors(actual, 1);
     }
 
     @Test
     public void nameShouldBeMax50CharactersLong() {
         GenericWord genericWord = new GenericWord();
-        setter.set("name", genericWord.make(51));
-        validator.assertErrors(1);
+        actual = new Platform(genericWord.make(51));
+        EntityValidatorNew.assertErrors(actual, 1);
     }
 
     @Test
     public void gamesShouldNotBeNull() {
-        setter.set("games", null);
-        validator.assertErrors(1);
+        actual = new Platform("name");
+        EntityValidatorNew.assertErrors(actual, 0);
     }
 
     @Test
