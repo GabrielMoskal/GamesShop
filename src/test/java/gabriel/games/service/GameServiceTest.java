@@ -172,4 +172,11 @@ public class GameServiceTest {
         update(game, mock(Game.class));
         verify(repository).save(any());
     }
+
+    @Test
+    public void deleteByUri_VerifyInteractions() {
+        String uri = "uri";
+        service.deleteByUri(uri);
+        verify(repository).deleteByUri(uri);
+    }
 }

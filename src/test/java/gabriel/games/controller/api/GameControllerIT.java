@@ -311,7 +311,7 @@ public class GameControllerIT {
         String uri = "non-existent";
 
         doThrow(EmptyResultDataAccessException.class).when(gameService).deleteByUri(uri);
-        
+
         performDeleteRequest(uri).andExpect(status().isNoContent());
     }
 }

@@ -44,6 +44,6 @@ public class GameService {
     }
 
     public void deleteByUri(String uri) {
-
+        repository.deleteByUri(uri);
     }
 }
