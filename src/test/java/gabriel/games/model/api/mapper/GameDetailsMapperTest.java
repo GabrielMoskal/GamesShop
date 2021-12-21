@@ -53,4 +53,38 @@ public class GameDetailsMapperTest {
                 .build();
         assertMappingCorrect(expected);
     }
+
+    @Test
+    public void toGameDetails_DescriptionGiven_ShouldContainValidDescription() {
+        GameDetailsDto gameDetailsDto = GameDetailsDto.builder().description("description").build();
+        GameDetails expected = GameDetails.builder().description(gameDetailsDto.getDescription()).build();
+        GameDetails actual = mapper.toGameDetails(gameDetailsDto);
+        assertEquals(expected.getDescription(), actual.getDescription());
+    }
+    
+    @Test
+    public void toGameDetails_WebpageGiven_ShouldContainValidWebpage() {
+        GameDetailsDto gameDetailsDto = GameDetailsDto.builder().webpage("www.webpage.com").build();
+        GameDetails expected = GameDetails.builder().webpage(gameDetailsDto.getWebpage()).build();
+        GameDetails actual = mapper.toGameDetails(gameDetailsDto);
+        assertEquals(expected.getWebpage(), actual.getWebpage());
+    }
+
+    @Test
+    public void toGameDetails_RatingPlayersGiven_ShouldContainValidRatingPlayers() {
+        GameDetailsDto gameDetailsDto = GameDetailsDto.builder().ratingPlayers(1.0).build();
+        Rating rating = new Rating(String.valueOf(gameDetailsDto.getRatingPlayers()));
+        GameDetails expected = GameDetails.builder().ratingPlayers(rating).build();
+        GameDetails actual = mapper.toGameDetails(gameDetailsDto);
+        assertEquals(expected.getRatingPlayers(), actual.getRatingPlayers());
+    }
+
+    @Test
+    public void toGameDetails_RatingReviewerGiven_ShouldContainValidRatingReviewer() {
+        GameDetailsDto gameDetailsDto = GameDetailsDto.builder().ratingReviewer(2.0).build();
+        Rating rating = new Rating(String.valueOf(gameDetailsDto.getRatingReviewer()));
+        GameDetails expected = GameDetails.builder().ratingReviewer(rating).build();
+        GameDetails actual = mapper.toGameDetails(gameDetailsDto);
+        assertEquals(expected.getRatingReviewer(), actual.getRatingReviewer());
+    }
 }

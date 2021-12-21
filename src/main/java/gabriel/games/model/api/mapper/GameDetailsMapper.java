@@ -2,6 +2,7 @@ package gabriel.games.model.api.mapper;
 
 import gabriel.games.model.api.GameDetails;
 import gabriel.games.model.api.dto.GameDetailsDto;
+import gabriel.games.model.api.embedded.Rating;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -17,7 +18,11 @@ public class GameDetailsMapper {
     }
 
     public GameDetails toGameDetails(GameDetailsDto gameDetailsDto) {
-        // TODO
-        return null;
+        return GameDetails.builder()
+                .description(gameDetailsDto.getDescription())
+                .webpage(gameDetailsDto.getWebpage())
+                .ratingPlayers(new Rating(String.valueOf(gameDetailsDto.getRatingPlayers())))
+                .ratingReviewer(new Rating(String.valueOf(gameDetailsDto.getRatingReviewer())))
+                .build();
     }
 }
