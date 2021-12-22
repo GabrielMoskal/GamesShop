@@ -47,6 +47,8 @@ public class GameDetails {
     @OneToOne
     @MapsId
     @JoinColumn(name = "game_id")
+    @Getter
+    @Setter
     private Game game;
 
     public BigDecimal getRatingPlayers() {

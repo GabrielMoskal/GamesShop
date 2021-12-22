@@ -2,6 +2,7 @@ package gabriel.games.model.api.mapper;
 
 import gabriel.games.model.api.*;
 import gabriel.games.model.api.dto.*;
+import gabriel.games.model.api.embedded.Rating;
 import org.junit.jupiter.api.*;
 
 import java.util.*;
@@ -112,6 +113,7 @@ public class GameMapperTest {
 
     private void assertToGameMappingCorrect(Game expected) {
         when(gameDto.getName()).thenReturn(expected.getName());
+        when(gameDetailsMapper.toGameDetails(any())).thenReturn(mock(GameDetails.class));
         Game actual = gameMapper.toGame(gameDto);
         assertEquals(expected, actual);
     }
@@ -124,14 +126,21 @@ public class GameMapperTest {
 
     @Test
     public void toGame_GameDetailsGiven_ShouldContainValidDetails() {
-        GameDetails gameDetails = stubGameDetails();
         stubGetName();
+        GameDetails expectedGameDetails = stubGameDetails();
         Game actual = gameMapper.toGame(gameDto);
-        assertEquals(gameDetails, actual.getDetails());
+        GameDetails actualGameDetails = actual.getDetails();
+        assertEquals(expectedGameDetails, actualGameDetails);
+        assertEquals(actual, actualGameDetails.getGame());
     }
 
     private GameDetails stubGameDetails() {
-        GameDetails gameDetails = mock(GameDetails.class);
+        GameDetails gameDetails = GameDetails.builder()
+                .description("description")
+                .webpage("webpage")
+                .ratingPlayers(new Rating("1.0"))
+                .ratingReviewer(new Rating("2.0"))
+                .build();
         when(gameDetailsMapper.toGameDetails(any())).thenReturn(gameDetails);
         return gameDetails;
     }
@@ -144,6 +153,7 @@ public class GameMapperTest {
     public void toGame_GamePlatformDtosGiven_ShouldContainValidGamePlatforms() {
         Set<GamePlatform> gamePlatforms = stubGamePlatforms();
         stubGetName();
+        when(gameDetailsMapper.toGameDetails(any())).thenReturn(mock(GameDetails.class));
         Game actual = gameMapper.toGame(gameDto);
         assertEquals(gamePlatforms, actual.getPlatforms());
     }
@@ -159,12 +169,18 @@ public class GameMapperTest {
     public void toGame_CompaniesDtoGiven_ShouldContainValidCompanies() {
         Set<Company> companies = stubCompanies();
         stubGetName();
+        stubGameDetails();
         Game actual = gameMapper.toGame(gameDto);
         assertEquals(companies, actual.getCompanies());
+        Company actualCompany = actual.getCompanies().iterator().next();
+        assertEquals(actual, actualCompany.getGames().iterator().next());
     }
 
     private Set<Company> stubCompanies() {
-        Set<Company> companies = new HashSet<>(Collections.singletonList(mock(Company.class)));
+        Set<Company> companies = new HashSet<>();
+        Company company = new Company("name");
+        company.addCompanyType(mock(CompanyType.class));
+        companies.add(company);
         when(companyMapper.toCompany(any())).thenReturn(companies.iterator().next());
         when(gameDto.getCompanies()).thenReturn(Collections.singletonList(mock(CompanyDto.class)));
         return companies;

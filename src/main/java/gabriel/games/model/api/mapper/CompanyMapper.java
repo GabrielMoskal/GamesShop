@@ -15,9 +15,16 @@ public class CompanyMapper {
     }
 
     public Company toCompany(CompanyDto companyDto) {
-        Set<CompanyType> companyTypes = new HashSet<>();
-        companyDto.getTypes().forEach((type) -> companyTypes.add(new CompanyType(type)));
+        Company company = new Company(companyDto.getName());
+        List<String> companyTypes = companyDto.getTypes();
 
-        return new Company(companyDto.getName(), companyTypes);
+        companyTypes.forEach(
+                (type) -> {
+                    CompanyType companyType = new CompanyType(type);
+                    companyType.addCompany(company);
+                    company.addCompanyType(companyType);
+                }
+        );
+        return company;
     }
 }

@@ -1,11 +1,13 @@
 package gabriel.games.model.api.mapper;
 
 import gabriel.games.model.api.Company;
+import gabriel.games.model.api.CompanyType;
 import gabriel.games.model.api.dto.CompanyDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.*;
+import java.util.function.Consumer;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
@@ -57,5 +59,23 @@ public class CompanyMapperTest {
         CompanyDto companyDto = new CompanyDto("name", Collections.singletonList("type name"));
         Company actual = mapper.toCompany(companyDto);
         assertEquals(companyDto.getTypes(), actual.getTypeNames());
+        assertCompanyTypesContainCompany(actual);
+    }
+
+    private void assertCompanyTypesContainCompany(Company actual) {
+        Set<CompanyType> actualCompanyTypes = actual.getCompanyTypes();
+        actualCompanyTypes.forEach(
+                getCompanyTypeConsumer(actual)
+        );
+    }
+
+    private Consumer<CompanyType> getCompanyTypeConsumer(Company actual) {
+        return (companyType) -> companyType.getCompanies().forEach(
+                getCompanyConsumer(actual)
+        );
+    }
+
+    private Consumer<Company> getCompanyConsumer(Company actual) {
+        return (company) -> assertEquals(company, actual);
     }
 }

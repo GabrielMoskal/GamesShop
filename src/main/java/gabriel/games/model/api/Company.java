@@ -23,6 +23,8 @@ public class Company {
 
     @ManyToMany(mappedBy = "companies")
     @ToString.Exclude
+    @Getter
+    @Setter
     private Set<Game> games;
 
     @ManyToMany
@@ -33,15 +35,19 @@ public class Company {
     )
     @ToString.Exclude
     @Getter
-    private Set<CompanyType> types;
+    private Set<CompanyType> companyTypes;
 
-    public Company(String name, Set<CompanyType> types) {
+    public Company(String name) {
         this.name = name;
-        this.types = types;
+        this.companyTypes = new HashSet<>();
+    }
+
+    public void addCompanyType(CompanyType companyType) {
+        companyTypes.add(companyType);
     }
 
     public List<String> getTypeNames() {
-        if (Objects.isNull(types)) {
+        if (Objects.isNull(companyTypes)) {
             return Collections.emptyList();
         } else {
             return convertToListOfCompanyTypeNames();
@@ -50,7 +56,7 @@ public class Company {
 
     private List<String> convertToListOfCompanyTypeNames() {
         List<String> companyTypeNames = new ArrayList<>();
-        types.forEach((type) -> companyTypeNames.add(type.getType()));
+        companyTypes.forEach((type) -> companyTypeNames.add(type.getType()));
         return companyTypeNames;
     }
 

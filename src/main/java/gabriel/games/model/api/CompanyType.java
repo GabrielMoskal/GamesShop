@@ -5,8 +5,7 @@ import lombok.*;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 @ToString
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -23,12 +22,19 @@ public class CompanyType {
     @Getter
     private String type;
 
-    @ManyToMany(mappedBy = "types")
+    @ManyToMany(mappedBy = "companyTypes")
     @ToString.Exclude
+    @Getter
+    @Setter
     private Set<Company> companies;
 
     public CompanyType(String type) {
         this.type = type;
+        companies = new HashSet<>();
+    }
+
+    public void addCompany(Company company) {
+        companies.add(company);
     }
 
     @Override

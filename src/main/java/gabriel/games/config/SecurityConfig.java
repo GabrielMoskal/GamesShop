@@ -1,10 +1,7 @@
 package gabriel.games.config;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.*;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
@@ -20,7 +17,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final UserDetailsService userDetailsService;
 
-    @Autowired
     public SecurityConfig(@Qualifier("userService") @Lazy UserDetailsService userDetailsService) {
         this.userDetailsService = userDetailsService;
     }
@@ -39,15 +35,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
-        httpSecurity
-                .authorizeRequests()
-                .antMatchers("/", "/**").permitAll()
-                .and()
-                .formLogin()
-                .loginPage("/login")
-                .and()
-                .logout()
-                .logoutSuccessUrl("/");
+        httpSecurity.csrf().disable();
     }
 
     // ignore spring security for H2 console

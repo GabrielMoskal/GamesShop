@@ -6,6 +6,7 @@ import nl.jqno.equalsverifier.Warning;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 
 public class CompanyTypeTest {
@@ -16,6 +17,15 @@ public class CompanyTypeTest {
     public void constructorTest() {
         actual = new CompanyType("type");
         assertEquals("type", actual.getType());
+        assertTrue(actual.getCompanies().isEmpty());
+    }
+
+    @Test
+    public void addCompany_CompanyGiven_ContainsCompany() {
+        actual = new CompanyType("type");
+        Company company = mock(Company.class);
+        actual.addCompany(company);
+        assertTrue(actual.getCompanies().contains(company));
     }
 
     @Test
