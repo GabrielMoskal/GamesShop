@@ -10,12 +10,10 @@ import java.util.*;
 public class GameDtoTest {
 
     private GameDto actual;
-    private GenericWord genericWord;
 
     @BeforeEach
     public void setUp() {
         this.actual = makeGameDto();
-        this.genericWord = new GenericWord();
     }
 
     private GameDto makeGameDto() {
@@ -53,7 +51,7 @@ public class GameDtoTest {
 
     @Test
     public void uriShouldBeMax128CharacterLong() {
-        actual = GameDto.builder().uri(genericWord.make(129)).build();
+        actual = GameDto.builder().uri(GenericWord.make(129)).build();
         EntityValidator.assertPropertyErrors(actual, "uri");
     }
 
@@ -72,7 +70,7 @@ public class GameDtoTest {
 
     @Test
     public void nameShouldBeMax128CharacterLong() {
-        actual = GameDto.builder().name(genericWord.make(129)).build();
+        actual = GameDto.builder().name(GenericWord.make(129)).build();
         EntityValidator.assertPropertyErrors(actual, "name");
     }
 
