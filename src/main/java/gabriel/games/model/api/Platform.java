@@ -1,10 +1,10 @@
 package gabriel.games.model.api;
 
+import gabriel.games.model.api.util.UriGenerator;
 import lombok.*;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
 import java.util.*;
 
 @ToString
@@ -19,7 +19,15 @@ public class Platform {
     @NotNull
     @Size(min = 1, max = 50)
     @Getter
+    @Setter
     private String name;
+
+    @NotNull
+    @Size(min = 1, max = 50)
+    @Pattern(regexp = "([a-z-_0-9]*)")
+    @Getter
+    @Setter
+    private String uri;
 
     @NotNull
     @OneToMany(mappedBy = "platform")
@@ -29,6 +37,7 @@ public class Platform {
 
     public Platform(String name) {
         this.name = name;
+        this.uri = UriGenerator.generate(name);
         this.games = new HashSet<>();
     }
 

@@ -13,41 +13,67 @@ public class PlatformTest {
 
     private Platform actual;
 
+    @BeforeEach
+    public void setUp() {
+        actual = new Platform("name");
+    }
+
     @Test
     public void constructorTest() {
-        actual = new Platform("name");
         assertEquals("name", actual.getName());
+        assertEquals("name", actual.getUri());
         assertEquals(Collections.emptySet(), actual.getGames());
     }
 
     @Test
     public void validPlatformGiven_HasNoErrors() {
-        actual = new Platform("name");
         EntityValidator.assertErrors(actual, 0);
     }
 
     @Test
     public void nameShouldNotBeNull() {
-        actual = new Platform(null);
-        EntityValidator.assertErrors(actual, 1);
+        actual.setName(null);
+        EntityValidator.assertPropertyErrors(actual, "name");
     }
 
     @Test
     public void nameShouldBeAtLeast1CharacterLong() {
-        actual = new Platform("");
-        EntityValidator.assertErrors(actual, 1);
+        actual.setName("");
+        EntityValidator.assertPropertyErrors(actual, "name");
     }
 
     @Test
     public void nameShouldBeMax50CharactersLong() {
-        GenericWord genericWord = new GenericWord();
-        actual = new Platform(genericWord.make(51));
-        EntityValidator.assertErrors(actual, 1);
+        actual.setName(GenericWord.make(51));
+        EntityValidator.assertPropertyErrors(actual, "name");
+    }
+
+    @Test
+    public void uriShouldNotBeNull() {
+        actual.setUri(null);
+        EntityValidator.assertPropertyErrors(actual, "uri");
+    }
+
+    @Test
+    public void uriShouldBeAtLeast1CharacterLong() {
+        actual.setUri("");
+        EntityValidator.assertPropertyErrors(actual, "uri");
+    }
+
+    @Test
+    public void uriShouldBeMax50CharactersLong() {
+        actual.setUri(GenericWord.make(51));
+        EntityValidator.assertPropertyErrors(actual, "uri");
+    }
+
+    @Test
+    public void uriShouldHaveValidForm() {
+        actual.setUri("Invalid Uri");
+        EntityValidator.assertPropertyErrors(actual, "uri");
     }
 
     @Test
     public void gamesShouldNotBeNull() {
-        actual = new Platform("name");
         EntityValidator.assertErrors(actual, 0);
     }
 

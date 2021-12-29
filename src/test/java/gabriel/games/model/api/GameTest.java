@@ -12,12 +12,10 @@ import static org.mockito.Mockito.mock;
 public class GameTest {
 
     private Game actual;
-    private GenericWord genericWord;
 
     @BeforeEach
     public void setUp() {
         this.actual = makeGame("valid name");
-        this.genericWord = new GenericWord();
     }
 
     private Game makeGame(String name) {
@@ -64,7 +62,7 @@ public class GameTest {
 
     @Test
     public void nameShouldBeMax128CharacterLong() {
-        actual.setName(genericWord.make(129));
+        actual.setName(GenericWord.make(129));
         EntityValidator.assertErrors(actual,1);
     }
 
@@ -82,7 +80,7 @@ public class GameTest {
 
     @Test
     public void uriShouldBeMax128CharacterLong() {
-        actual.setUri(genericWord.make(129));
+        actual.setUri(GenericWord.make(129));
         EntityValidator.assertErrors(actual,1);
     }
 

@@ -48,8 +48,7 @@ public class CompanyTypeTest {
 
     @Test
     public void typeShouldBeMax50CharactersLong() {
-        GenericWord genericWord = new GenericWord();
-        actual = new CompanyType(genericWord.make(51));
+        actual = new CompanyType(GenericWord.make(51));
         EntityValidator.assertErrors(actual, 1);
     }
 

@@ -1,5 +1,6 @@
 package gabriel.games.model.api;
 
+import gabriel.games.model.api.util.UriGenerator;
 import lombok.*;
 
 import javax.persistence.*;
@@ -59,15 +60,9 @@ public class Game {
 
     public Game(String name) {
         this.name = name;
-        makeUri(name);
+        this.uri = UriGenerator.generate(name);
         this.platforms = new HashSet<>();
         this.companies = new HashSet<>();
-    }
-
-    private void makeUri(String name) {
-        if (name != null) {
-            this.uri = name.toLowerCase().replace(" ", "-");
-        }
     }
 
     @Override

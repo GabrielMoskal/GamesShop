@@ -89,7 +89,7 @@ public class GameServiceTest {
     @Test
     public void update_EmptyGameGiven_ShouldNotUpdateGame() {
         Game game = new Game("name");
-        Game patch = new Game(null);
+        Game patch = new Game("patch");
 
         Game actual = update(game, patch);
 
@@ -105,8 +105,7 @@ public class GameServiceTest {
     @Test
     public void update_NameGiven_ShouldUpdateName() {
         Game game = new Game("name");
-        Game patch = new Game(null);
-        patch.setName("different");
+        Game patch = new Game("patch");
 
         Game actual = update(game, patch);
 
@@ -116,7 +115,7 @@ public class GameServiceTest {
     @Test
     public void update_UriGiven_ShouldUpdateUri() {
         Game game = new Game("name");
-        Game patch = new Game(null);
+        Game patch = new Game("different");
         patch.setUri("different");
 
         Game actual = update(game, patch);
@@ -127,7 +126,7 @@ public class GameServiceTest {
     @Test
     public void update_DetailsGiven_ShouldUpdateDetails() {
         Game game = new Game("name");
-        Game patch = new Game(null);
+        Game patch = new Game("patch");
         patch.setDetails(mock(GameDetails.class));
 
         Game actual = update(game, patch);
@@ -138,7 +137,7 @@ public class GameServiceTest {
     @Test
     public void update_PlatformsGiven_ShouldUpdatePlatforms() {
         Game game = new Game("name");
-        Game patch = new Game(null);
+        Game patch = new Game("patch");
         patch.setPlatforms(new HashSet<>(Collections.singletonList(mock(GamePlatform.class))));
 
         Game actual = update(game, patch);
@@ -149,7 +148,7 @@ public class GameServiceTest {
     @Test
     public void update_CompaniesGiven_ShouldUpdateCompanies() {
         Game game = new Game("name");
-        Game patch = new Game(null);
+        Game patch = new Game("patch");
         patch.setCompanies(new HashSet<>(Collections.singletonList(mock(Company.class))));
 
         Game actual = update(game, patch);

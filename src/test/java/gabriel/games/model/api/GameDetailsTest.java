@@ -14,12 +14,6 @@ import static org.mockito.Mockito.mock;
 public class GameDetailsTest {
 
     private GameDetails actual;
-    private GenericWord genericWord;
-
-    @BeforeEach
-    public void setUp() {
-        this.genericWord = new GenericWord();
-    }
 
     @Test
     public void validGameDetailsGiven_HasNoErrors() {
@@ -41,7 +35,7 @@ public class GameDetailsTest {
 
     @Test
     public void descriptionShouldBeMax1024CharactersLong() {
-        actual = GameDetails.builder().description(genericWord.make(1025)).build();
+        actual = GameDetails.builder().description(GenericWord.make(1025)).build();
         EntityValidator.assertPropertyErrors(actual, "description");
     }
 
@@ -53,7 +47,7 @@ public class GameDetailsTest {
 
     @Test
     public void webpageShouldBeMax256CharactersLong() {
-        actual = GameDetails.builder().webpage(genericWord.make(257)).build();
+        actual = GameDetails.builder().webpage(GenericWord.make(257)).build();
         EntityValidator.assertPropertyErrors(actual, "webpage");
     }
 
