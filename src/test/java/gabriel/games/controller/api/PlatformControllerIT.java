@@ -19,10 +19,10 @@ import org.springframework.test.web.servlet.ResultActions;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(PlatformController.class)
@@ -153,5 +153,59 @@ public class PlatformControllerIT {
         PlatformDto platformDto = new PlatformDto(null, "");
 
         performPostPlatform(platformDto).andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void patchPlatform_ValidNameGiven_ShouldReturn200() throws Exception {
+        PlatformDto expected = new PlatformDto("valid name", "uri");
+        mockPatchPlatformMembers(expected);
+
+        ResultActions resultActions = performPatchPlatform(expected)
+                .andExpect(status().isOk());
+
+        verifyPatchPlatformInteractions(expected);
+        platformValidator.validate(resultActions, expected);
+    }
+
+    private void mockPatchPlatformMembers(PlatformDto platformDto) {
+        Platform platform = new Platform(platformDto.getName(), platformDto.getUri());
+        when(platformMapper.toPlatform(any())).thenReturn(platform);
+        when(platformService.update(anyString(), any())).thenReturn(platform);
+        when(platformMapper.toPlatformDto(any())).thenReturn(platformDto);
+    }
+
+    private ResultActions performPatchPlatform(PlatformDto expected) throws Exception {
+        return mockMvc.perform(
+                patch(PATH + "{uri}", expected.getUri())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(expected))
+        );
+    }
+
+    private void verifyPatchPlatformInteractions(PlatformDto expected) {
+        verifyPatchPlatformMapperToPlatformInteractions(expected);
+        verifyPatchPlatformServiceUpdateInteractions(expected);
+        verifyPatchPlatformMapperToPlatformDtoInteractions(expected);
+    }
+
+    private void verifyPatchPlatformMapperToPlatformInteractions(PlatformDto expected) {
+        ArgumentCaptor<PlatformDto> platformDtoCaptor = ArgumentCaptor.forClass(PlatformDto.class);
+        verify(platformMapper).toPlatform(platformDtoCaptor.capture());
+        PlatformDto actual = platformDtoCaptor.getValue();
+        assertEquals(expected.getName(), actual.getName());
+    }
+
+    private void verifyPatchPlatformServiceUpdateInteractions(PlatformDto expected) {
+        ArgumentCaptor<Platform> platformCaptor = ArgumentCaptor.forClass(Platform.class);
+        verify(platformService).update(any(), platformCaptor.capture());
+        Platform actual = platformCaptor.getValue();
+        assertEquals(expected.getName(), actual.getName());
+    }
+
+    private void verifyPatchPlatformMapperToPlatformDtoInteractions(PlatformDto expected) {
+        ArgumentCaptor<Platform> platformCaptor = ArgumentCaptor.forClass(Platform.class);
+        verify(platformMapper).toPlatformDto(platformCaptor.capture());
+        Platform actual = platformCaptor.getValue();
+        assertEquals(expected.getName(), actual.getName());
     }
 }

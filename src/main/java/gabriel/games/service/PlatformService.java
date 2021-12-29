@@ -20,4 +20,9 @@ public class PlatformService {
     public Platform save(Platform platform) {
         return platformRepository.save(platform);
     }
+
+    public Platform update(String uri, Platform patch) {
+        //TODO
+        return null;
+    }
 }
