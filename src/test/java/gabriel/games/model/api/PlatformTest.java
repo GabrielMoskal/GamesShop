@@ -15,13 +15,13 @@ public class PlatformTest {
 
     @BeforeEach
     public void setUp() {
-        actual = new Platform("name");
+        actual = new Platform("name", "uri");
     }
 
     @Test
     public void constructorTest() {
         assertEquals("name", actual.getName());
-        assertEquals("name", actual.getUri());
+        assertEquals("uri", actual.getUri());
         assertEquals(Collections.emptySet(), actual.getGames());
     }
 

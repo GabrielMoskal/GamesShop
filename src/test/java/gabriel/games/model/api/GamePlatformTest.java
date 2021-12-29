@@ -17,13 +17,13 @@ public class GamePlatformTest {
 
     @Test
     public void constructorTest() {
-        actual = new GamePlatform(new Platform("name"), new Date(0));
+        actual = new GamePlatform(new Platform("name", "uri"), new Date(0));
         assertEquals("name", actual.getPlatformName());
         assertEquals(new Date(0), actual.getReleaseDate());
     }
 
     private GamePlatform makeGamePlatform(String name, Date date) {
-        return new GamePlatform(new Platform(name), date);
+        return new GamePlatform(new Platform(name, "uri"), date);
     }
 
     @Test

@@ -8,12 +8,10 @@ import org.springframework.stereotype.Component;
 public class PlatformMapper {
 
     public PlatformDto toPlatformDto(Platform platform) {
-        //TODO
-        return null;
+        return new PlatformDto(platform.getName(), platform.getUri());
     }
 
     public Platform toPlatform(PlatformDto platformDto) {
-        // TODO
-        return null;
+        return new Platform(platformDto.getName(), platformDto.getUri());
     }
 }

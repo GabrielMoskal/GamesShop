@@ -17,7 +17,7 @@ public class GamePlatformMapper {
     }
 
     public GamePlatform toGamePlatform(GamePlatformDto gamePlatformDto) {
-        Platform platform = new Platform(gamePlatformDto.getName());
+        Platform platform = new Platform(gamePlatformDto.getName(), "uri");
         Date date = gamePlatformDto.getReleaseDate();
         return new GamePlatform(platform, date);
     }

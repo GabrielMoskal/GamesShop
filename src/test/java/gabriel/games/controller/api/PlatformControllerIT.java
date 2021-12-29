@@ -53,7 +53,7 @@ public class PlatformControllerIT {
     }
 
     private void mockGetPlatformMembers(PlatformDto platformDto) {
-        when(platformService.findByUri(any())).thenReturn(new Platform(platformDto.getName()));
+        when(platformService.findByUri(any())).thenReturn(new Platform(platformDto.getName(), platformDto.getUri()));
         when(platformMapper.toPlatformDto(any())).thenReturn(platformDto);
     }
 
@@ -104,7 +104,7 @@ public class PlatformControllerIT {
     }
 
     private void mockPostPlatformMembers(PlatformDto platformDto) {
-        Platform platform = new Platform(platformDto.getName());
+        Platform platform = new Platform(platformDto.getName(), platformDto.getUri());
         when(platformMapper.toPlatform(platformDto)).thenReturn(platform);
         when(platformService.save(any())).thenReturn(platform);
         when(platformMapper.toPlatformDto(any())).thenReturn(platformDto);

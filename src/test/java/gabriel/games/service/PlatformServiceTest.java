@@ -26,7 +26,7 @@ public class PlatformServiceTest {
 
     @Test
     public void findByUri_ExistingUriGiven_ShouldReturnValidPlatform() {
-        Platform expected = new Platform("name");
+        Platform expected = new Platform("name", "uri");
         mockFindByUri(expected);
         Platform actual = platformService.findByUri(expected.getName());
 
@@ -45,7 +45,7 @@ public class PlatformServiceTest {
 
     @Test
     public void findByUri_UriGiven_VerifyInteractions() {
-        Platform platform =  new Platform("uri");
+        Platform platform =  new Platform("name", "uri");
         mockFindByUri(platform);
 
         platformService.findByUri(platform.getUri());
@@ -55,7 +55,7 @@ public class PlatformServiceTest {
 
     @Test
     public void save_ValidPlatformGiven_ShouldReturnValidPlatform() {
-        Platform expected = new Platform("name");
+        Platform expected = new Platform("name", "uri");
 
         when(platformRepository.save(expected)).thenReturn(expected);
         Platform actual = platformService.save(expected);
@@ -65,7 +65,7 @@ public class PlatformServiceTest {
 
     @Test
     public void save_ValidPlatformGiven_VerifyInteractions() {
-        Platform platform = new Platform("name");
+        Platform platform = new Platform("name", "uri");
 
         platformService.save(platform);
 

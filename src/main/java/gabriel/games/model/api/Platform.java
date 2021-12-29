@@ -1,6 +1,5 @@
 package gabriel.games.model.api;
 
-import gabriel.games.model.api.util.UriGenerator;
 import lombok.*;
 
 import javax.persistence.*;
@@ -35,9 +34,9 @@ public class Platform {
     @Getter
     private Set<GamePlatform> games;
 
-    public Platform(String name) {
+    public Platform(String name, String uri) {
         this.name = name;
-        this.uri = UriGenerator.generate(name);
+        this.uri = uri;
         this.games = new HashSet<>();
     }
 
