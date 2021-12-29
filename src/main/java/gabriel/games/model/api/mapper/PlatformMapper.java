@@ -11,4 +11,9 @@ public class PlatformMapper {
         //TODO
         return null;
     }
+
+    public Platform toPlatform(PlatformDto platformDto) {
+        // TODO
+        return null;
+    }
 }

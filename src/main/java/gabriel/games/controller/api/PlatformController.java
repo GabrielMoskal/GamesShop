@@ -12,6 +12,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
@@ -38,10 +40,10 @@ public class PlatformController {
         return makeResponse(platformDto, HttpStatus.OK);
     }
 
-    private ResponseEntity<EntityModel<PlatformDto>> makeResponse(PlatformDto platformDto, HttpStatus ok) {
+    private ResponseEntity<EntityModel<PlatformDto>> makeResponse(PlatformDto platformDto, HttpStatus httpStatus) {
         EntityModel<PlatformDto> entityModel = EntityModel.of(platformDto);
         entityModel.add(makeLink(platformDto));
-        return new ResponseEntity<>(entityModel, HttpStatus.OK);
+        return new ResponseEntity<>(entityModel, httpStatus);
     }
 
     private Link makeLink(PlatformDto platformDto) {
@@ -50,5 +52,13 @@ public class PlatformController {
 
     private ResponseEntity<EntityModel<PlatformDto>> notFound() {
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    @PostMapping
+    public ResponseEntity<EntityModel<PlatformDto>> postPlatform(@Valid @RequestBody PlatformDto platformDto) {
+        Platform platform = platformMapper.toPlatform(platformDto);
+        platform = platformService.save(platform);
+        PlatformDto responseBody = platformMapper.toPlatformDto(platform);
+        return makeResponse(responseBody, HttpStatus.CREATED);
     }
 }

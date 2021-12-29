@@ -9,4 +9,9 @@ public class PlatformService {
         // TODO
         return null;
     }
+
+    public Platform save(Platform platform) {
+        // TODO
+        return null;
+    }
 }

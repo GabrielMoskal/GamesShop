@@ -1,5 +1,6 @@
 package gabriel.games.controller.api;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import gabriel.games.controller.util.PlatformValidator;
 import gabriel.games.model.api.Platform;
 import gabriel.games.model.api.dto.PlatformDto;
@@ -21,12 +22,15 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(PlatformController.class)
 public class PlatformControllerIT {
 
+    private final String PATH = "/api/platform/";
     @Autowired private MockMvc mockMvc;
+    @Autowired private ObjectMapper objectMapper;
     @MockBean private PlatformService platformService;
     @MockBean private PlatformMapper platformMapper;
     private PlatformValidator platformValidator;
@@ -55,7 +59,7 @@ public class PlatformControllerIT {
 
     private ResultActions performGetPlatform(String uri) throws Exception {
         return mockMvc.perform(
-                get("/api/platform/{uri}", uri)
+                get(PATH + "{uri}", uri)
                         .contentType(MediaType.APPLICATION_JSON)
         );
     }
@@ -85,5 +89,69 @@ public class PlatformControllerIT {
         when(platformService.findByUri(uri)).thenThrow(new ObjectNotFoundException("msg"));
 
         performGetPlatform(uri).andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void postPlatform_ValidPlatformDtoGiven_ShouldReturn201() throws Exception {
+        PlatformDto platformDto = new PlatformDto("word", "word");
+        mockPostPlatformMembers(platformDto);
+
+        ResultActions resultActions = performPostPlatform(platformDto)
+                .andExpect(status().isCreated());
+
+        verifyPostPlatformInteractions(platformDto);
+        platformValidator.validate(resultActions, platformDto);
+    }
+
+    private void mockPostPlatformMembers(PlatformDto platformDto) {
+        Platform platform = new Platform(platformDto.getName());
+        when(platformMapper.toPlatform(platformDto)).thenReturn(platform);
+        when(platformService.save(any())).thenReturn(platform);
+        when(platformMapper.toPlatformDto(any())).thenReturn(platformDto);
+    }
+
+    private ResultActions performPostPlatform(PlatformDto platformDto) throws Exception {
+        return mockMvc.perform(
+                post(PATH)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(platformDto))
+        );
+    }
+
+    private void verifyPostPlatformInteractions(PlatformDto platformDto) {
+        verifyPostPlatformMapperToPlatformInteractions(platformDto);
+        verifyPostPlatformServiceInteractions(platformDto);
+        verifyPostPlatformMapperToPlatformDtoInteractions(platformDto);
+    }
+
+    private void verifyPostPlatformMapperToPlatformInteractions(PlatformDto platformDto) {
+        ArgumentCaptor<PlatformDto> platformDtoCaptor = ArgumentCaptor.forClass(PlatformDto.class);
+        verify(platformMapper).toPlatform(platformDtoCaptor.capture());
+        PlatformDto actual = platformDtoCaptor.getValue();
+        assertEquals(platformDto.getName(), actual.getName());
+        assertEquals(platformDto.getUri(), actual.getUri());
+    }
+
+    private void verifyPostPlatformServiceInteractions(PlatformDto platformDto) {
+        ArgumentCaptor<Platform> platformCaptor = ArgumentCaptor.forClass(Platform.class);
+        verify(platformService).save(platformCaptor.capture());
+        Platform actual = platformCaptor.getValue();
+        assertEquals(platformDto.getName(), actual.getName());
+        assertEquals(platformDto.getUri(), actual.getUri());
+    }
+
+    private void verifyPostPlatformMapperToPlatformDtoInteractions(PlatformDto platformDto) {
+        ArgumentCaptor<Platform> platformCaptor = ArgumentCaptor.forClass(Platform.class);
+        verify(platformMapper).toPlatformDto(platformCaptor.capture());
+        Platform actual = platformCaptor.getValue();
+        assertEquals(platformDto.getName(), actual.getName());
+        assertEquals(platformDto.getUri(), actual.getUri());
+    }
+
+    @Test
+    public void postPlatform_InvalidPlatformDtoGiven_ShouldReturn400() throws Exception {
+        PlatformDto platformDto = new PlatformDto(null, "");
+
+        performPostPlatform(platformDto).andExpect(status().isBadRequest());
     }
 }
