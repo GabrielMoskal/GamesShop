@@ -47,7 +47,7 @@ public class Game {
 
     @NotNull
     @Size(min = 1)
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(
             name = "game_company",
             joinColumns = @JoinColumn(name = "game_id"),

@@ -13,7 +13,7 @@ import java.util.*;
 public class Company {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotNull
@@ -27,7 +27,7 @@ public class Company {
     @Setter
     private Set<Game> games;
 
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(
             name = "company_type",
             joinColumns = @JoinColumn(name = "company_id"),
