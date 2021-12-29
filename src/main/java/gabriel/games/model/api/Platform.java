@@ -48,11 +48,14 @@ public class Platform {
 
         Platform platform = (Platform) o;
 
-        return Objects.equals(name, platform.name);
+        if (!Objects.equals(name, platform.name)) return false;
+        return Objects.equals(uri, platform.uri);
     }
 
     @Override
     public int hashCode() {
-        return name != null ? name.hashCode() : 0;
+        int result = name != null ? name.hashCode() : 0;
+        result = 31 * result + (uri != null ? uri.hashCode() : 0);
+        return result;
     }
 }

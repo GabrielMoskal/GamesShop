@@ -25,11 +25,7 @@ public class GameServiceTest {
 
     @Test
     public void findByUri_ExistingUriGiven_ShouldReturnValidGame() {
-        testFindByUri("name");
-    }
-
-    private void testFindByUri(String name) {
-        Game expected = new Game(name);
+        Game expected = new Game("name");
         mockFindByUri(expected);
         Game actual = service.findByUri(expected.getUri());
         assertThat(actual).isEqualToComparingFieldByField(expected);
@@ -37,11 +33,6 @@ public class GameServiceTest {
 
     private void mockFindByUri(Game game) {
         when(repository.findByUri(game.getUri())).thenReturn(Optional.of(game));
-    }
-
-    @Test
-    public void findByUri_DifferentExistingUriGiven_ShouldReturnValidGame() {
-        testFindByUri("different");
     }
 
     @Test
