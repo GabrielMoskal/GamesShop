@@ -5,9 +5,11 @@ import gabriel.games.repository.PlatformRepository;
 import gabriel.games.service.exception.ObjectNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 
 import java.util.Optional;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -70,5 +72,53 @@ public class PlatformServiceTest {
         platformService.save(platform);
 
         verify(platformRepository).save(platform);
+    }
+
+    @Test
+    public void update_EmptyPlatformGiven_ShouldContainNoChanges() {
+        Platform patch = new Platform(null, null);
+        Platform expected = new Platform("name", "uri");
+        expected.setId(1L);
+        mockRepository(expected);
+
+        Platform result = platformService.update(anyString(), patch);
+
+        assertThat(result).isEqualToComparingFieldByField(expected);
+    }
+
+    private void mockRepository(Platform platform) {
+        when(platformRepository.findByUri(any())).thenReturn(Optional.of(platform));
+        when(platformRepository.save(platform)).thenReturn(platform);
+    }
+
+    @Test
+    public void update_NameGiven_ShouldUpdateName() {
+        Platform patch = new Platform("different name", null);
+        Platform toUpdate = new Platform("name", "uri");
+        mockRepository(toUpdate);
+
+        Platform result = platformService.update("uri", patch);
+
+        assertThat(result.getName()).isEqualTo("different name");
+    }
+
+    @Test
+    public void update_UriGiven_ShouldUpdateUri() {
+        Platform patch = new Platform(null, "different uri");
+        Platform toUpdate = new Platform("name", "uri");
+        mockRepository(toUpdate);
+
+        Platform result = platformService.update("uri", patch);
+
+        assertThat(result.getUri()).isEqualTo("different uri");
+    }
+
+    @Test
+    public void update_NonExistentUriGiven_ShouldThrowException() {
+        Platform patch = new Platform("name", "uri");
+
+        Executable executable = () -> platformService.update("uri", patch);
+        ObjectNotFoundException exception = assertThrows(ObjectNotFoundException.class, executable);
+        assertThat(exception.getMessage()).isEqualTo("Platform with given uri not found.");
     }
 }

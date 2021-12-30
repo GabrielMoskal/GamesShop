@@ -81,24 +81,22 @@ public class GameServiceTest {
     public void update_EmptyGameGiven_ShouldNotUpdateGame() {
         Game game = new Game("name");
         Game patch = new Game("patch");
-
-        Game actual = update(game, patch);
-
-        assertThat(actual).isEqualToComparingFieldByField(game);
-    }
-
-    private Game update(Game game, Game patch) {
         mockSave(game);
         mockFindByUri(game);
-        return service.update(game.getUri(), patch);
+
+        Game actual = service.update(game.getUri(), patch);
+
+        assertThat(actual).isEqualToComparingFieldByField(game);
     }
 
     @Test
     public void update_NameGiven_ShouldUpdateName() {
         Game game = new Game("name");
         Game patch = new Game("patch");
+        mockSave(game);
+        mockFindByUri(game);
 
-        Game actual = update(game, patch);
+        Game actual = service.update(game.getUri(), patch);
 
         assertThat(actual.getName()).isEqualTo(patch.getName());
     }
@@ -108,8 +106,10 @@ public class GameServiceTest {
         Game game = new Game("name");
         Game patch = new Game("different");
         patch.setUri("different");
+        mockSave(game);
+        mockFindByUri(game);
 
-        Game actual = update(game, patch);
+        Game actual = service.update(game.getUri(), patch);
 
         assertThat(actual.getUri()).isEqualTo(patch.getUri());
     }
@@ -119,8 +119,10 @@ public class GameServiceTest {
         Game game = new Game("name");
         Game patch = new Game("patch");
         patch.setDetails(mock(GameDetails.class));
+        mockSave(game);
+        mockFindByUri(game);
 
-        Game actual = update(game, patch);
+        Game actual = service.update(game.getUri(), patch);
 
         assertThat(actual.getDetails()).isEqualToComparingFieldByField(patch.getDetails());
     }
@@ -130,8 +132,10 @@ public class GameServiceTest {
         Game game = new Game("name");
         Game patch = new Game("patch");
         patch.setPlatforms(new HashSet<>(Collections.singletonList(mock(GamePlatform.class))));
+        mockSave(game);
+        mockFindByUri(game);
 
-        Game actual = update(game, patch);
+        Game actual = service.update(game.getUri(), patch);
 
         assertThat(actual.getPlatforms()).isEqualTo(patch.getPlatforms());
     }
@@ -141,8 +145,10 @@ public class GameServiceTest {
         Game game = new Game("name");
         Game patch = new Game("patch");
         patch.setCompanies(new HashSet<>(Collections.singletonList(mock(Company.class))));
+        mockSave(game);
+        mockFindByUri(game);
 
-        Game actual = update(game, patch);
+        Game actual = service.update(game.getUri(), patch);
 
         assertThat(actual.getCompanies()).isEqualTo(patch.getCompanies());
     }
@@ -150,16 +156,18 @@ public class GameServiceTest {
     @Test
     public void update_NonExistentUriGiven_ShouldThrowException() {
         Executable executable = () -> service.update("non existent", new Game("name"));
-        Throwable throwable = assertThrows(ObjectNotFoundException.class, executable);
-        String msg = throwable.getMessage();
-        assertThat(msg).isEqualTo("Game with given uri not found.");
+
+        ObjectNotFoundException exception = assertThrows(ObjectNotFoundException.class, executable);
+        assertThat(exception.getMessage()).isEqualTo("Game with given uri not found.");
     }
 
     @Test
     public void update_VerifyInteractions() {
         Game game = new Game("name");
         mockFindByUri(game);
-        update(game, mock(Game.class));
+
+        service.update(game.getUri(), mock(Game.class));
+
         verify(repository).save(any());
     }
 

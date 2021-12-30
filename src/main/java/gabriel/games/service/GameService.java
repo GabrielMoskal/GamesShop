@@ -6,7 +6,6 @@ import gabriel.games.service.exception.ObjectNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-
 @Service
 @AllArgsConstructor
 public class GameService {
@@ -23,7 +22,7 @@ public class GameService {
     }
 
     public Game update(String uri, Game patch) {
-        Game game = repository.findByUri(uri).orElseThrow(() -> new ObjectNotFoundException(NOT_FOUND));
+        Game game = findByUri(uri);
 
         if (patch.getName() != null) {
             game.setName(patch.getName());

@@ -22,7 +22,14 @@ public class PlatformService {
     }
 
     public Platform update(String uri, Platform patch) {
-        //TODO
-        return null;
+        Platform platform = findByUri(uri);
+
+        if (patch.getName() != null) {
+            platform.setName(patch.getName());
+        }
+        if (patch.getUri() != null) {
+            platform.setUri(patch.getUri());
+        }
+        return save(platform);
     }
 }
