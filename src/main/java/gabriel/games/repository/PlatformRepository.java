@@ -7,4 +7,6 @@ import java.util.Optional;
 
 public interface PlatformRepository extends CrudRepository<Platform, Long> {
     Optional<Platform> findByUri(String uri);
+
+    void deleteByUri(String uri);
 }

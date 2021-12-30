@@ -121,4 +121,11 @@ public class PlatformServiceTest {
         ObjectNotFoundException exception = assertThrows(ObjectNotFoundException.class, executable);
         assertThat(exception.getMessage()).isEqualTo("Platform with given uri not found.");
     }
+
+    @Test
+    public void deleteByUri_VerifyInteractions() {
+        platformService.deleteByUri("uri");
+
+        verify(platformRepository).deleteByUri("uri");
+    }
 }

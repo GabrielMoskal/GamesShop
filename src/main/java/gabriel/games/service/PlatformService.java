@@ -34,6 +34,6 @@ public class PlatformService {
     }
 
     public void deleteByUri(String uri) {
-        // TODO
+        platformRepository.deleteByUri(uri);
     }
 }
