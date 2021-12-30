@@ -22,7 +22,6 @@ import java.util.Collections;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -134,7 +133,6 @@ public class GameControllerIT {
 
         return mockMvc.perform(
                 post(PATH)
-                        .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(gameDtoAsJson)
         );
@@ -214,7 +212,6 @@ public class GameControllerIT {
         String content = objectMapper.writeValueAsString(expected);
 
         return mockMvc.perform(patch(PATH + expected.getUri())
-                .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(content)
         );
@@ -292,11 +289,7 @@ public class GameControllerIT {
     }
 
     private ResultActions performDeleteRequest(String uri) throws Exception {
-        return mockMvc.perform(delete(PATH + uri)
-                .with(csrf())
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(uri))
-        );
+        return mockMvc.perform(delete(PATH + uri));
     }
 
     private void verifyDeleteGameInteractions(String uri) {

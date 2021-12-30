@@ -32,4 +32,8 @@ public class PlatformService {
         }
         return save(platform);
     }
+
+    public void deleteByUri(String uri) {
+        // TODO
+    }
 }

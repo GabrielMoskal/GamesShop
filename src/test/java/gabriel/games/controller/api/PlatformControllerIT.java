@@ -13,6 +13,7 @@ import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -20,8 +21,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -207,5 +207,26 @@ public class PlatformControllerIT {
         verify(platformMapper).toPlatformDto(platformCaptor.capture());
         Platform actual = platformCaptor.getValue();
         assertEquals(expected.getName(), actual.getName());
+    }
+
+    @Test
+    public void deletePlatform_ExistingUriGiven_ShouldReturn204() throws Exception {
+        performDeletePlatform("uri").andExpect(status().isNoContent());
+
+        ArgumentCaptor<String> stringCaptor = ArgumentCaptor.forClass(String.class);
+        verify(platformService).deleteByUri(stringCaptor.capture());
+        String actual = stringCaptor.getValue();
+        assertEquals("uri", actual);
+    }
+
+    private ResultActions performDeletePlatform(String uri) throws Exception {
+        return mockMvc.perform(delete(PATH + uri));
+    }
+
+    @Test
+    public void deletePlatform_ExceptionThrown_ShouldReturn204() throws Exception {
+        doThrow(EmptyResultDataAccessException.class).when(platformService).deleteByUri("uri");
+
+        performDeletePlatform("uri").andExpect(status().isNoContent());
     }
 }
