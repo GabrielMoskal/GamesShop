@@ -1,5 +1,6 @@
 package gabriel.games.model.api.mapper;
 
+import gabriel.games.model.api.Game;
 import gabriel.games.model.api.GamePlatform;
 import gabriel.games.model.api.Platform;
 import gabriel.games.model.api.dto.GamePlatformDto;
@@ -11,14 +12,18 @@ import java.sql.Date;
 public class GamePlatformMapper {
 
     public GamePlatformDto toGamePlatformDto(GamePlatform gamePlatform) {
+        String gameName = gamePlatform.getGameName();
         String platformName = gamePlatform.getPlatformName();
         Date releaseDate = gamePlatform.getReleaseDate();
-        return new GamePlatformDto(platformName, releaseDate);
+        return new GamePlatformDto(gameName, platformName, releaseDate);
     }
 
     public GamePlatform toGamePlatform(GamePlatformDto gamePlatformDto) {
-        Platform platform = new Platform(gamePlatformDto.getName(), "uri");
+        // TODO
+        Game game = new Game(gamePlatformDto.getGameName(), null);
+        // TODO
+        Platform platform = new Platform(gamePlatformDto.getPlatformName(), "uri");
         Date date = gamePlatformDto.getReleaseDate();
-        return new GamePlatform(platform, date);
+        return new GamePlatform(game, platform, date);
     }
 }

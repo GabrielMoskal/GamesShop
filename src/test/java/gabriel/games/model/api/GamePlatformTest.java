@@ -17,13 +17,14 @@ public class GamePlatformTest {
 
     @Test
     public void constructorTest() {
-        actual = new GamePlatform(new Platform("name", "uri"), new Date(0));
-        assertEquals("name", actual.getPlatformName());
+        actual = new GamePlatform(new Game("gameName", null), new Platform("platformName", "uri"), new Date(0));
+        assertEquals("gameName", actual.getGameName());
+        assertEquals("platformName", actual.getPlatformName());
         assertEquals(new Date(0), actual.getReleaseDate());
     }
 
     private GamePlatform makeGamePlatform(String name, Date date) {
-        return new GamePlatform(new Platform(name, "uri"), date);
+        return new GamePlatform(new Game(name, null), new Platform(name, "uri"), date);
     }
 
     @Test
@@ -36,6 +37,13 @@ public class GamePlatformTest {
     public void releaseDateIsNotNull() {
         actual = makeGamePlatform("name", null);
         EntityValidator.assertErrors(actual, 1);
+    }
+
+    @Test
+    public void getGameName_ReturnsGameName() {
+        actual = makeGamePlatform("name", new Date(0));
+
+        assertEquals("name", actual.getGameName());
     }
 
     @Test
@@ -54,7 +62,7 @@ public class GamePlatformTest {
 
     @Test
     public void getPlatformName_NullPlatformGiven_ShouldThrowException() {
-        actual = new GamePlatform(null, new Date(0));
+        actual = new GamePlatform(null, null, new Date(0));
 
         Throwable exception = assertThrows(NullPointerException.class, () -> actual.getPlatformName());
         String expectedMsg = "platform should not be null";

@@ -53,7 +53,7 @@ public class GameControllerIT {
                                 .build()
                 )
                 .platforms(
-                        Collections.singletonList(new GamePlatformDto(filler, new Date(0)))
+                        Collections.singletonList(new GamePlatformDto(filler, filler, new Date(0)))
                 )
                 .companies(
                         Collections.singletonList(new CompanyDto(filler, Collections.singletonList(filler)))
@@ -76,7 +76,7 @@ public class GameControllerIT {
         GameDto expected = makeGameDto("filler");
 
         when(gameMapper.toGameDto(any())).thenReturn(expected);
-        when(gameService.findByUri(expected.getUri())).thenReturn(new Game(expected.getName()));
+        when(gameService.findByUri(expected.getUri())).thenReturn(new Game(expected.getName(), expected.getUri()));
 
         performGetRequest(expected);
         verifyDescriptionMethodServiceInteractions(expected);
@@ -151,7 +151,7 @@ public class GameControllerIT {
     @Test
     public void postGame_GameDtoGiven_VerifyMethodCalls() throws Exception {
         GameDto gameDto = makeGameDto("filler");
-        Game game = new Game(gameDto.getName());
+        Game game = new Game(gameDto.getName(), gameDto.getUri());
 
         stubPostGameInteractions(gameDto, game);
 
@@ -230,7 +230,7 @@ public class GameControllerIT {
     @Test
     public void patchGame_SingleAttributeUpdateGiven_VerifyMethodCalls() throws Exception {
         GameDto gameDto = makeGameDto("filler");
-        Game updatedGame = new Game(gameDto.getName());
+        Game updatedGame = new Game(gameDto.getName(), gameDto.getUri());
         updatedGame.setName("different name");
 
         stubPatchGameInteractions(gameDto, updatedGame);

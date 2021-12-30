@@ -107,7 +107,7 @@ public class GameMapperTest {
 
     @Test
     public void toGame_NameGiven_ShouldContainValidName() {
-        Game expected = new Game("name");
+        Game expected = new Game("name", null);
         assertToGameMappingCorrect(expected);
     }
 
@@ -120,7 +120,7 @@ public class GameMapperTest {
 
     @Test
     public void toGame_DifferentNameGiven_ShouldContainValidName() {
-        Game expected = new Game("different name");
+        Game expected = new Game("different name", null);
         assertToGameMappingCorrect(expected);
     }
 

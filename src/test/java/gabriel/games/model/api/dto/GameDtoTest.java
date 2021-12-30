@@ -29,10 +29,10 @@ public class GameDtoTest {
                                 .build()
                 )
                 .platforms(
-                        Collections.singletonList(new GamePlatformDto("name", new Date(0)))
+                        Collections.singletonList(new GamePlatformDto("gameName", "platformName", new Date(0)))
                 )
                 .companies(
-                        Collections.singletonList(new CompanyDto("company name", Collections.singletonList("type")))
+                        Collections.singletonList(new CompanyDto("companyName", Collections.singletonList("type")))
                 )
                 .build();
     }
@@ -97,9 +97,9 @@ public class GameDtoTest {
     @Test
     public void platformsAreValidated() {
         actual = GameDto.builder()
-                .platforms(Collections.singletonList(new GamePlatformDto(null, null)))
+                .platforms(Collections.singletonList(new GamePlatformDto(null, null, null)))
                 .build();
-        EntityValidator.assertPropertyErrors(actual.getPlatforms().get(0), "name");
+        EntityValidator.assertPropertyErrors(actual.getPlatforms().get(0), "platformName");
     }
 
     @Test

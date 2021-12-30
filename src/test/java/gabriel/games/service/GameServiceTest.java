@@ -25,7 +25,7 @@ public class GameServiceTest {
 
     @Test
     public void findByUri_ExistingUriGiven_ShouldReturnValidGame() {
-        Game expected = new Game("name");
+        Game expected = new Game("name", null);
         mockFindByUri(expected);
         Game actual = service.findByUri(expected.getUri());
         assertThat(actual).isEqualToComparingFieldByField(expected);
@@ -43,10 +43,9 @@ public class GameServiceTest {
 
     @Test
     public void findByUri_AnyUriGiven_VerifyInteractions() {
-        String gameName = "name";
-        mockFindByUri(new Game(gameName));
-        service.findByUri(gameName);
-        verify(repository).findByUri(gameName);
+        mockFindByUri(new Game("name", "uri"));
+        service.findByUri("uri");
+        verify(repository).findByUri("uri");
     }
 
     @Test
@@ -55,7 +54,7 @@ public class GameServiceTest {
     }
 
     private void testSave(String name) {
-        Game expected = new Game(name);
+        Game expected = new Game(name, null);
         mockSave(expected);
         Game actual = service.save(expected);
         assertThat(actual).isEqualToComparingFieldByField(expected);
@@ -72,15 +71,15 @@ public class GameServiceTest {
 
     @Test
     public void save_AnyGameGiven_VerifyInteractions() {
-        Game game = new Game("name");
+        Game game = new Game("name", null);
         service.save(game);
         verify(repository).save(any());
     }
 
     @Test
     public void update_EmptyGameGiven_ShouldNotUpdateGame() {
-        Game game = new Game("name");
-        Game patch = new Game("patch");
+        Game game = new Game("name", null);
+        Game patch = new Game("patch", null);
         mockSave(game);
         mockFindByUri(game);
 
@@ -91,8 +90,8 @@ public class GameServiceTest {
 
     @Test
     public void update_NameGiven_ShouldUpdateName() {
-        Game game = new Game("name");
-        Game patch = new Game("patch");
+        Game game = new Game("name", null);
+        Game patch = new Game("patch", null);
         mockSave(game);
         mockFindByUri(game);
 
@@ -103,8 +102,8 @@ public class GameServiceTest {
 
     @Test
     public void update_UriGiven_ShouldUpdateUri() {
-        Game game = new Game("name");
-        Game patch = new Game("different");
+        Game game = new Game("name", null);
+        Game patch = new Game("different", null);
         patch.setUri("different");
         mockSave(game);
         mockFindByUri(game);
@@ -116,8 +115,8 @@ public class GameServiceTest {
 
     @Test
     public void update_DetailsGiven_ShouldUpdateDetails() {
-        Game game = new Game("name");
-        Game patch = new Game("patch");
+        Game game = new Game("name", null);
+        Game patch = new Game("patch", null);
         patch.setDetails(mock(GameDetails.class));
         mockSave(game);
         mockFindByUri(game);
@@ -129,8 +128,8 @@ public class GameServiceTest {
 
     @Test
     public void update_PlatformsGiven_ShouldUpdatePlatforms() {
-        Game game = new Game("name");
-        Game patch = new Game("patch");
+        Game game = new Game("name", null);
+        Game patch = new Game("patch", null);
         patch.setPlatforms(new HashSet<>(Collections.singletonList(mock(GamePlatform.class))));
         mockSave(game);
         mockFindByUri(game);
@@ -142,8 +141,8 @@ public class GameServiceTest {
 
     @Test
     public void update_CompaniesGiven_ShouldUpdateCompanies() {
-        Game game = new Game("name");
-        Game patch = new Game("patch");
+        Game game = new Game("name", null);
+        Game patch = new Game("patch", null);
         patch.setCompanies(new HashSet<>(Collections.singletonList(mock(Company.class))));
         mockSave(game);
         mockFindByUri(game);
@@ -155,7 +154,7 @@ public class GameServiceTest {
 
     @Test
     public void update_NonExistentUriGiven_ShouldThrowException() {
-        Executable executable = () -> service.update("non existent", new Game("name"));
+        Executable executable = () -> service.update("non existent", new Game("name", null));
 
         ObjectNotFoundException exception = assertThrows(ObjectNotFoundException.class, executable);
         assertThat(exception.getMessage()).isEqualTo("Game with given uri not found.");
@@ -163,7 +162,7 @@ public class GameServiceTest {
 
     @Test
     public void update_VerifyInteractions() {
-        Game game = new Game("name");
+        Game game = new Game("name", null);
         mockFindByUri(game);
 
         service.update(game.getUri(), mock(Game.class));

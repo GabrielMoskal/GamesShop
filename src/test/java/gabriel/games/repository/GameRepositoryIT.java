@@ -2,14 +2,12 @@ package gabriel.games.repository;
 
 import gabriel.games.model.api.Game;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.mock;
 
-@ExtendWith(SpringExtension.class)
 @DataJpaTest
 public class GameRepositoryIT {
 
@@ -25,11 +23,11 @@ public class GameRepositoryIT {
     }
 
     private Game makeExpected() {
-        return new Game("Test Name");
+        return new Game("Test Name", "test-name");
     }
 
     private Game makeActual() {
-        return repository.findByUri("test-name").orElse(new Game("name1"));
+        return repository.findByUri("test-name").orElse(mock(Game.class));
     }
 
     private void assertGameValid(Game expectedGame, Game actualGame) {

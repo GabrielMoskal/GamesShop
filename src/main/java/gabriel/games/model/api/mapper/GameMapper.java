@@ -50,7 +50,7 @@ public class GameMapper {
     }
 
     public Game toGame(GameDto gameDto) {
-        Game game = new Game(gameDto.getName());
+        Game game = new Game(gameDto.getName(), null);
         addGameDetails(game, gameDto);
         addGamePlatforms(game, gameDto);
         addCompanies(game, gameDto);

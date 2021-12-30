@@ -15,11 +15,11 @@ public class GameTest {
 
     @BeforeEach
     public void setUp() {
-        this.actual = makeGame("valid name");
+        this.actual = makeGame("valid name", "valid-uri");
     }
 
-    private Game makeGame(String name) {
-        Game game = new Game(name);
+    private Game makeGame(String name, String uri) {
+        Game game = new Game(name, uri);
         game.setPlatforms(makeGamePlatforms());
         game.setCompanies(makeCompanies());
         return game;
@@ -40,7 +40,7 @@ public class GameTest {
     @Test
     public void constructorTest() {
         assertEquals("valid name", actual.getName());
-        assertEquals("valid-name", actual.getUri());
+        assertEquals("valid-uri", actual.getUri());
     }
 
     @Test
