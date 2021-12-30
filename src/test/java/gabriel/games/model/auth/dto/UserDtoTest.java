@@ -1,18 +1,11 @@
 package gabriel.games.model.auth.dto;
 
 import gabriel.games.model.util.*;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class UserDtoTest {
 
     private UserDto actual;
-    private GenericWord genericWord;
-
-    @BeforeEach
-    public void setUp() {
-        this.genericWord = new GenericWord();
-    }
 
     @Test
     public void validUserDtoHasNoErrors() {
@@ -22,13 +15,13 @@ public class UserDtoTest {
 
     @Test
     public void usernameShouldBeAtLeast5CharLong() {
-        actual = new UserDto(genericWord.make(4), "", "");
+        actual = new UserDto(GenericWord.make(4), "", "");
         EntityValidator.assertPropertyErrors(actual, "username");
     }
 
     @Test
     public void usernameShouldBeMax20CharsLong() {
-        actual = new UserDto(genericWord.make(21), "", "");
+        actual = new UserDto(GenericWord.make(21), "", "");
         EntityValidator.assertPropertyErrors(actual, "username");
     }
 
@@ -46,13 +39,13 @@ public class UserDtoTest {
 
     @Test
     public void passwordShouldBeAtLeast7CharLong() {
-        actual = new UserDto("", genericWord.make(6), "");
+        actual = new UserDto("", GenericWord.make(6), "");
         EntityValidator.assertPropertyErrors(actual, "password");
     }
 
     @Test
     public void passwordShouldBeMax20CharsLong() {
-        actual = new UserDto("", genericWord.make(21), "");
+        actual = new UserDto("", GenericWord.make(21), "");
         EntityValidator.assertPropertyErrors(actual, "password");
     }
 
@@ -70,13 +63,13 @@ public class UserDtoTest {
 
     @Test
     public void confirmedPasswordShouldBeAtLeast7CharsLong() {
-        actual = new UserDto("", "", genericWord.make(6));
+        actual = new UserDto("", "", GenericWord.make(6));
         EntityValidator.assertPropertyErrors(actual, "confirmedPassword");
     }
 
     @Test
     public void confirmedPasswordShouldBeMax20CharsLong() {
-        actual = new UserDto("", "", genericWord.make(21));
+        actual = new UserDto("", "", GenericWord.make(21));
         EntityValidator.assertPropertyErrors(actual, "confirmedPassword");
     }
 

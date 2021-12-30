@@ -2,7 +2,6 @@ package gabriel.games.model.api.dto;
 
 import gabriel.games.model.util.EntityValidator;
 import gabriel.games.model.util.GenericWord;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.*;
@@ -10,12 +9,6 @@ import java.util.*;
 public class CompanyDtoTest {
 
     private CompanyDto actual;
-    private GenericWord genericWord;
-
-    @BeforeEach
-    public void setUp() {
-        this.genericWord = new GenericWord();
-    }
 
     private List<String> makeCompanyTypes() {
         return Arrays.asList("publisher", "producer");
@@ -41,7 +34,7 @@ public class CompanyDtoTest {
 
     @Test
     public void nameShouldBeMax128CharactersLong() {
-        actual = new CompanyDto(genericWord.make(129), makeCompanyTypes());
+        actual = new CompanyDto(GenericWord.make(129), makeCompanyTypes());
         EntityValidator.assertErrors(actual, 1);
     }
 
@@ -65,7 +58,7 @@ public class CompanyDtoTest {
 
     @Test
     public void typeShouldBeMax50CharactersLong() {
-        actual = new CompanyDto("name", Collections.singletonList(genericWord.make(51)));
+        actual = new CompanyDto("name", Collections.singletonList(GenericWord.make(51)));
         EntityValidator.assertErrors(actual, 1);
     }
 }

@@ -2,18 +2,11 @@ package gabriel.games.model.api.dto;
 
 import gabriel.games.model.util.EntityValidator;
 import gabriel.games.model.util.GenericWord;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class GameDetailsDtoTest {
 
     private GameDetailsDto actual;
-    private GenericWord genericWord;
-
-    @BeforeEach
-    public void setUp() {
-        this.genericWord = new GenericWord();
-    }
 
     @Test
     public void validGameDto_HasNoErrors() {
@@ -35,7 +28,7 @@ public class GameDetailsDtoTest {
     @Test
     public void descriptionShouldBeMax1024CharacterLong() {
         actual = GameDetailsDto.builder()
-                .description(genericWord.make(1025))
+                .description(GenericWord.make(1025))
                 .build();
         EntityValidator.assertPropertyErrors(actual, "description");
     }
@@ -49,7 +42,7 @@ public class GameDetailsDtoTest {
     @Test
     public void webpageShouldBeMax256CharacterLong() {
         actual = GameDetailsDto.builder()
-                .description(genericWord.make(257))
+                .description(GenericWord.make(257))
                 .build();
         EntityValidator.assertPropertyErrors(actual, "webpage");
     }

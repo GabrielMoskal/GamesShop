@@ -29,8 +29,7 @@ public class GamePlatformDtoTest {
 
     @Test
     public void platformNameShouldBeMax50CharacterLong() {
-        GenericWord genericWord = new GenericWord();
-        actual = new GamePlatformDto(genericWord.make(51), new Date(0));
+        actual = new GamePlatformDto(GenericWord.make(51), new Date(0));
         EntityValidator.assertErrors(actual, 1);
     }
 
