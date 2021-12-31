@@ -6,19 +6,20 @@ import org.springframework.test.web.servlet.ResultActions;
 
 import java.util.List;
 
-public class UserValidator extends DtoValidator {
+public class UserValidator {
 
+    private JsonValidator jsonValidator;
     private UserDto expected;
 
-    public void validate(ResultActions resultActions, String uri, UserDto expected) {
+    public void validate(ResultActions resultActions, UserDto expected, String uri) {
         setMembers(resultActions, expected);
         validateUserDetails();
         validateErrors();
-        validateLink(uri);
+        jsonValidator.validateJsonLinks(uri);
     }
 
     private void setMembers(ResultActions resultActions, UserDto expected) {
-        super.setMembers(resultActions);
+        this.jsonValidator = new JsonValidator(resultActions);
         this.expected = expected;
     }
 

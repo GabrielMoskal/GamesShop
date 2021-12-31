@@ -43,7 +43,7 @@ public class RegistrationControllerIT {
     public void register_ShouldReturnEmptyUserJsonWithLink() throws Exception {
         userDto = Users.makeUserDto("", "");
         ResultActions resultActions = performGet().andExpect(status().isOk());
-        userValidator.validate(resultActions, PATH, userDto);
+        userValidator.validate(resultActions, userDto, PATH);
     }
 
     private ResultActions performGet() throws Exception {
@@ -60,7 +60,7 @@ public class RegistrationControllerIT {
 
         verifyMethodCalls();
         userDto = Users.makeUserDto(userDto.getUsername(), "");
-        userValidator.validate(resultActions, PATH, userDto);
+        userValidator.validate(resultActions, userDto, PATH);
     }
 
     private ResultActions performPostRegister() throws Exception {
@@ -102,7 +102,7 @@ public class RegistrationControllerIT {
         addExpectedErrorsToUserDto("Nazwa użytkownika musi zawierać między 5 a 20 znaków.");
         mockErrorService();
         ResultActions resultActions = performPostRegister().andExpect(status().is4xxClientError());
-        userValidator.validate(resultActions, PATH, userDto);
+        userValidator.validate(resultActions, userDto, PATH);
     }
 
     private void addExpectedErrorsToUserDto(String errorMessage) {
@@ -122,7 +122,7 @@ public class RegistrationControllerIT {
         mockErrorService();
         ResultActions resultActions = performPostRegister().andExpect(status().is4xxClientError());
         verifyInteractions();
-        userValidator.validate(resultActions, PATH, userDto);
+        userValidator.validate(resultActions, userDto, PATH);
     }
 
     private void mockUserService() {

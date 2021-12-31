@@ -27,7 +27,7 @@ public class JsonValidator {
         }
     }
 
-    public void verifyJsonLinks(String path) {
+    public void validateJsonLinks(String path) {
         ResultMatcher resultMatcher = MockMvcResultMatchers.jsonPath("_links.self.href", endsWith(path));
         tryToExpect(resultMatcher);
     }

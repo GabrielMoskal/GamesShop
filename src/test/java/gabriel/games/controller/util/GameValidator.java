@@ -5,8 +5,9 @@ import org.springframework.test.web.servlet.ResultActions;
 
 import java.util.List;
 
-public class GameValidator extends DtoValidator {
+public class GameValidator {
 
+    private JsonValidator jsonValidator;
     private GameDto expected;
 
     public void validate(ResultActions resultActions, GameDto expected) {
@@ -15,11 +16,11 @@ public class GameValidator extends DtoValidator {
         validateDetails();
         validatePlatforms();
         validateCompanies();
-        validateLink(expected.getUri());
+        jsonValidator.validateJsonLinks(expected.getUri());
     }
 
     private void setMembers(ResultActions resultActions, GameDto expected) {
-        super.setMembers(resultActions);
+        this.jsonValidator = new JsonValidator(resultActions);
         this.expected = expected;
     }
 

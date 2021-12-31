@@ -46,7 +46,8 @@ public class GamePlatformControllerIT {
         resultActions.andExpect(status().isOk());
         verifyGetServiceInteractions(gamePlatformDto);
         verifyGetMapperInteractions(gamePlatform);
-        GamePlatformValidator.validate(resultActions, gamePlatformDto, PATH + "game-name/platform-name");
+        GamePlatformValidator validator = new GamePlatformValidator();
+        validator.validate(resultActions, gamePlatformDto, PATH + "game-name/platform-name");
     }
 
     private ResultActions performGetRequest(String uri) throws Exception {
