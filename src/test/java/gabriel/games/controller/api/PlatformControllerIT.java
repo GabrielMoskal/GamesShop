@@ -84,11 +84,9 @@ public class PlatformControllerIT {
 
     @Test
     public void getPlatform_NonExistentPlatformUriGiven_ShouldReturn404() throws Exception {
-        String uri = "non-existent";
+        when(platformService.findByUri(anyString())).thenThrow(new ObjectNotFoundException("msg"));
 
-        when(platformService.findByUri(uri)).thenThrow(new ObjectNotFoundException("msg"));
-
-        performGetPlatform(uri).andExpect(status().isNotFound());
+        performGetPlatform("non-existent").andExpect(status().isNotFound());
     }
 
     @Test
