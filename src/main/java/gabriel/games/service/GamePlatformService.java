@@ -25,7 +25,6 @@ public class GamePlatformService {
     }
 
     public GamePlatform save(GamePlatform gamePlatform) {
-        //TODO
-        return null;
+        return gamePlatformRepository.save(gamePlatform);
     }
 }

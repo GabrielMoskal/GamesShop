@@ -13,8 +13,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class GamePlatformServiceTest {
 
@@ -53,5 +52,16 @@ public class GamePlatformServiceTest {
 
         ObjectNotFoundException exception = assertThrows(ObjectNotFoundException.class, executable);
         assertEquals("GamePlatform with given id not found.", exception.getMessage());
+    }
+
+    @Test
+    public void save_ValidGamePlatformGiven_ShouldReturnValidGamePlatform() {
+        GamePlatform expected = new GamePlatform(mock(Date.class));
+        when(gamePlatformRepository.save(expected)).thenReturn(expected);
+
+        GamePlatform actual = service.save(expected);
+
+        assertEquals(expected, actual);
+        verify(gamePlatformRepository).save(expected);
     }
 }

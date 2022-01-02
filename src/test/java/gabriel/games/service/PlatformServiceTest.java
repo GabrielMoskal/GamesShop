@@ -59,20 +59,12 @@ public class PlatformServiceTest {
     @Test
     public void save_ValidPlatformGiven_ShouldReturnValidPlatform() {
         Platform expected = new Platform("name", "uri");
-
         when(platformRepository.save(expected)).thenReturn(expected);
+
         Platform actual = platformService.save(expected);
 
         assertEquals(expected, actual);
-    }
-
-    @Test
-    public void save_ValidPlatformGiven_VerifyInteractions() {
-        Platform platform = new Platform("name", "uri");
-
-        platformService.save(platform);
-
-        verify(platformRepository).save(platform);
+        verify(platformRepository).save(expected);
     }
 
     @Test
