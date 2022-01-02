@@ -30,6 +30,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class GamePlatformControllerIT {
 
     private final String PATH = "/api/game-platform/";
+    private final String PLATFORM_URI = "test-platform-uri";
+    private final String GAME_URI = "test-game-uri";
+
     @Autowired private MockMvc mockMvc;
     @Autowired private ObjectMapper objectMapper;
     @MockBean private GamePlatformService gamePlatformService;
@@ -42,7 +45,7 @@ public class GamePlatformControllerIT {
     }
 
     @Test
-    public void getGamePlatform_ValidNamesGiven_VerifyInteractions() throws Exception {
+    public void getGamePlatform_ValidUriGiven_VerifyInteractions() throws Exception {
         //given
         GamePlatformDto gamePlatformDto = new GamePlatformDto("game-name", "platform-name", new Date(0));
         GamePlatform gamePlatform = mockGamePlatform(gamePlatformDto);
@@ -50,13 +53,13 @@ public class GamePlatformControllerIT {
         when(gamePlatformMapper.toGamePlatformDto(gamePlatform)).thenReturn(gamePlatformDto);
 
         //when
-        ResultActions resultActions = performGetRequest("game-name/platform-name");
+        ResultActions resultActions = performGetRequest(GAME_URI + "/" + PLATFORM_URI);
 
         //then
         resultActions.andExpect(status().isOk());
-        verifyGetServiceInteractions(gamePlatformDto);
+        verifyGetServiceInteractions();
         verifyMapperToGamePlatformDtoInteractions(gamePlatformDto);
-        validator.validate(resultActions, gamePlatformDto, PATH + "game-name/platform-name");
+        validator.validate(resultActions, gamePlatformDto, PATH + GAME_URI + "/" + PLATFORM_URI);
     }
 
     private GamePlatform mockGamePlatform(GamePlatformDto gamePlatformDto) {
@@ -65,6 +68,8 @@ public class GamePlatformControllerIT {
         when(gamePlatform.getReleaseDate()).thenReturn(gamePlatformDto.getReleaseDate());
         when(gamePlatform.getGameName()).thenReturn(gamePlatformDto.getGameName());
         when(gamePlatform.getPlatformName()).thenReturn(gamePlatformDto.getPlatformName());
+        when(gamePlatform.getGameUri()).thenReturn(GAME_URI);
+        when(gamePlatform.getPlatformUri()).thenReturn(PLATFORM_URI);
 
         return gamePlatform;
     }
@@ -75,12 +80,12 @@ public class GamePlatformControllerIT {
         );
     }
 
-    private void verifyGetServiceInteractions(GamePlatformDto gamePlatformDto) {
-        ArgumentCaptor<String> gameNameCaptor = ArgumentCaptor.forClass(String.class);
-        ArgumentCaptor<String> platformNameCaptor = ArgumentCaptor.forClass(String.class);
-        verify(gamePlatformService).find(gameNameCaptor.capture(), platformNameCaptor.capture());
-        assertEquals(gamePlatformDto.getGameName(), gameNameCaptor.getValue());
-        assertEquals(gamePlatformDto.getPlatformName(), platformNameCaptor.getValue());
+    private void verifyGetServiceInteractions() {
+        ArgumentCaptor<String> gameUriCaptor = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<String> platformUriCaptor = ArgumentCaptor.forClass(String.class);
+        verify(gamePlatformService).find(gameUriCaptor.capture(), platformUriCaptor.capture());
+        assertEquals(GAME_URI, gameUriCaptor.getValue());
+        assertEquals(PLATFORM_URI, platformUriCaptor.getValue());
     }
 
     private void verifyMapperToGamePlatformDtoInteractions(GamePlatformDto expected) {
@@ -112,7 +117,7 @@ public class GamePlatformControllerIT {
         // then
         resultActions.andExpect(status().isCreated());
         verifyPostInteractions(gamePlatformDto);
-        validator.validate(resultActions, gamePlatformDto, PATH + "game-name/platform-name");
+        validator.validate(resultActions, gamePlatformDto, PATH + GAME_URI + "/" + PLATFORM_URI);
     }
 
     private void stubPostMembers(GamePlatformDto gamePlatformDto) {

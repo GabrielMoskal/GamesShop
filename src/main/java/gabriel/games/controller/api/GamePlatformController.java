@@ -26,32 +26,32 @@ public class GamePlatformController {
     private GamePlatformService gamePlatformService;
     private GamePlatformMapper gamePlatformMapper;
 
-    @GetMapping("/{game-name}/{platform-name}")
-    public ResponseEntity<EntityModel<GamePlatformDto>> getGamePlatform(@PathVariable(name = "game-name") String gameName,
-                                                       @PathVariable(name = "platform-name") String platformName) {
+    @GetMapping("/{game-uri}/{platform-uri}")
+    public ResponseEntity<EntityModel<GamePlatformDto>> getGamePlatform(@PathVariable(name = "game-uri") String gameUri,
+                                                       @PathVariable(name = "platform-uri") String platformUri) {
         try {
-            return findGamePlatform(gameName, platformName);
+            return findGamePlatform(gameUri, platformUri);
         } catch (ObjectNotFoundException e) {
             return notFound();
         }
     }
 
-    private ResponseEntity<EntityModel<GamePlatformDto>> findGamePlatform(String gameName, String platformName) {
-        GamePlatform gamePlatform = gamePlatformService.find(gameName, platformName);
-        GamePlatformDto gamePlatformDto = gamePlatformMapper.toGamePlatformDto(gamePlatform);
+    private ResponseEntity<EntityModel<GamePlatformDto>> findGamePlatform(String gameUri, String platformUri) {
+        GamePlatform gamePlatform = gamePlatformService.find(gameUri, platformUri);
 
-        return makeResponse(gamePlatformDto, HttpStatus.OK);
+        return makeResponse(gamePlatform, HttpStatus.OK);
     }
 
-    private ResponseEntity<EntityModel<GamePlatformDto>> makeResponse(GamePlatformDto gamePlatformDto, HttpStatus httpStatus) {
+    private ResponseEntity<EntityModel<GamePlatformDto>> makeResponse(GamePlatform gamePlatform, HttpStatus httpStatus) {
+        GamePlatformDto gamePlatformDto = gamePlatformMapper.toGamePlatformDto(gamePlatform);
         EntityModel<GamePlatformDto> entityModel = EntityModel.of(gamePlatformDto);
-        entityModel.add(makeLink(gamePlatformDto.getGameName(), gamePlatformDto.getPlatformName()));
+        entityModel.add(makeLink(gamePlatform.getGameUri(), gamePlatform.getPlatformUri()));
 
         return new ResponseEntity<>(entityModel, httpStatus);
     }
 
-    private Link makeLink(String gameName, String platformName) {
-        return linkTo(methodOn(GamePlatformController.class).getGamePlatform(gameName, platformName)).withSelfRel();
+    private Link makeLink(String gameUri, String platformUri) {
+        return linkTo(methodOn(GamePlatformController.class).getGamePlatform(gameUri, platformUri)).withSelfRel();
     }
 
     private ResponseEntity<EntityModel<GamePlatformDto>> notFound() {
@@ -62,7 +62,7 @@ public class GamePlatformController {
     public ResponseEntity<EntityModel<GamePlatformDto>> postGamePlatform(@Valid @RequestBody GamePlatformDto gamePlatformDto) {
         GamePlatform gamePlatform = gamePlatformMapper.toGamePlatform(gamePlatformDto);
         gamePlatform = gamePlatformService.save(gamePlatform);
-        GamePlatformDto responseBody = gamePlatformMapper.toGamePlatformDto(gamePlatform);
-        return makeResponse(responseBody, HttpStatus.CREATED);
+
+        return makeResponse(gamePlatform, HttpStatus.CREATED);
     }
 }

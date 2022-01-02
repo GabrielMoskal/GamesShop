@@ -41,8 +41,16 @@ public class GamePlatform {
         return game.getName();
     }
 
+    public String getGameUri() {
+        return game.getUri();
+    }
+
     public String getPlatformName() {
         return platform.getName();
+    }
+
+    public String getPlatformUri() {
+        return platform.getUri();
     }
 
     @Override

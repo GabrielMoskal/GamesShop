@@ -30,6 +30,7 @@ public class PlatformServiceTest {
     public void findByUri_ExistingUriGiven_ShouldReturnValidPlatform() {
         Platform expected = new Platform("name", "uri");
         mockFindByUri(expected);
+
         Platform actual = platformService.findByUri(expected.getName());
 
         assertEquals(expected, actual);

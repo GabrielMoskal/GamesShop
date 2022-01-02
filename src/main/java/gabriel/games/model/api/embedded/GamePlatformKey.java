@@ -6,9 +6,11 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import java.io.Serializable;
 
-@Data
-@NoArgsConstructor(access = AccessLevel.PUBLIC)
 @Embeddable
+@NoArgsConstructor(access = AccessLevel.PUBLIC)
+@AllArgsConstructor
+@ToString
+@EqualsAndHashCode
 public class GamePlatformKey implements Serializable {
 
     @Column(name = "game_id")

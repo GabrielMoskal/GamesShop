@@ -45,6 +45,16 @@ public class GamePlatformTest {
     }
 
     @Test
+    public void getGameUri_ReturnsGameUri() {
+        actual = new GamePlatform(mock(Date.class));
+        Game game = mock(Game.class);
+        when(game.getUri()).thenReturn("uri");
+        actual.setGame(game);
+
+        assertEquals("uri", actual.getGameUri());
+    }
+
+    @Test
     public void getPlatformName_ReturnsPlatformName() {
         actual = new GamePlatform(mock(Date.class));
         Platform platform = mock(Platform.class);
@@ -52,6 +62,16 @@ public class GamePlatformTest {
         actual.setPlatform(platform);
 
         assertEquals("name", actual.getPlatformName());
+    }
+
+    @Test
+    public void getPlatformUri_ReturnsPlatformUri() {
+        actual = new GamePlatform(mock(Date.class));
+        Platform platform = mock(Platform.class);
+        when(platform.getUri()).thenReturn("uri");
+        actual.setPlatform(platform);
+
+        assertEquals("uri", actual.getPlatformUri());
     }
 
     @Test
