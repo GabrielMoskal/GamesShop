@@ -43,31 +43,11 @@ public class GamePlatformMapperTest {
     @Test
     public void toGamePlatformDto_ReleaseDateGiven_ShouldContainValidReleaseDate() {
         GamePlatform gamePlatform = mock(GamePlatform.class);
-        when(gamePlatform.getReleaseDate()).thenReturn(new Date(0));
+        when(gamePlatform.getReleaseDate()).thenReturn(mock(Date.class));
 
         GamePlatformDto actual = mapper.toGamePlatformDto(gamePlatform);
 
-        assertEquals(new Date(0), actual.getReleaseDate());
-    }
-
-    @Test
-    public void toGamePlatform_GameNameGiven_ShouldContainValidGameName() {
-        GamePlatformDto gamePlatformDto = mock(GamePlatformDto.class);
-        when(gamePlatformDto.getGameName()).thenReturn("gameName");
-
-        GamePlatform actual = mapper.toGamePlatform(gamePlatformDto);
-
-        assertEquals("gameName", actual.getGameName());
-    }
-
-    @Test
-    public void toGamePlatform_PlatformNameGiven_ShouldContainValidPlatformName() {
-        GamePlatformDto gamePlatformDto = mock(GamePlatformDto.class);
-        when(gamePlatformDto.getPlatformName()).thenReturn("platformName");
-
-        GamePlatform actual = mapper.toGamePlatform(gamePlatformDto);
-
-        assertEquals("platformName", actual.getPlatformName());
+        assertEquals(gamePlatform.getReleaseDate(), actual.getReleaseDate());
     }
 
     @Test

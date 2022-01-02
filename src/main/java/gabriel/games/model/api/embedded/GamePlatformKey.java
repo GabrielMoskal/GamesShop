@@ -7,8 +7,7 @@ import javax.persistence.Embeddable;
 import java.io.Serializable;
 
 @Data
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PUBLIC)
 @Embeddable
 public class GamePlatformKey implements Serializable {
 

@@ -19,30 +19,29 @@ public class GamePlatform {
     @ManyToOne
     @MapsId("gameId")
     @JoinColumn(name = "game_id")
+    @Setter
     private Game game;
 
     @ManyToOne
     @MapsId("platformId")
     @JoinColumn(name = "platform_id")
+    @Setter
     private Platform platform;
 
     @NotNull
     @Getter
     private Date releaseDate;
 
-    public GamePlatform(Game game, Platform platform, Date releaseDate) {
-        this.game = game;
-        this.platform = platform;
+    public GamePlatform(Date releaseDate) {
         this.releaseDate = releaseDate;
+        this.id = new GamePlatformKey();
     }
 
     public String getGameName() {
-        Objects.requireNonNull(game, "game should not be null");
         return game.getName();
     }
 
     public String getPlatformName() {
-        Objects.requireNonNull(platform, "platform should not be null");
         return platform.getName();
     }
 

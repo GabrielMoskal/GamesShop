@@ -12,6 +12,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
@@ -38,14 +40,14 @@ public class GamePlatformController {
         GamePlatform gamePlatform = gamePlatformService.find(gameName, platformName);
         GamePlatformDto gamePlatformDto = gamePlatformMapper.toGamePlatformDto(gamePlatform);
 
-        return makeResponse(gamePlatformDto);
+        return makeResponse(gamePlatformDto, HttpStatus.OK);
     }
 
-    private ResponseEntity<EntityModel<GamePlatformDto>> makeResponse(GamePlatformDto gamePlatformDto) {
+    private ResponseEntity<EntityModel<GamePlatformDto>> makeResponse(GamePlatformDto gamePlatformDto, HttpStatus httpStatus) {
         EntityModel<GamePlatformDto> entityModel = EntityModel.of(gamePlatformDto);
         entityModel.add(makeLink(gamePlatformDto.getGameName(), gamePlatformDto.getPlatformName()));
 
-        return new ResponseEntity<>(entityModel, HttpStatus.OK);
+        return new ResponseEntity<>(entityModel, httpStatus);
     }
 
     private Link makeLink(String gameName, String platformName) {
@@ -56,4 +58,11 @@ public class GamePlatformController {
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
+    @PostMapping
+    public ResponseEntity<EntityModel<GamePlatformDto>> postGamePlatform(@Valid @RequestBody GamePlatformDto gamePlatformDto) {
+        GamePlatform gamePlatform = gamePlatformMapper.toGamePlatform(gamePlatformDto);
+        gamePlatform = gamePlatformService.save(gamePlatform);
+        GamePlatformDto responseBody = gamePlatformMapper.toGamePlatformDto(gamePlatform);
+        return makeResponse(responseBody, HttpStatus.CREATED);
+    }
 }

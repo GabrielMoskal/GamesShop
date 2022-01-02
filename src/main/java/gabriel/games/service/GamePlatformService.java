@@ -9,4 +9,9 @@ public class GamePlatformService {
         // TODO
         return null;
     }
+
+    public GamePlatform save(GamePlatform gamePlatform) {
+        //TODO
+        return null;
+    }
 }
