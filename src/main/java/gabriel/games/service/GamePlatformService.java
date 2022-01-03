@@ -36,4 +36,9 @@ public class GamePlatformService {
         }
         return save(original);
     }
+
+    public void delete(String gameUri, String platformUri) {
+        GamePlatform gamePlatform = find(gameUri, platformUri);
+        gamePlatformRepository.delete(gamePlatform);
+    }
 }

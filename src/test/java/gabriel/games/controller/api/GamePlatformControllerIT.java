@@ -13,6 +13,7 @@ import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -186,5 +187,35 @@ public class GamePlatformControllerIT {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(content)
         );
+    }
+
+    @Test
+    public void deleteGamePlatform_UriGiven_ShouldReturn204() throws Exception {
+        ResultActions resultActions = performDeleteRequest();
+
+        resultActions.andExpect(status().isNoContent());
+        verifyDeleteServiceInteractions();
+    }
+
+    private ResultActions performDeleteRequest() throws Exception {
+        return mockMvc.perform(delete(PATH + GAME_URI + "/" + PLATFORM_URI));
+    }
+
+    private void verifyDeleteServiceInteractions() {
+        ArgumentCaptor<String> gameUriCaptor = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<String> platformUriCaptor = ArgumentCaptor.forClass(String.class);
+
+        verify(gamePlatformService).delete(gameUriCaptor.capture(), platformUriCaptor.capture());
+        assertEquals(GAME_URI, gameUriCaptor.getValue());
+        assertEquals(PLATFORM_URI, platformUriCaptor.getValue());
+    }
+
+    @Test
+    public void deleteGamePlatform_ExceptionThrown_ShouldReturn204() throws Exception {
+        doThrow(EmptyResultDataAccessException.class).when(gamePlatformService).delete(GAME_URI, PLATFORM_URI);
+
+        ResultActions resultActions = performDeleteRequest();
+
+        resultActions.andExpect(status().isNoContent());
     }
 }

@@ -7,6 +7,7 @@ import gabriel.games.service.exception.ObjectNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
+import org.mockito.ArgumentCaptor;
 
 import java.sql.Date;
 import java.util.Optional;
@@ -95,5 +96,18 @@ public class GamePlatformServiceTest {
         GamePlatform actual = service.update("game-uri", "platform-uri", patch);
 
         assertEquals(toUpdate.getReleaseDate(), actual.getReleaseDate());
+    }
+
+    @Test
+    public void delete_UrisGiven_VerifyInteractions() {
+        GamePlatform gamePlatform = mock(GamePlatform.class);
+        when(gamePlatformRepository.findById(any())).thenReturn(Optional.of(gamePlatform));
+
+        service.delete("game-uri", "platform-uri");
+
+        ArgumentCaptor<GamePlatform> gamePlatformCaptor = ArgumentCaptor.forClass(GamePlatform.class);
+        verify(gamePlatformRepository).delete(gamePlatformCaptor.capture());
+        GamePlatform actual = gamePlatformCaptor.getValue();
+        assertEquals(gamePlatform, actual);
     }
 }

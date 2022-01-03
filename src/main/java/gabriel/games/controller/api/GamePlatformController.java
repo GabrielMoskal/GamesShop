@@ -6,6 +6,7 @@ import gabriel.games.model.api.mapper.GamePlatformMapper;
 import gabriel.games.service.GamePlatformService;
 import gabriel.games.service.exception.ObjectNotFoundException;
 import lombok.AllArgsConstructor;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
@@ -71,8 +72,18 @@ public class GamePlatformController {
                                                                           @PathVariable(name = "platform-uri") String platformUri,
                                                                           @RequestBody GamePlatformDto patch) {
         GamePlatform gamePlatform = gamePlatformMapper.toGamePlatform(patch);
-        gamePlatformService.update(gameUri, platformUri, gamePlatform);
+        gamePlatform = gamePlatformService.update(gameUri, platformUri, gamePlatform);
 
         return makeResponse(gamePlatform, HttpStatus.OK);
+    }
+
+    @DeleteMapping(path = "/{game-uri}/{platform-uri}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteGamePlatform(@PathVariable(name = "game-uri") String gameUri,
+                                   @PathVariable(name = "platform-uri") String platformUri) {
+        try {
+            gamePlatformService.delete(gameUri, platformUri);
+        } catch (EmptyResultDataAccessException ignore) {
+        }
     }
 }
