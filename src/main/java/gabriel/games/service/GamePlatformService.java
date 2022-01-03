@@ -28,8 +28,12 @@ public class GamePlatformService {
         return gamePlatformRepository.save(gamePlatform);
     }
 
-    public GamePlatform update(String gameUri, String platformUri, GamePlatform gamePlatform) {
-        // TODO
-        return null;
+    public GamePlatform update(String gameUri, String platformUri, GamePlatform patch) {
+        GamePlatform original = find(gameUri, platformUri);
+
+        if (patch.getReleaseDate() != null) {
+            original.setReleaseDate(patch.getReleaseDate());
+        }
+        return save(original);
     }
 }

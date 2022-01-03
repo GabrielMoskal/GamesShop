@@ -72,14 +72,14 @@ public class PlatformServiceTest {
         Platform patch = new Platform(null, null);
         Platform expected = new Platform("name", "uri");
         expected.setId(1L);
-        mockRepository(expected);
+        stubRepository(expected);
 
         Platform result = platformService.update(anyString(), patch);
 
         assertThat(result).isEqualToComparingFieldByField(expected);
     }
 
-    private void mockRepository(Platform platform) {
+    private void stubRepository(Platform platform) {
         when(platformRepository.findByUri(any())).thenReturn(Optional.of(platform));
         when(platformRepository.save(platform)).thenReturn(platform);
     }
@@ -88,7 +88,7 @@ public class PlatformServiceTest {
     public void update_NameGiven_ShouldUpdateName() {
         Platform patch = new Platform("different name", null);
         Platform toUpdate = new Platform("name", "uri");
-        mockRepository(toUpdate);
+        stubRepository(toUpdate);
 
         Platform result = platformService.update("uri", patch);
 
@@ -99,7 +99,7 @@ public class PlatformServiceTest {
     public void update_UriGiven_ShouldUpdateUri() {
         Platform patch = new Platform(null, "different uri");
         Platform toUpdate = new Platform("name", "uri");
-        mockRepository(toUpdate);
+        stubRepository(toUpdate);
 
         Platform result = platformService.update("uri", patch);
 

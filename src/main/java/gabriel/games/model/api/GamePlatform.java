@@ -30,6 +30,7 @@ public class GamePlatform {
 
     @NotNull
     @Getter
+    @Setter
     private Date releaseDate;
 
     public GamePlatform(Date releaseDate) {
