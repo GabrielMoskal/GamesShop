@@ -65,4 +65,14 @@ public class GamePlatformController {
 
         return makeResponse(gamePlatform, HttpStatus.CREATED);
     }
+
+    @PatchMapping(path = "/{game-uri}/{platform-uri}")
+    public ResponseEntity<EntityModel<GamePlatformDto>> patchGamePlatform(@PathVariable(name = "game-uri") String gameUri,
+                                                                          @PathVariable(name = "platform-uri") String platformUri,
+                                                                          @RequestBody GamePlatformDto patch) {
+        GamePlatform gamePlatform = gamePlatformMapper.toGamePlatform(patch);
+        gamePlatformService.update(gameUri, platformUri, gamePlatform);
+
+        return makeResponse(gamePlatform, HttpStatus.OK);
+    }
 }

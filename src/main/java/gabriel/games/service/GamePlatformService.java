@@ -27,4 +27,9 @@ public class GamePlatformService {
     public GamePlatform save(GamePlatform gamePlatform) {
         return gamePlatformRepository.save(gamePlatform);
     }
+
+    public GamePlatform update(String gameUri, String platformUri, GamePlatform gamePlatform) {
+        // TODO
+        return null;
+    }
 }

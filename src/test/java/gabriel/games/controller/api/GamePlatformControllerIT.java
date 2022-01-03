@@ -22,8 +22,7 @@ import java.sql.Date;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(GamePlatformController.class)
@@ -58,7 +57,7 @@ public class GamePlatformControllerIT {
         //then
         resultActions.andExpect(status().isOk());
         verifyGetServiceInteractions();
-        verifyMapperToGamePlatformDtoInteractions(gamePlatformDto);
+        verifyMapperToGamePlatformDtoInteractions(gamePlatform);
         validator.validate(resultActions, gamePlatformDto, PATH + GAME_URI + "/" + PLATFORM_URI);
     }
 
@@ -88,13 +87,11 @@ public class GamePlatformControllerIT {
         assertEquals(PLATFORM_URI, platformUriCaptor.getValue());
     }
 
-    private void verifyMapperToGamePlatformDtoInteractions(GamePlatformDto expected) {
+    private void verifyMapperToGamePlatformDtoInteractions(GamePlatform expected) {
         ArgumentCaptor<GamePlatform> gamePlatformCaptor = ArgumentCaptor.forClass(GamePlatform.class);
         verify(gamePlatformMapper).toGamePlatformDto(gamePlatformCaptor.capture());
         GamePlatform actual = gamePlatformCaptor.getValue();
-        assertEquals(expected.getReleaseDate(), actual.getReleaseDate());
-        assertEquals(expected.getGameName(), actual.getGameName());
-        assertEquals(expected.getPlatformName(), actual.getPlatformName());
+        assertEquals(expected, actual);
     }
 
     @Test
@@ -109,23 +106,20 @@ public class GamePlatformControllerIT {
     public void postGamePlatform_ValidGamePlatformDtoGiven_VerifyInteractions() throws Exception {
         // given
         GamePlatformDto gamePlatformDto = new GamePlatformDto("game-name", "platform-name", new Date(0));
-        stubPostMembers(gamePlatformDto);
+        GamePlatform gamePlatform = mockGamePlatform(gamePlatformDto);
+        when(gamePlatformMapper.toGamePlatform(any())).thenReturn(gamePlatform);
+        when(gamePlatformService.save(any())).thenReturn(gamePlatform);
+        when(gamePlatformMapper.toGamePlatformDto(any())).thenReturn(gamePlatformDto);
 
         // when
         ResultActions resultActions = performPostRequest(gamePlatformDto);
 
         // then
         resultActions.andExpect(status().isCreated());
-        verifyPostInteractions(gamePlatformDto);
+        verifyMapperToGamePlatformInteractions(gamePlatformDto);
+        verifyPostServiceInteractions(gamePlatformDto);
+        verifyMapperToGamePlatformDtoInteractions(gamePlatform);
         validator.validate(resultActions, gamePlatformDto, PATH + GAME_URI + "/" + PLATFORM_URI);
-    }
-
-    private void stubPostMembers(GamePlatformDto gamePlatformDto) {
-        GamePlatform gamePlatform = mockGamePlatform(gamePlatformDto);
-
-        when(gamePlatformMapper.toGamePlatform(any())).thenReturn(gamePlatform);
-        when(gamePlatformService.save(any())).thenReturn(gamePlatform);
-        when(gamePlatformMapper.toGamePlatformDto(any())).thenReturn(gamePlatformDto);
     }
 
     private ResultActions performPostRequest(GamePlatformDto gamePlatformDto) throws Exception {
@@ -135,13 +129,7 @@ public class GamePlatformControllerIT {
         );
     }
 
-    private void verifyPostInteractions(GamePlatformDto gamePlatformDto) {
-        verifyPostMapperToGamePlatformInteractions(gamePlatformDto);
-        verifyPostServiceInteractions(gamePlatformDto);
-        verifyMapperToGamePlatformDtoInteractions(gamePlatformDto);
-    }
-
-    private void verifyPostMapperToGamePlatformInteractions(GamePlatformDto gamePlatformDto) {
+    private void verifyMapperToGamePlatformInteractions(GamePlatformDto gamePlatformDto) {
         ArgumentCaptor<GamePlatformDto> gamePlatformDtoCaptor = ArgumentCaptor.forClass(GamePlatformDto.class);
         verify(gamePlatformMapper).toGamePlatform(gamePlatformDtoCaptor.capture());
         GamePlatformDto actual = gamePlatformDtoCaptor.getValue();
@@ -162,5 +150,41 @@ public class GamePlatformControllerIT {
         GamePlatformDto gamePlatformDto = new GamePlatformDto(null, null, null);
 
         performPostRequest(gamePlatformDto).andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void patchGamePlatform_DateGiven_ShouldUpdateGamePlatform() throws Exception {
+        GamePlatformDto gamePlatformDto = new GamePlatformDto("gameName", "platformName", new Date(0));
+        GamePlatform gamePlatform = mockGamePlatform(gamePlatformDto);
+        when(gamePlatformMapper.toGamePlatform(any())).thenReturn(gamePlatform);
+        when(gamePlatformService.update(GAME_URI, PLATFORM_URI, gamePlatform)).thenReturn(gamePlatform);
+        when(gamePlatformMapper.toGamePlatformDto(gamePlatform)).thenReturn(gamePlatformDto);
+
+        ResultActions resultActions = performPatchRequest(gamePlatformDto);
+
+        resultActions.andExpect(status().isOk());
+        verifyMapperToGamePlatformInteractions(gamePlatformDto);
+        verifyPatchServiceInteractions(gamePlatform);
+        verifyMapperToGamePlatformDtoInteractions(gamePlatform);
+    }
+
+    private void verifyPatchServiceInteractions(GamePlatform gamePlatform) {
+        ArgumentCaptor<String> gameUriCaptor = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<String> platformUriCaptor = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<GamePlatform> gamePlatformCaptor = ArgumentCaptor.forClass(GamePlatform.class);
+        verify(gamePlatformService).update(gameUriCaptor.capture(), platformUriCaptor.capture(), gamePlatformCaptor.capture());
+
+        assertEquals(GAME_URI, gameUriCaptor.getValue());
+        assertEquals(PLATFORM_URI, platformUriCaptor.getValue());
+        assertEquals(gamePlatform, gamePlatformCaptor.getValue());
+    }
+
+    private ResultActions performPatchRequest(GamePlatformDto gamePlatformDto) throws Exception {
+        String content = objectMapper.writeValueAsString(gamePlatformDto);
+
+        return mockMvc.perform(patch(PATH + GAME_URI + "/" + PLATFORM_URI)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(content)
+        );
     }
 }
