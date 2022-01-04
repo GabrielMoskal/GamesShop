@@ -29,7 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(GamePlatformController.class)
 public class GamePlatformControllerIT {
 
-    private final String PATH = "/api/game-platform/";
+    private final String PATH = "/api/game-platform";
     private final String PLATFORM_URI = "test-platform-uri";
     private final String GAME_URI = "test-game-uri";
 
@@ -53,13 +53,13 @@ public class GamePlatformControllerIT {
         when(gamePlatformMapper.toGamePlatformDto(gamePlatform)).thenReturn(gamePlatformDto);
 
         //when
-        ResultActions resultActions = performGetRequest(GAME_URI + "/" + PLATFORM_URI);
+        ResultActions resultActions = performGetRequest();
 
         //then
         resultActions.andExpect(status().isOk());
         verifyGetServiceInteractions();
         verifyMapperToGamePlatformDtoInteractions(gamePlatform);
-        validator.validate(resultActions, gamePlatformDto, PATH + GAME_URI + "/" + PLATFORM_URI);
+        validateUri(resultActions, gamePlatformDto);
     }
 
     private GamePlatform mockGamePlatform(GamePlatformDto gamePlatformDto) {
@@ -74,10 +74,15 @@ public class GamePlatformControllerIT {
         return gamePlatform;
     }
 
-    private ResultActions performGetRequest(String uri) throws Exception {
-        return mockMvc.perform(get(PATH + uri)
+    private ResultActions performGetRequest() throws Exception {
+        String uri = makeUri(PATH, GAME_URI, PLATFORM_URI);
+        return mockMvc.perform(get(uri)
                 .contentType(MediaType.APPLICATION_JSON)
         );
+    }
+
+    private String makeUri(String... path) {
+        return String.join("/", path);
     }
 
     private void verifyGetServiceInteractions() {
@@ -95,11 +100,16 @@ public class GamePlatformControllerIT {
         assertEquals(expected, actual);
     }
 
+    private void validateUri(ResultActions resultActions, GamePlatformDto gamePlatformDto) {
+        String uri = makeUri(PATH, GAME_URI, PLATFORM_URI);
+        validator.validate(resultActions, gamePlatformDto, uri);
+    }
+
     @Test
-    public void getGamePlatform_InvalidNamesGiven_ShouldReturn404() throws Exception {
+    public void getGamePlatform_InvalidUrisGiven_ShouldReturn404() throws Exception {
         when(gamePlatformService.find(anyString(), anyString())).thenThrow(new ObjectNotFoundException("msg"));
 
-        performGetRequest("invalid/invalid")
+        performGetRequest()
                 .andExpect(status().isNotFound());
     }
 
@@ -120,7 +130,7 @@ public class GamePlatformControllerIT {
         verifyMapperToGamePlatformInteractions(gamePlatformDto);
         verifyPostServiceInteractions(gamePlatformDto);
         verifyMapperToGamePlatformDtoInteractions(gamePlatform);
-        validator.validate(resultActions, gamePlatformDto, PATH + GAME_URI + "/" + PLATFORM_URI);
+        validateUri(resultActions, gamePlatformDto);
     }
 
     private ResultActions performPostRequest(GamePlatformDto gamePlatformDto) throws Exception {
@@ -181,9 +191,10 @@ public class GamePlatformControllerIT {
     }
 
     private ResultActions performPatchRequest(GamePlatformDto gamePlatformDto) throws Exception {
+        String uri = String.join("/", PATH, GAME_URI, PLATFORM_URI);
         String content = objectMapper.writeValueAsString(gamePlatformDto);
 
-        return mockMvc.perform(patch(PATH + GAME_URI + "/" + PLATFORM_URI)
+        return mockMvc.perform(patch(uri)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(content)
         );
@@ -198,7 +209,8 @@ public class GamePlatformControllerIT {
     }
 
     private ResultActions performDeleteRequest() throws Exception {
-        return mockMvc.perform(delete(PATH + GAME_URI + "/" + PLATFORM_URI));
+        String uri = makeUri(PATH, GAME_URI, PLATFORM_URI);
+        return mockMvc.perform(delete(uri));
     }
 
     private void verifyDeleteServiceInteractions() {
