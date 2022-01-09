@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import gabriel.games.controller.util.PlatformValidator;
 import gabriel.games.model.api.Platform;
 import gabriel.games.model.api.dto.PlatformDto;
+import gabriel.games.model.api.dto.assembler.PlatformDtoModelAssembler;
 import gabriel.games.model.api.mapper.PlatformMapper;
 import gabriel.games.service.PlatformService;
 import gabriel.games.service.exception.ObjectNotFoundException;
@@ -14,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.hateoas.Link;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -33,6 +35,7 @@ public class PlatformControllerIT {
     @Autowired private ObjectMapper objectMapper;
     @MockBean private PlatformService platformService;
     @MockBean private PlatformMapper platformMapper;
+    @MockBean private PlatformDtoModelAssembler platformAssembler;
     private PlatformValidator platformValidator;
 
     @BeforeEach
@@ -42,7 +45,7 @@ public class PlatformControllerIT {
 
     @Test
     public void getPlatform_NameGiven_ShouldReturnValidPlatform() throws Exception {
-        PlatformDto platformDto = new PlatformDto("Playstation 3", "playstation-3");
+        PlatformDto platformDto = makePlatformDto("Playstation 3", "playstation-3");
         mockGetPlatformMembers(platformDto);
 
         ResultActions resultActions = performGetPlatform("playstation-3")
@@ -52,9 +55,16 @@ public class PlatformControllerIT {
         platformValidator.validate(resultActions, platformDto);
     }
 
+    private PlatformDto makePlatformDto(String name, String uri) {
+        PlatformDto platformDto = new PlatformDto(name, uri);
+        platformDto.add(Link.of(PATH + uri));
+        return platformDto;
+    }
+
     private void mockGetPlatformMembers(PlatformDto platformDto) {
         when(platformService.findByUri(any())).thenReturn(new Platform(platformDto.getName(), platformDto.getUri()));
         when(platformMapper.toPlatformDto(any())).thenReturn(platformDto);
+        when(platformAssembler.toModel(any())).thenReturn(platformDto);
     }
 
     private ResultActions performGetPlatform(String uri) throws Exception {
@@ -65,19 +75,19 @@ public class PlatformControllerIT {
     }
 
     private void verifyGetPlatformInteractions(PlatformDto platformDto) {
-        verifyGetPlatformServiceInteraction(platformDto);
-        verifyGetPlatformMapperInteraction(platformDto);
+        verifyServiceFindByUriInteractions(platformDto);
+        verifyAssemblerInteractions(platformDto);
     }
 
-    private void verifyGetPlatformServiceInteraction(PlatformDto platformDto) {
+    private void verifyServiceFindByUriInteractions(PlatformDto platformDto) {
         ArgumentCaptor<String> stringCaptor = ArgumentCaptor.forClass(String.class);
         verify(platformService).findByUri(stringCaptor.capture());
         assertEquals(platformDto.getUri(), stringCaptor.getValue());
     }
 
-    private void verifyGetPlatformMapperInteraction(PlatformDto platformDto) {
+    private void verifyAssemblerInteractions(PlatformDto platformDto) {
         ArgumentCaptor<Platform> platformCaptor = ArgumentCaptor.forClass(Platform.class);
-        verify(platformMapper).toPlatformDto(platformCaptor.capture());
+        verify(platformAssembler).toModel(platformCaptor.capture());
         assertEquals(platformDto.getName(), platformCaptor.getValue().getName());
         assertEquals(platformDto.getUri(), platformCaptor.getValue().getUri());
     }
@@ -85,13 +95,12 @@ public class PlatformControllerIT {
     @Test
     public void getPlatform_NonExistentPlatformUriGiven_ShouldReturn404() throws Exception {
         when(platformService.findByUri(anyString())).thenThrow(new ObjectNotFoundException("msg"));
-
         performGetPlatform("non-existent").andExpect(status().isNotFound());
     }
 
     @Test
     public void postPlatform_ValidPlatformDtoGiven_ShouldReturn201() throws Exception {
-        PlatformDto platformDto = new PlatformDto("word", "word");
+        PlatformDto platformDto = makePlatformDto("name", "uri");
         mockPostPlatformMembers(platformDto);
 
         ResultActions resultActions = performPostPlatform(platformDto)
@@ -103,9 +112,9 @@ public class PlatformControllerIT {
 
     private void mockPostPlatformMembers(PlatformDto platformDto) {
         Platform platform = new Platform(platformDto.getName(), platformDto.getUri());
-        when(platformMapper.toPlatform(platformDto)).thenReturn(platform);
+        when(platformMapper.toPlatform(any())).thenReturn(platform);
         when(platformService.save(any())).thenReturn(platform);
-        when(platformMapper.toPlatformDto(any())).thenReturn(platformDto);
+        when(platformAssembler.toModel(any())).thenReturn(platformDto);
     }
 
     private ResultActions performPostPlatform(PlatformDto platformDto) throws Exception {
@@ -117,12 +126,12 @@ public class PlatformControllerIT {
     }
 
     private void verifyPostPlatformInteractions(PlatformDto platformDto) {
-        verifyPostPlatformMapperToPlatformInteractions(platformDto);
-        verifyPostPlatformServiceInteractions(platformDto);
-        verifyPostPlatformMapperToPlatformDtoInteractions(platformDto);
+        verifyMapperInteractions(platformDto);
+        verifyServiceSaveInteractions(platformDto);
+        verifyAssemblerInteractions(platformDto);
     }
 
-    private void verifyPostPlatformMapperToPlatformInteractions(PlatformDto platformDto) {
+    private void verifyMapperInteractions(PlatformDto platformDto) {
         ArgumentCaptor<PlatformDto> platformDtoCaptor = ArgumentCaptor.forClass(PlatformDto.class);
         verify(platformMapper).toPlatform(platformDtoCaptor.capture());
         PlatformDto actual = platformDtoCaptor.getValue();
@@ -130,17 +139,9 @@ public class PlatformControllerIT {
         assertEquals(platformDto.getUri(), actual.getUri());
     }
 
-    private void verifyPostPlatformServiceInteractions(PlatformDto platformDto) {
+    private void verifyServiceSaveInteractions(PlatformDto platformDto) {
         ArgumentCaptor<Platform> platformCaptor = ArgumentCaptor.forClass(Platform.class);
         verify(platformService).save(platformCaptor.capture());
-        Platform actual = platformCaptor.getValue();
-        assertEquals(platformDto.getName(), actual.getName());
-        assertEquals(platformDto.getUri(), actual.getUri());
-    }
-
-    private void verifyPostPlatformMapperToPlatformDtoInteractions(PlatformDto platformDto) {
-        ArgumentCaptor<Platform> platformCaptor = ArgumentCaptor.forClass(Platform.class);
-        verify(platformMapper).toPlatformDto(platformCaptor.capture());
         Platform actual = platformCaptor.getValue();
         assertEquals(platformDto.getName(), actual.getName());
         assertEquals(platformDto.getUri(), actual.getUri());
@@ -155,21 +156,21 @@ public class PlatformControllerIT {
 
     @Test
     public void patchPlatform_ValidNameGiven_ShouldReturn200() throws Exception {
-        PlatformDto expected = new PlatformDto("valid name", "uri");
-        mockPatchPlatformMembers(expected);
+        PlatformDto platformDto = makePlatformDto("name", "uri");
+        mockPatchPlatformMembers(platformDto);
 
-        ResultActions resultActions = performPatchPlatform(expected)
+        ResultActions resultActions = performPatchPlatform(platformDto)
                 .andExpect(status().isOk());
 
-        verifyPatchPlatformInteractions(expected);
-        platformValidator.validate(resultActions, expected);
+        verifyPatchPlatformInteractions(platformDto);
+        platformValidator.validate(resultActions, platformDto);
     }
 
     private void mockPatchPlatformMembers(PlatformDto platformDto) {
         Platform platform = new Platform(platformDto.getName(), platformDto.getUri());
         when(platformMapper.toPlatform(any())).thenReturn(platform);
         when(platformService.update(anyString(), any())).thenReturn(platform);
-        when(platformMapper.toPlatformDto(any())).thenReturn(platformDto);
+        when(platformAssembler.toModel(any())).thenReturn(platformDto);
     }
 
     private ResultActions performPatchPlatform(PlatformDto expected) throws Exception {
@@ -180,41 +181,28 @@ public class PlatformControllerIT {
         );
     }
 
-    private void verifyPatchPlatformInteractions(PlatformDto expected) {
-        verifyPatchPlatformMapperToPlatformInteractions(expected);
-        verifyPatchPlatformServiceUpdateInteractions(expected);
-        verifyPatchPlatformMapperToPlatformDtoInteractions(expected);
+    private void verifyPatchPlatformInteractions(PlatformDto platformDto) {
+        verifyMapperInteractions(platformDto);
+        verifyServiceUpdateInteractions(platformDto);
+        verifyAssemblerInteractions(platformDto);
     }
 
-    private void verifyPatchPlatformMapperToPlatformInteractions(PlatformDto expected) {
-        ArgumentCaptor<PlatformDto> platformDtoCaptor = ArgumentCaptor.forClass(PlatformDto.class);
-        verify(platformMapper).toPlatform(platformDtoCaptor.capture());
-        PlatformDto actual = platformDtoCaptor.getValue();
-        assertEquals(expected.getName(), actual.getName());
-    }
-
-    private void verifyPatchPlatformServiceUpdateInteractions(PlatformDto expected) {
+    private void verifyServiceUpdateInteractions(PlatformDto expected) {
         ArgumentCaptor<Platform> platformCaptor = ArgumentCaptor.forClass(Platform.class);
         verify(platformService).update(any(), platformCaptor.capture());
         Platform actual = platformCaptor.getValue();
         assertEquals(expected.getName(), actual.getName());
     }
 
-    private void verifyPatchPlatformMapperToPlatformDtoInteractions(PlatformDto expected) {
-        ArgumentCaptor<Platform> platformCaptor = ArgumentCaptor.forClass(Platform.class);
-        verify(platformMapper).toPlatformDto(platformCaptor.capture());
-        Platform actual = platformCaptor.getValue();
-        assertEquals(expected.getName(), actual.getName());
-    }
-
     @Test
     public void deletePlatform_ExistingUriGiven_ShouldReturn204() throws Exception {
-        performDeletePlatform("uri").andExpect(status().isNoContent());
+        ResultActions resultActions = performDeletePlatform("uri");
 
         ArgumentCaptor<String> stringCaptor = ArgumentCaptor.forClass(String.class);
         verify(platformService).deleteByUri(stringCaptor.capture());
-        String actual = stringCaptor.getValue();
-        assertEquals("uri", actual);
+
+        assertEquals("uri", stringCaptor.getValue());
+        resultActions.andExpect(status().isNoContent());
     }
 
     private ResultActions performDeletePlatform(String uri) throws Exception {
