@@ -4,8 +4,6 @@ import gabriel.games.model.util.*;
 import nl.jqno.equalsverifier.*;
 import org.junit.jupiter.api.*;
 
-import java.util.*;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 
@@ -15,26 +13,7 @@ public class GameTest {
 
     @BeforeEach
     public void setUp() {
-        this.actual = makeGame("valid name", "valid-uri");
-    }
-
-    private Game makeGame(String name, String uri) {
-        Game game = new Game(name, uri);
-        game.setPlatforms(makeGamePlatforms());
-        game.setCompanies(makeCompanies());
-        return game;
-    }
-
-    private Set<GamePlatform> makeGamePlatforms() {
-        Set<GamePlatform> gamePlatforms = new HashSet<>();
-        gamePlatforms.add(mock(GamePlatform.class));
-        return gamePlatforms;
-    }
-
-    private Set<Company> makeCompanies() {
-        Set<Company> companies = new HashSet<>();
-        companies.add(mock(Company.class));
-        return companies;
+        this.actual = new Game("valid name", "valid-uri");
     }
 
     @Test
@@ -93,30 +72,6 @@ public class GameTest {
     @Test
     public void uriShouldBeLowercase() {
         actual.setUri("Uppercase");
-        EntityValidator.assertErrors(actual,1);
-    }
-
-    @Test
-    public void platformsShouldNotBeNull() {
-        actual.setPlatforms(null);
-        EntityValidator.assertErrors(actual,1);
-    }
-
-    @Test
-    public void platformsShouldNotBeEmpty() {
-        actual.setPlatforms(Collections.emptySet());
-        EntityValidator.assertErrors(actual,1);
-    }
-
-    @Test
-    public void companiesShouldNotBeNull() {
-        actual.setCompanies(null);
-        EntityValidator.assertErrors(actual,1);
-    }
-
-    @Test
-    public void companiesShouldNotBeEmpty() {
-        actual.setCompanies(Collections.emptySet());
         EntityValidator.assertErrors(actual,1);
     }
 

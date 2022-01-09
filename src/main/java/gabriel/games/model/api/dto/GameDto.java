@@ -24,14 +24,10 @@ public class GameDto {
     @Valid
     private final GameDetailsDto details;
 
-    @NotNull
-    @Size(min = 1, message = "{platforms.size}")
     @Builder.Default
-    private final List<@Valid GamePlatformDto> platforms = new ArrayList<>();
+    private final List<GamePlatformDto> platforms = new ArrayList<>();
 
-    @NotNull
-    @Size(min = 1, message = "{companies.size}")
     @Builder.Default
-    private final List<@Valid CompanyDto> companies = new ArrayList<>();
+    private final List<CompanyDto> companies = new ArrayList<>();
 
 }

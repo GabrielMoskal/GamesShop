@@ -16,9 +16,6 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.*;
 
-import java.sql.Date;
-import java.util.Collections;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -40,6 +37,16 @@ public class GameControllerIT {
         this.gameValidator = new GameValidator();
     }
 
+    @Test
+    public void getGame_ExistingResourcePathGiven_ShouldReturnValidJson() throws Exception {
+        GameDto expected = makeGameDto("filler");
+        when(gameMapper.toGameDto(any())).thenReturn(expected);
+
+        ResultActions resultActions = performGetRequest(expected);
+
+        gameValidator.validate(resultActions, expected);
+    }
+
     private GameDto makeGameDto(String filler) {
         return GameDto.builder()
                 .uri(filler)
@@ -52,33 +59,17 @@ public class GameControllerIT {
                                 .ratingReviewer(2.0)
                                 .build()
                 )
-                .platforms(
-                        Collections.singletonList(new GamePlatformDto(filler, filler, new Date(0)))
-                )
-                .companies(
-                        Collections.singletonList(new CompanyDto(filler, Collections.singletonList(filler)))
-                )
                 .build();
     }
 
     @Test
-    public void description_ExistingResourcePathGiven_ShouldReturnValidJson() throws Exception {
+    public void getGame_GameDtoGiven_VerifyMethodCalls() throws Exception {
         GameDto expected = makeGameDto("filler");
-
-        when(gameMapper.toGameDto(any())).thenReturn(expected);
-
-        ResultActions resultActions = performGetRequest(expected);
-        gameValidator.validate(resultActions, expected);
-    }
-
-    @Test
-    public void description_GameDtoGiven_VerifyMethodCalls() throws Exception {
-        GameDto expected = makeGameDto("filler");
-
         when(gameMapper.toGameDto(any())).thenReturn(expected);
         when(gameService.findByUri(expected.getUri())).thenReturn(new Game(expected.getName(), expected.getUri()));
 
         performGetRequest(expected);
+
         verifyDescriptionMethodServiceInteractions(expected);
         verifyDescriptionMethodGameMapperInteractions(expected);
     }
@@ -102,18 +93,16 @@ public class GameControllerIT {
     }
 
     @Test
-    public void description_NonExistingResourcePathGiven_ShouldReturn404() throws Exception {
+    public void getGame_NonExistingResourcePathGiven_ShouldReturn404() throws Exception {
         GameDto expected = makeGameDto("filler");
-
         when(gameService.findByUri(expected.getUri())).thenThrow(new ObjectNotFoundException("msg"));
 
         performGetRequest(expected).andExpect(status().isNotFound());
     }
 
     @Test
-    public void description_ExistingResourcePathGiven_ShouldReturn200() throws Exception {
+    public void getGame_ExistingResourcePathGiven_ShouldReturn200() throws Exception {
         GameDto expected = makeGameDto("filler");
-
         when(gameMapper.toGameDto(any())).thenReturn(expected);
 
         performGetRequest(expected).andExpect(status().isOk());
@@ -122,7 +111,6 @@ public class GameControllerIT {
     @Test
     public void postGame_ValidGameDtoGiven_ShouldReturn201() throws Exception {
         GameDto expected = makeGameDto("filler");
-
         when(gameMapper.toGameDto(any())).thenReturn(expected);
 
         performPostRequest(expected).andExpect(status().isCreated());
@@ -141,10 +129,10 @@ public class GameControllerIT {
     @Test
     public void postGame_ValidGameDtoGiven_ShouldReturnValidJson() throws Exception {
         GameDto expected = makeGameDto("filler");
-
         when(gameMapper.toGameDto(any())).thenReturn(expected);
 
         ResultActions resultActions = performPostRequest(expected);
+
         gameValidator.validate(resultActions, expected);
     }
 
@@ -152,10 +140,10 @@ public class GameControllerIT {
     public void postGame_GameDtoGiven_VerifyMethodCalls() throws Exception {
         GameDto gameDto = makeGameDto("filler");
         Game game = new Game(gameDto.getName(), gameDto.getUri());
-
         stubPostGameInteractions(gameDto, game);
 
         performPostRequest(gameDto);
+
         verifyMethodCalls(gameDto, game);
     }
 
@@ -174,14 +162,18 @@ public class GameControllerIT {
     private void verifyPostGameGameMapperToGameInteractions(GameDto expected) {
         ArgumentCaptor<GameDto> gameDtoCaptor = ArgumentCaptor.forClass(GameDto.class);
         verify(gameMapper).toGame(gameDtoCaptor.capture());
+
         GameDto actual = gameDtoCaptor.getValue();
+
         assertThat(actual).isEqualTo(expected);
     }
 
     private void verifyPostGameGameServiceSaveInteractions(Game expected) {
         ArgumentCaptor<Game> gameCaptor = ArgumentCaptor.forClass(Game.class);
         verify(gameService).save(gameCaptor.capture());
+
         Game actual = gameCaptor.getValue();
+
         assertThat(actual).isEqualTo(expected);
     }
 
@@ -202,7 +194,6 @@ public class GameControllerIT {
     @Test
     public void patchGame_SingleAttributeUpdateGiven_ShouldReturn200() throws Exception {
         GameDto expected = makeGameDto("filler");
-
         when(gameMapper.toGameDto(any())).thenReturn(expected);
 
         performPatchRequest(expected).andExpect(status().isOk());
@@ -220,20 +211,19 @@ public class GameControllerIT {
     @Test
     public void patchGame_SingleAttributeUpdateGiven_ShouldReturnValidJson() throws Exception {
         GameDto expected = makeGameDto("different");
-
         when(gameMapper.toGameDto(any())).thenReturn(expected);
 
         ResultActions resultActions = performPatchRequest(expected);
+
         gameValidator.validate(resultActions, expected);
     }
 
     @Test
     public void patchGame_SingleAttributeUpdateGiven_VerifyMethodCalls() throws Exception {
         GameDto gameDto = makeGameDto("filler");
-        Game updatedGame = new Game(gameDto.getName(), gameDto.getUri());
-        updatedGame.setName("different name");
-
+        Game updatedGame = new Game("different name", gameDto.getUri());
         stubPatchGameInteractions(gameDto, updatedGame);
+
         performPatchRequest(gameDto);
 
         verifyPatchInteractions(gameDto, updatedGame);
@@ -294,7 +284,9 @@ public class GameControllerIT {
 
     private void verifyDeleteGameInteractions(String uri) {
         ArgumentCaptor<String> stringCaptor = ArgumentCaptor.forClass(String.class);
+
         verify(gameService).deleteByUri(stringCaptor.capture());
+
         String actual = stringCaptor.getValue();
         assertThat(actual).isEqualTo(uri);
     }
@@ -302,7 +294,6 @@ public class GameControllerIT {
     @Test
     public void deleteGame_ExceptionThrown_ShouldReturn204() throws Exception {
         String uri = "non-existent";
-
         doThrow(EmptyResultDataAccessException.class).when(gameService).deleteByUri(uri);
 
         performDeleteRequest(uri).andExpect(status().isNoContent());

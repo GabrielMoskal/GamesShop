@@ -15,6 +15,8 @@ public class Game {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @ToString.Include
+    @Getter
+    @Setter
     private Long id;
 
     @NotNull
@@ -38,16 +40,12 @@ public class Game {
     @Setter
     private GameDetails details;
 
-    @NotNull
-    @Size(min = 1)
     @OneToMany(mappedBy = "game")
     @Getter
     @Setter
     private Set<GamePlatform> platforms;
 
-    @NotNull
-    @Size(min = 1)
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany
     @JoinTable(
             name = "game_company",
             joinColumns = @JoinColumn(name = "game_id"),

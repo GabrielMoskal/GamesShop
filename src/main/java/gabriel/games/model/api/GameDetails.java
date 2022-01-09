@@ -18,6 +18,8 @@ public class GameDetails {
 
     @Id
     @ToString.Include
+    @Getter
+    @Setter
     private Long gameId;
 
     @NotNull

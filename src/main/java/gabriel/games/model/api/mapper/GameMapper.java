@@ -50,10 +50,8 @@ public class GameMapper {
     }
 
     public Game toGame(GameDto gameDto) {
-        Game game = new Game(gameDto.getName(), null);
+        Game game = new Game(gameDto.getName(), gameDto.getUri());
         addGameDetails(game, gameDto);
-        addGamePlatforms(game, gameDto);
-        addCompanies(game, gameDto);
         return game;
     }
 
@@ -62,34 +60,4 @@ public class GameMapper {
         game.setDetails(gameDetails);
         gameDetails.setGame(game);
     }
-
-    private void addGamePlatforms(Game game, GameDto gameDto) {
-        Set<GamePlatform> platforms = toGamePlatforms(gameDto.getPlatforms());
-        game.setPlatforms(platforms);
-    }
-
-    private Set<GamePlatform> toGamePlatforms(List<GamePlatformDto> platformDtos) {
-        Set<GamePlatform> platforms = new HashSet<>();
-        platformDtos.forEach((platformDto) -> platforms.add(platformMapper.toGamePlatform(platformDto)));
-        return platforms;
-    }
-
-    private void addCompanies(Game game, GameDto gameDto) {
-        Set<Company> companies = toCompanies(gameDto.getCompanies(), game);
-        game.setCompanies(companies);
-    }
-
-    private Set<Company> toCompanies(List<CompanyDto> companyDtos, Game game) {
-        Set<Company> companies = new HashSet<>();
-        companyDtos.forEach((companyDto) -> {
-            Set<Game> games = new HashSet<>();
-            games.add(game);
-            Company company = companyMapper.toCompany(companyDto);
-            company.setGames(games);
-            companies.add(company);
-
-        });
-        return companies;
-    }
-
 }

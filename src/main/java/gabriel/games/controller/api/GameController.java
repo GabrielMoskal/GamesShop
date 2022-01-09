@@ -25,7 +25,7 @@ public class GameController {
     private final GameMapper gameMapper;
 
     @GetMapping(path = "/{uri}")
-    public ResponseEntity<EntityModel<GameDto>> description(@PathVariable String uri) {
+    public ResponseEntity<EntityModel<GameDto>> getGame(@PathVariable String uri) {
         try {
             return findGame(uri);
         } catch (ObjectNotFoundException e) {
@@ -46,7 +46,7 @@ public class GameController {
     }
 
     private Link makeLink(GameDto gameDto) {
-        return linkTo(methodOn(GameController.class).description(gameDto.getUri())).withSelfRel();
+        return linkTo(methodOn(GameController.class).getGame(gameDto.getUri())).withSelfRel();
     }
 
     private ResponseEntity<EntityModel<GameDto>> notFound() {

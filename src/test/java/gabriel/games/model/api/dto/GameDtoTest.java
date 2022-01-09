@@ -4,20 +4,13 @@ import gabriel.games.model.util.EntityValidator;
 import gabriel.games.model.util.GenericWord;
 import org.junit.jupiter.api.*;
 
-import java.sql.Date;
-import java.util.*;
-
 public class GameDtoTest {
 
     private GameDto actual;
 
-    @BeforeEach
-    public void setUp() {
-        this.actual = makeGameDto();
-    }
-
-    private GameDto makeGameDto() {
-        return GameDto.builder()
+    @Test
+    public void validGameDtoHasNoErrors() {
+        actual = GameDto.builder()
                 .uri("test")
                 .name("test")
                 .details(
@@ -28,18 +21,8 @@ public class GameDtoTest {
                                 .ratingReviewer(2.0)
                                 .build()
                 )
-                .platforms(
-                        Collections.singletonList(new GamePlatformDto("gameName", "platformName", new Date(0)))
-                )
-                .companies(
-                        Collections.singletonList(new CompanyDto("companyName", Collections.singletonList("type")))
-                )
                 .build();
-    }
 
-    @Test
-    public void validGameDtoHasNoErrors() {
-        actual = makeGameDto();
         EntityValidator.assertErrors(actual, 0);
     }
 
@@ -78,43 +61,5 @@ public class GameDtoTest {
     public void detailsShouldNotBeNull() {
         actual = GameDto.builder().details(null).build();
         EntityValidator.assertPropertyErrors(actual, "details");
-    }
-
-    @Test
-    public void platformsShouldNotBeNull() {
-        actual = GameDto.builder().platforms(null).build();
-        EntityValidator.assertPropertyErrors(actual, "platforms");
-    }
-
-    @Test
-    public void platformsShouldNotBeEmpty() {
-        actual = GameDto.builder()
-                .platforms(Collections.emptyList())
-                .build();
-        EntityValidator.assertPropertyErrors(actual, "platforms");
-    }
-
-    @Test
-    public void platformsAreValidated() {
-        actual = GameDto.builder()
-                .platforms(Collections.singletonList(new GamePlatformDto(null, null, null)))
-                .build();
-        EntityValidator.assertPropertyErrors(actual.getPlatforms().get(0), "platformName");
-    }
-
-    @Test
-    public void companiesShouldNotBeNull() {
-        actual = GameDto.builder()
-                .companies(null)
-                .build();
-        EntityValidator.assertPropertyErrors(actual, "companies");
-    }
-
-    @Test
-    public void companiesShouldNotBeEmpty() {
-        actual = GameDto.builder()
-                .companies(Collections.emptyList())
-                .build();
-        EntityValidator.assertPropertyErrors(actual, "companies");
     }
 }

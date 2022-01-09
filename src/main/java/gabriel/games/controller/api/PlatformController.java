@@ -51,7 +51,7 @@ public class PlatformController {
 
     @PatchMapping(path = "{uri}")
     public ResponseEntity<PlatformDto> patchPlatform(@PathVariable String uri,
-                                                                  @RequestBody PlatformDto platformDto) {
+                                                     @RequestBody PlatformDto platformDto) {
         Platform platform = platformMapper.toPlatform(platformDto);
         platform = platformService.update(uri, platform);
         return makeResponse(platform, HttpStatus.OK);

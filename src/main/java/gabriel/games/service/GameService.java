@@ -11,14 +11,14 @@ import org.springframework.stereotype.Service;
 public class GameService {
 
     private static final String NOT_FOUND = "Game with given uri not found.";
-    private GameRepository repository;
+    private GameRepository gameRepository;
 
     public Game findByUri(String uri) {
-        return repository.findByUri(uri).orElseThrow(() -> new ObjectNotFoundException(NOT_FOUND));
+        return gameRepository.findByUri(uri).orElseThrow(() -> new ObjectNotFoundException(NOT_FOUND));
     }
 
     public Game save(Game game) {
-        return repository.save(game);
+        return gameRepository.save(game);
     }
 
     public Game update(String uri, Game patch) {
@@ -32,17 +32,14 @@ public class GameService {
         }
         if (patch.getDetails() != null) {
             game.setDetails(patch.getDetails());
+            game.getDetails().setGameId(game.getId());
+            game.getDetails().setGame(game);
         }
-        if (patch.getPlatforms() != null) {
-            game.setPlatforms(patch.getPlatforms());
-        }
-        if (patch.getCompanies() != null) {
-            game.setCompanies(patch.getCompanies());
-        }
+
         return save(game);
     }
 
     public void deleteByUri(String uri) {
-        repository.deleteByUri(uri);
+        gameRepository.deleteByUri(uri);
     }
 }

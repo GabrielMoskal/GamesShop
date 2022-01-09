@@ -1,6 +1,7 @@
 package gabriel.games.service;
 
 import gabriel.games.model.api.*;
+import gabriel.games.model.api.embedded.Rating;
 import gabriel.games.repository.GameRepository;
 import gabriel.games.service.exception.ObjectNotFoundException;
 import org.junit.jupiter.api.*;
@@ -25,10 +26,18 @@ public class GameServiceTest {
 
     @Test
     public void findByUri_ExistingUriGiven_ShouldReturnValidGame() {
-        Game expected = new Game("name", null);
+        Game expected = makeGame("name", null, null);
         mockFindByUri(expected);
+
         Game actual = service.findByUri(expected.getUri());
+
         assertThat(actual).isEqualToComparingFieldByField(expected);
+    }
+
+    private Game makeGame(String name, String uri, GameDetails gameDetails) {
+        Game game = new Game(name, uri);
+        game.setDetails(gameDetails);
+        return game;
     }
 
     private void mockFindByUri(Game game) {
@@ -38,13 +47,16 @@ public class GameServiceTest {
     @Test
     public void findByUri_NonExistingUriGiven_ShouldThrowException() {
         ObjectNotFoundException exception = assertThrows(ObjectNotFoundException.class, () -> service.findByUri("name"));
+
         assertThat(exception.getMessage()).isEqualTo("Game with given uri not found.");
     }
 
     @Test
     public void findByUri_AnyUriGiven_VerifyInteractions() {
-        mockFindByUri(new Game("name", "uri"));
+        mockFindByUri(makeGame(null, "uri", null));
+
         service.findByUri("uri");
+
         verify(repository).findByUri("uri");
     }
 
@@ -54,9 +66,11 @@ public class GameServiceTest {
     }
 
     private void testSave(String name) {
-        Game expected = new Game(name, null);
+        Game expected = makeGame(name, null, null);
         mockSave(expected);
+
         Game actual = service.save(expected);
+
         assertThat(actual).isEqualToComparingFieldByField(expected);
     }
 
@@ -71,15 +85,17 @@ public class GameServiceTest {
 
     @Test
     public void save_AnyGameGiven_VerifyInteractions() {
-        Game game = new Game("name", null);
+        Game game = makeGame("name", null, null
+        );
         service.save(game);
+
         verify(repository).save(any());
     }
 
     @Test
     public void update_EmptyGameGiven_ShouldNotUpdateGame() {
-        Game game = new Game("name", null);
-        Game patch = new Game("patch", null);
+        Game game = makeGame("name", null, null);
+        Game patch = makeGame("patch", null, null);
         mockSave(game);
         mockFindByUri(game);
 
@@ -90,8 +106,8 @@ public class GameServiceTest {
 
     @Test
     public void update_NameGiven_ShouldUpdateName() {
-        Game game = new Game("name", null);
-        Game patch = new Game("patch", null);
+        Game game = makeGame("name", null, null);
+        Game patch = makeGame("patch", null, null);
         mockSave(game);
         mockFindByUri(game);
 
@@ -102,9 +118,8 @@ public class GameServiceTest {
 
     @Test
     public void update_UriGiven_ShouldUpdateUri() {
-        Game game = new Game("name", null);
-        Game patch = new Game("different", null);
-        patch.setUri("different");
+        Game game = makeGame("name", "uri", null);
+        Game patch = makeGame(null, "different", null);
         mockSave(game);
         mockFindByUri(game);
 
@@ -115,41 +130,23 @@ public class GameServiceTest {
 
     @Test
     public void update_DetailsGiven_ShouldUpdateDetails() {
-        Game game = new Game("name", null);
-        Game patch = new Game("patch", null);
-        patch.setDetails(mock(GameDetails.class));
+        Game game = makeGame(null, null, null);
+        game.setId(1L);
+        GameDetails gameDetails = GameDetails.builder()
+                .description("desc")
+                .webpage("page")
+                .ratingPlayers(mock(Rating.class))
+                .ratingReviewer(mock(Rating.class))
+                .build();
+        Game patch = makeGame(null, null, gameDetails);
         mockSave(game);
         mockFindByUri(game);
 
         Game actual = service.update(game.getUri(), patch);
 
         assertThat(actual.getDetails()).isEqualToComparingFieldByField(patch.getDetails());
-    }
-
-    @Test
-    public void update_PlatformsGiven_ShouldUpdatePlatforms() {
-        Game game = new Game("name", null);
-        Game patch = new Game("patch", null);
-        patch.setPlatforms(new HashSet<>(Collections.singletonList(mock(GamePlatform.class))));
-        mockSave(game);
-        mockFindByUri(game);
-
-        Game actual = service.update(game.getUri(), patch);
-
-        assertThat(actual.getPlatforms()).isEqualTo(patch.getPlatforms());
-    }
-
-    @Test
-    public void update_CompaniesGiven_ShouldUpdateCompanies() {
-        Game game = new Game("name", null);
-        Game patch = new Game("patch", null);
-        patch.setCompanies(new HashSet<>(Collections.singletonList(mock(Company.class))));
-        mockSave(game);
-        mockFindByUri(game);
-
-        Game actual = service.update(game.getUri(), patch);
-
-        assertThat(actual.getCompanies()).isEqualTo(patch.getCompanies());
+        assertThat(actual.getDetails().getGameId()).isEqualTo(game.getId());
+        assertThat(actual.getDetails().getGame()).isEqualToComparingFieldByField(game);
     }
 
     @Test
@@ -162,7 +159,7 @@ public class GameServiceTest {
 
     @Test
     public void update_VerifyInteractions() {
-        Game game = new Game("name", null);
+        Game game = makeGame("name", null, null);
         mockFindByUri(game);
 
         service.update(game.getUri(), mock(Game.class));
