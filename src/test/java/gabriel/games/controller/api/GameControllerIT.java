@@ -1,7 +1,7 @@
 package gabriel.games.controller.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import gabriel.games.controller.util.GameValidator;
+import gabriel.games.controller.util.GameDtoValidator;
 import gabriel.games.model.api.Game;
 import gabriel.games.model.api.dto.*;
 import gabriel.games.model.api.mapper.*;
@@ -26,7 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class GameControllerIT {
 
     private final String PATH = "/api/game/";
-    private GameValidator gameValidator;
+    private GameDtoValidator gameDtoValidator;
     @Autowired private MockMvc mockMvc;
     @MockBean private GameMapper gameMapper;
     @MockBean private GameService gameService;
@@ -34,7 +34,7 @@ public class GameControllerIT {
 
     @BeforeEach
     public void setUp() {
-        this.gameValidator = new GameValidator();
+        this.gameDtoValidator = new GameDtoValidator();
     }
 
     @Test
@@ -44,7 +44,7 @@ public class GameControllerIT {
 
         ResultActions resultActions = performGetRequest(expected);
 
-        gameValidator.validate(resultActions, expected);
+        gameDtoValidator.validate(resultActions, expected);
     }
 
     private GameDto makeGameDto(String filler) {
@@ -133,7 +133,7 @@ public class GameControllerIT {
 
         ResultActions resultActions = performPostRequest(expected);
 
-        gameValidator.validate(resultActions, expected);
+        gameDtoValidator.validate(resultActions, expected);
     }
 
     @Test
@@ -215,7 +215,7 @@ public class GameControllerIT {
 
         ResultActions resultActions = performPatchRequest(expected);
 
-        gameValidator.validate(resultActions, expected);
+        gameDtoValidator.validate(resultActions, expected);
     }
 
     @Test

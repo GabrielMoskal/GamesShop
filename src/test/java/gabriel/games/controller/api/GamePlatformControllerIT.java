@@ -1,7 +1,7 @@
 package gabriel.games.controller.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import gabriel.games.controller.util.GamePlatformValidator;
+import gabriel.games.controller.util.GamePlatformDtoValidator;
 import gabriel.games.model.api.GamePlatform;
 import gabriel.games.model.api.dto.GamePlatformDto;
 import gabriel.games.model.api.mapper.GamePlatformMapper;
@@ -37,11 +37,11 @@ public class GamePlatformControllerIT {
     @Autowired private ObjectMapper objectMapper;
     @MockBean private GamePlatformService gamePlatformService;
     @MockBean private GamePlatformMapper gamePlatformMapper;
-    private GamePlatformValidator validator;
+    private GamePlatformDtoValidator validator;
 
     @BeforeEach
     public void setUp() {
-         this.validator = new GamePlatformValidator();
+         this.validator = new GamePlatformDtoValidator();
     }
 
     @Test

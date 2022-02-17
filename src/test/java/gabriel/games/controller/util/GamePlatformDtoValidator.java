@@ -3,7 +3,7 @@ package gabriel.games.controller.util;
 import gabriel.games.model.api.dto.GamePlatformDto;
 import org.springframework.test.web.servlet.ResultActions;
 
-public class GamePlatformValidator {
+public class GamePlatformDtoValidator {
 
     public void validate(ResultActions resultActions, GamePlatformDto expected, String link) {
         JsonValidator jsonValidator = new JsonValidator(resultActions);

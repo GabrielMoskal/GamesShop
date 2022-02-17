@@ -1,7 +1,7 @@
 package gabriel.games.controller.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import gabriel.games.controller.util.PlatformValidator;
+import gabriel.games.controller.util.PlatformDtoValidator;
 import gabriel.games.model.api.Platform;
 import gabriel.games.model.api.dto.PlatformDto;
 import gabriel.games.model.api.dto.assembler.PlatformDtoModelAssembler;
@@ -36,11 +36,11 @@ public class PlatformControllerIT {
     @MockBean private PlatformService platformService;
     @MockBean private PlatformMapper platformMapper;
     @MockBean private PlatformDtoModelAssembler platformAssembler;
-    private PlatformValidator platformValidator;
+    private PlatformDtoValidator platformDtoValidator;
 
     @BeforeEach
     public void setUp() {
-        this.platformValidator = new PlatformValidator();
+        this.platformDtoValidator = new PlatformDtoValidator();
     }
 
     @Test
@@ -52,7 +52,7 @@ public class PlatformControllerIT {
                 .andExpect(status().isOk());
 
         verifyGetPlatformInteractions(platformDto);
-        platformValidator.validate(resultActions, platformDto);
+        platformDtoValidator.validate(resultActions, platformDto);
     }
 
     private PlatformDto makePlatformDto(String name, String uri) {
@@ -107,7 +107,7 @@ public class PlatformControllerIT {
                 .andExpect(status().isCreated());
 
         verifyPostPlatformInteractions(platformDto);
-        platformValidator.validate(resultActions, platformDto);
+        platformDtoValidator.validate(resultActions, platformDto);
     }
 
     private void mockPostPlatformMembers(PlatformDto platformDto) {
@@ -163,7 +163,7 @@ public class PlatformControllerIT {
                 .andExpect(status().isOk());
 
         verifyPatchPlatformInteractions(platformDto);
-        platformValidator.validate(resultActions, platformDto);
+        platformDtoValidator.validate(resultActions, platformDto);
     }
 
     private void mockPatchPlatformMembers(PlatformDto platformDto) {

@@ -5,7 +5,7 @@ import org.springframework.test.web.servlet.ResultActions;
 
 import java.util.List;
 
-public class GameValidator {
+public class GameDtoValidator {
 
     private JsonValidator jsonValidator;
     private GameDto expected;

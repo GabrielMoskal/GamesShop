@@ -1,7 +1,7 @@
 package gabriel.games.controller.auth;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import gabriel.games.controller.util.UserValidator;
+import gabriel.games.controller.util.UserDtoValidator;
 import gabriel.games.model.auth.dto.UserDto;
 import gabriel.games.controller.auth.exception.UserAlreadyExistsException;
 import gabriel.games.model.dto.ErrorDto;
@@ -28,7 +28,7 @@ public class RegistrationControllerIT {
 
     private final String PATH = "/register";
     private UserDto userDto;
-    private UserValidator userValidator;
+    private UserDtoValidator userDtoValidator;
     @Autowired private MockMvc mockMvc;
     @MockBean private UserService userService;
     @MockBean private ErrorService errorService;
@@ -36,14 +36,14 @@ public class RegistrationControllerIT {
     @BeforeEach
     public void setUp() {
         this.userDto = Users.makeUserDto("valid_name", "valid_pass");
-        this.userValidator = new UserValidator();
+        this.userDtoValidator = new UserDtoValidator();
     }
 
     @Test
     public void register_ShouldReturnEmptyUserJsonWithLink() throws Exception {
         userDto = Users.makeUserDto("", "");
         ResultActions resultActions = performGet().andExpect(status().isOk());
-        userValidator.validate(resultActions, userDto, PATH);
+        userDtoValidator.validate(resultActions, userDto, PATH);
     }
 
     private ResultActions performGet() throws Exception {
@@ -60,7 +60,7 @@ public class RegistrationControllerIT {
 
         verifyMethodCalls();
         userDto = Users.makeUserDto(userDto.getUsername(), "");
-        userValidator.validate(resultActions, userDto, PATH);
+        userDtoValidator.validate(resultActions, userDto, PATH);
     }
 
     private ResultActions performPostRegister() throws Exception {
@@ -102,7 +102,7 @@ public class RegistrationControllerIT {
         addExpectedErrorsToUserDto("Nazwa użytkownika musi zawierać między 5 a 20 znaków.");
         mockErrorService();
         ResultActions resultActions = performPostRegister().andExpect(status().is4xxClientError());
-        userValidator.validate(resultActions, userDto, PATH);
+        userDtoValidator.validate(resultActions, userDto, PATH);
     }
 
     private void addExpectedErrorsToUserDto(String errorMessage) {
@@ -122,7 +122,7 @@ public class RegistrationControllerIT {
         mockErrorService();
         ResultActions resultActions = performPostRegister().andExpect(status().is4xxClientError());
         verifyInteractions();
-        userValidator.validate(resultActions, userDto, PATH);
+        userDtoValidator.validate(resultActions, userDto, PATH);
     }
 
     private void mockUserService() {

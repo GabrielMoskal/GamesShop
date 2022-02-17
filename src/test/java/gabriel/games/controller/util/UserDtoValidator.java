@@ -6,7 +6,7 @@ import org.springframework.test.web.servlet.ResultActions;
 
 import java.util.List;
 
-public class UserValidator {
+public class UserDtoValidator {
 
     private JsonValidator jsonValidator;
     private UserDto expected;
