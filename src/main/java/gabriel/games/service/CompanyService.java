@@ -10,4 +10,9 @@ public class CompanyService {
         // TODO
         return null;
     }
+
+    public Company save(Company company) {
+        // TODO
+        return null;
+    }
 }

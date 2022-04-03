@@ -1,5 +1,6 @@
 package gabriel.games.controller.api;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import gabriel.games.controller.util.CompanyDtoValidator;
 import gabriel.games.model.api.Company;
 import gabriel.games.model.api.dto.CompanyDto;
@@ -12,6 +13,7 @@ import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
@@ -20,6 +22,7 @@ import java.util.Collections;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(CompanyController.class)
@@ -29,6 +32,8 @@ public class CompanyControllerIT {
 
     @Autowired
     private MockMvc mockMvc;
+    @Autowired
+    private ObjectMapper objectMapper;
     @MockBean
     private CompanyService companyService;
     @MockBean
@@ -74,5 +79,53 @@ public class CompanyControllerIT {
         when(companyService.findByName("name")).thenThrow(ObjectNotFoundException.class);
 
         mockMvc.perform(get(PATH)).andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void postCompany_ValidCompanyDtoGiven_ShouldReturn201() throws Exception {
+        // given
+        CompanyDto companyDto = new CompanyDto("name", Collections.singletonList("type"));
+        Company company = mock(Company.class);
+
+        when(companyMapper.toCompany(any())).thenReturn(company);
+        when(companyService.save(company)).thenReturn(company);
+        when(companyMapper.toCompanyDto(company)).thenReturn(companyDto);
+
+        // when
+        ResultActions resultActions = mockMvc.perform(
+                post("/api/company")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(companyDto))
+        );
+
+        //then
+        verifyToCompanyInteractions(companyDto);
+        verifySaveInteractions(company);
+        verifyToCompanyDtoInteractions(company);
+        resultActions.andExpect(status().isCreated());
+    }
+
+    private void verifyToCompanyInteractions(CompanyDto expected) {
+        ArgumentCaptor<CompanyDto> captor = ArgumentCaptor.forClass(CompanyDto.class);
+        verify(companyMapper).toCompany(captor.capture());
+        CompanyDto actual = captor.getValue();
+        assertEquals(expected, actual);
+    }
+
+    private void verifySaveInteractions(Company expected) {
+        ArgumentCaptor<Company> captor = ArgumentCaptor.forClass(Company.class);
+        verify(companyService).save(captor.capture());
+        Company actual = captor.getValue();
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void postCompany_invalidCompanyDtoGiven_ShouldReturn400() throws Exception {
+        CompanyDto companyDto = new CompanyDto(null, null);
+
+        mockMvc.perform(post("/api/company")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(companyDto)))
+                .andExpect(status().isBadRequest());
     }
 }
