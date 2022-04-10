@@ -33,6 +33,7 @@ public class Company {
             joinColumns = @JoinColumn(name = "company_id"),
             inverseJoinColumns = @JoinColumn(name = "type_id")
     )
+
     @ToString.Exclude
     @Getter
     private Set<CompanyType> companyTypes;
