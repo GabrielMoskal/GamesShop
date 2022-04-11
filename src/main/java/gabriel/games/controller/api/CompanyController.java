@@ -46,6 +46,7 @@ public class CompanyController {
         return new ResponseEntity<>(entityModel, status);
     }
 
+    // TODO mam dodany CompanyDtoModelAssembler
     private Link makeLink(String companyName) {
         return linkTo(methodOn(CompanyController.class).getCompany(companyName)).withSelfRel();
     }
