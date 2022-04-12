@@ -1,5 +1,6 @@
 package gabriel.games.model.api.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 import org.springframework.hateoas.EntityModel;
 
@@ -8,9 +9,11 @@ import javax.validation.constraints.Size;
 import java.util.List;
 
 @Getter
+@NoArgsConstructor(force = true)
 @AllArgsConstructor
 @ToString
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = false)
+@JsonIgnoreProperties({"links"})
 public class CompanyDto extends EntityModel<CompanyDto> {
 
     @NotNull
