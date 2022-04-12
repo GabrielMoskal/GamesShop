@@ -6,7 +6,9 @@ import gabriel.games.model.api.dto.CompanyDto;
 import gabriel.games.model.api.mapper.CompanyMapper;
 import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
 import org.springframework.lang.NonNull;
+import org.springframework.stereotype.Component;
 
+@Component
 public class CompanyDtoModelAssembler extends RepresentationModelAssemblerSupport<Company, CompanyDto> {
 
     private CompanyMapper mapper;

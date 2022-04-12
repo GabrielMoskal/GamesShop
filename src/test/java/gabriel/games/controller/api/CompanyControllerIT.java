@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import gabriel.games.controller.util.CompanyDtoValidator;
 import gabriel.games.model.api.Company;
 import gabriel.games.model.api.dto.CompanyDto;
+import gabriel.games.model.api.dto.assembler.CompanyDtoModelAssembler;
 import gabriel.games.model.api.mapper.CompanyMapper;
 import gabriel.games.service.CompanyService;
 import gabriel.games.service.exception.ObjectNotFoundException;
@@ -13,6 +14,7 @@ import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.hateoas.Link;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -38,6 +40,8 @@ public class CompanyControllerIT {
     private CompanyService companyService;
     @MockBean
     private CompanyMapper companyMapper;
+    @MockBean
+    private CompanyDtoModelAssembler assembler;
     private CompanyDtoValidator companyDtoValidator;
 
     @BeforeEach
@@ -48,14 +52,17 @@ public class CompanyControllerIT {
     @Test
     public void getCompany_ExistingCompanyGiven_ShouldReturn200() throws Exception {
         Company company = mock(Company.class);
-        when(companyService.findByName("name")).thenReturn(company);
         CompanyDto companyDto = new CompanyDto("name", Collections.singletonList("type"));
+        companyDto.add(Link.of(PATH));
+
+        when(companyService.findByName("name")).thenReturn(company);
         when(companyMapper.toCompanyDto(company)).thenReturn(companyDto);
+        when(assembler.toModel(company)).thenReturn(companyDto);
 
         ResultActions resultActions = mockMvc.perform(get(PATH));
 
         verifyFindByNameInteractions("name");
-        verifyToCompanyDtoInteractions(company);
+        verifyAssemblerInteractions(company);
         resultActions.andExpect(status().isOk());
         companyDtoValidator.validate(resultActions, companyDto, PATH);
     }
@@ -67,9 +74,9 @@ public class CompanyControllerIT {
         assertEquals(expected, captor.getValue());
     }
 
-    private void verifyToCompanyDtoInteractions(Company expected) {
+    private void verifyAssemblerInteractions(Company expected) {
         ArgumentCaptor<Company> captor = ArgumentCaptor.forClass(Company.class);
-        verify(companyMapper).toCompanyDto(captor.capture());
+        verify(assembler).toModel(captor.capture());
         verifyNoMoreInteractions(companyMapper);
         assertEquals(expected, captor.getValue());
     }
@@ -105,6 +112,13 @@ public class CompanyControllerIT {
         resultActions.andExpect(status().isCreated());
     }
 
+    private void verifyToCompanyDtoInteractions(Company expected) {
+        ArgumentCaptor<Company> captor = ArgumentCaptor.forClass(Company.class);
+        verify(companyMapper).toCompanyDto(captor.capture());
+        verifyNoMoreInteractions(companyMapper);
+        assertEquals(expected, captor.getValue());
+    }
+
     private void verifyToCompanyInteractions(CompanyDto expected) {
         ArgumentCaptor<CompanyDto> captor = ArgumentCaptor.forClass(CompanyDto.class);
         verify(companyMapper).toCompany(captor.capture());
@@ -124,8 +138,8 @@ public class CompanyControllerIT {
         CompanyDto companyDto = new CompanyDto(null, null);
 
         mockMvc.perform(post("/api/company")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(companyDto)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(companyDto)))
                 .andExpect(status().isBadRequest());
     }
 }
