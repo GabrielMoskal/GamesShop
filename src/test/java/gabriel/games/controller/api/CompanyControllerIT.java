@@ -56,7 +56,6 @@ public class CompanyControllerIT {
         companyDto.add(Link.of(PATH));
 
         when(companyService.findByName("name")).thenReturn(company);
-        when(companyMapper.toCompanyDto(company)).thenReturn(companyDto);
         when(assembler.toModel(company)).thenReturn(companyDto);
 
         ResultActions resultActions = mockMvc.perform(get(PATH));
@@ -96,7 +95,7 @@ public class CompanyControllerIT {
 
         when(companyMapper.toCompany(any())).thenReturn(company);
         when(companyService.save(company)).thenReturn(company);
-        when(companyMapper.toCompanyDto(company)).thenReturn(companyDto);
+        when(assembler.toModel(company)).thenReturn(companyDto);
 
         // when
         ResultActions resultActions = mockMvc.perform(
@@ -108,15 +107,8 @@ public class CompanyControllerIT {
         //then
         verifyToCompanyInteractions(companyDto);
         verifySaveInteractions(company);
-        verifyToCompanyDtoInteractions(company);
+        verifyAssemblerInteractions(company);
         resultActions.andExpect(status().isCreated());
-    }
-
-    private void verifyToCompanyDtoInteractions(Company expected) {
-        ArgumentCaptor<Company> captor = ArgumentCaptor.forClass(Company.class);
-        verify(companyMapper).toCompanyDto(captor.capture());
-        verifyNoMoreInteractions(companyMapper);
-        assertEquals(expected, captor.getValue());
     }
 
     private void verifyToCompanyInteractions(CompanyDto expected) {

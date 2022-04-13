@@ -33,11 +33,12 @@ public class CompanyController {
 
     private ResponseEntity<CompanyDto> find(String name) {
         Company company = companyService.findByName(name);
-        CompanyDto companyDto = assembler.toModel(company);
-        return makeResponse(companyDto, HttpStatus.OK);
+
+        return makeResponse(company, HttpStatus.OK);
     }
 
-    private ResponseEntity<CompanyDto> makeResponse(CompanyDto companyDto, HttpStatus status) {
+    private ResponseEntity<CompanyDto> makeResponse(Company company, HttpStatus status) {
+        CompanyDto companyDto = assembler.toModel(company);
         return new ResponseEntity<>(companyDto, status);
     }
 
@@ -49,7 +50,6 @@ public class CompanyController {
     public ResponseEntity<CompanyDto> postCompany(@RequestBody @Valid CompanyDto companyDto) {
         Company company = companyMapper.toCompany(companyDto);
         company = companyService.save(company);
-        CompanyDto result = companyMapper.toCompanyDto(company);
-        return makeResponse(result, HttpStatus.CREATED);
+        return makeResponse(company, HttpStatus.CREATED);
     }
 }
